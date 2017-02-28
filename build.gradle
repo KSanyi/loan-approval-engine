@@ -1,0 +1,58 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+version = '1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': name,
+                   'Implementation-Version': version,
+                   'Main-Class': 'hu.lae.Main'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.3.8.v20160314'
+    compile group: 'org.eclipse.jetty', name: 'jetty-webapp', version: '9.3.8.v20160314'
+	
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+	
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.26'
+    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.12'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.12'
+	
+    compile group: 'com.vaadin', name: 'vaadin-server', version: '7.6.4'
+    compile group: 'com.vaadin', name: 'vaadin-shared', version: '7.6.4'
+    compile group: 'com.vaadin', name: 'vaadin-themes', version: '7.6.4'
+    compile group: 'com.vaadin', name: 'vaadin-client-compiler', version: '7.6.4'
+    compile group: 'com.vaadin', name: 'vaadin-client-compiled', version: '7.6.4'
+	
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+mainClassName = "hu.lae.Main"
+
+// required for building the "fat jar" or "shadow jar"
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
+shadowJar {
+  mergeServiceFiles()
+}
+
+task stage {
+  dependsOn shadowJar
+}

@@ -1,0 +1,6 @@
+Heroku specific files (all should be removed when not using Heroku anymore):
+	-Procfile
+	-system.properties
+	-settings.gradle
+	-.env
+	-everything in the gradle folder

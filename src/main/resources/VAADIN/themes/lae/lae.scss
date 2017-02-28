@@ -1,0 +1,34 @@
+$v-background-color: hsl(210, 0%, 96%);
+$v-app-loading-text: "Loading Loan Application Engine Resources...";
+$v-font-size: 15px;
+$v-font-family: 'Lora', sans-serif, 'Source Sans Pro';
+
+@import "../valo/valo.scss";
+
+@mixin lae {
+    @include valo;
+
+    .dark {
+        background-color:#4B4B4B;
+    }
+    
+    .mainLogo {
+        font-family: "Baskerville Old Face", serif;
+        font-size: 50px;
+        color: white;
+        line-height: 46px;
+        font-weight: bold;
+    }
+    
+    .subLogo {
+        font-family: "Calibri", serif;
+        font-size: 11.5px;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .v-panel-caption-colored {
+       @include valo-panel-caption-style($background-color: hsl(220, 5%, 38%));
+    }
+    
+}
