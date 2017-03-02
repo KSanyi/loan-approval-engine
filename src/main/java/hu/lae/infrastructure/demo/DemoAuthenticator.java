@@ -28,10 +28,10 @@ public class DemoAuthenticator implements Authenticator {
     
     static {
         Map<UserInfo, String> map = new HashMap<>();
-        map.put(new UserInfo("tgyor", "Gyır Tam·s", UserRole.RiskManager), "xxx");
-        map.put(new UserInfo("egyor", "Gyır Erika", UserRole.Analyst), "xxx");
-        map.put(new UserInfo("bkiss", "Kiss BÈla", UserRole.Sales), "xxx");
-        map.put(new UserInfo("skocso", "KÛcsÛ S·ndor", UserRole.Admin), "xxx");
+        map.put(new UserInfo("tgyor", "Gy≈ër Tam√°s", UserRole.RiskManager), "xxx");
+        map.put(new UserInfo("egyor", "Gy≈ër Erika", UserRole.Analyst), "xxx");
+        map.put(new UserInfo("bkiss", "Kiss B√©la", UserRole.Sales), "xxx");
+        map.put(new UserInfo("skocso", "K√≥cs√≥ S√°ndor", UserRole.Admin), "xxx");
         users = Collections.unmodifiableMap(map);
     }
 
