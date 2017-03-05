@@ -47,13 +47,13 @@ public class MaxLoanDistributor {
     
     public long maxLongTermLoan(int paybackYears, long shortTermLoanAmount) {
         logger.debug("Calculating long term debt capacity for " + shortTermLoanAmount + " short term loan and " + paybackYears + " years payback");
-        long interestForSTLoan = shortTermInterestRate.multiply(new BigDecimal(shortTermLoanAmount)).longValue();
+        BigDecimal interestForSTLoan = shortTermInterestRate.multiply(new BigDecimal(shortTermLoanAmount));
         logger.debug("Interest for short term loan " + shortTermLoanAmount + ": " + interestForSTLoan + " = " + shortTermInterestRate + " * " + shortTermLoanAmount);
-        BigDecimal freeCashFlowElement = MathUtil.div((cashFlowElement - interestForSTLoan), dscrThreshold);
-        logger.debug("Free cash flow: " + freeCashFlowElement + " = (" + cashFlowElement + " - " + interestForSTLoan + ") /" + dscrThreshold);
+        BigDecimal freeCashFlowElement = MathUtil.div(new BigDecimal(cashFlowElement), dscrThreshold).subtract(interestForSTLoan);
+        logger.debug("Free cash flow: " + freeCashFlowElement + " = " + cashFlowElement + " / " + dscrThreshold + " - " + interestForSTLoan);
         CashFlow cashFlow = new CashFlow(paybackYears, freeCashFlowElement);
         BigDecimal ltDebtCapacity = cashFlow.presentValue(longTermInterestRate);
-        logger.debug("Long term debt capacity: " + ltDebtCapacity + " = PV(" + freeCashFlowElement + ", " + paybackYears + ")");
+        logger.debug("Long term debt capacity: " + ltDebtCapacity + " = PV(" + freeCashFlowElement + ", " + paybackYears + ", " + longTermInterestRate + ")");
         
         return ltDebtCapacity.min(BigDecimal.valueOf(ebitda * 5)).setScale(0, RoundingMode.HALF_UP).longValue();
     }
