@@ -40,8 +40,8 @@ public class MaxLoanDistributor {
     }
     
     private long calculateMaxShortTermLoan() {
-        long maxShortTermLoan = shortTermInterestRate.calculatePrincipal(new BigDecimal(cashFlowElement)).longValue();
-        logger.debug("Max short term loan: " + maxShortTermLoan + " = " + cashFlowElement + " / " + shortTermInterestRate);
+        long maxShortTermLoan = new InterestRate(shortTermInterestRate.value.multiply(dscrThreshold)).calculatePrincipal(new BigDecimal(cashFlowElement)).longValue();
+        logger.debug("Max short term loan: " + maxShortTermLoan + " = " + cashFlowElement + " / (" + shortTermInterestRate + " * " + dscrThreshold + ")");
         return maxShortTermLoan;
     }
     
