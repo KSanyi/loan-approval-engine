@@ -1,12 +1,17 @@
 package hu.lae.accounting;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IncomeStatement {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     public int year;
     
     public final long ebitda;
@@ -23,6 +28,7 @@ public class IncomeStatement {
     }
     
     public BigDecimal normalizedFreeCashFlow(BigDecimal amortizationRate) {
+        logger.debug("Calculating normalized free cash flow: " + ebitda + " - " + amortization + " * " + amortizationRate + " - " + taxes);
         int maintanenceCapex = amortizationRate.multiply(BigDecimal.valueOf(amortization)).intValue();
         return BigDecimal.valueOf(ebitda - maintanenceCapex - taxes);
     }

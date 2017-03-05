@@ -12,7 +12,7 @@ public class CashFlowTest {
 
     @Test
     public void test1() {
-        CashFlow cashFlow = new CashFlow(Arrays.asList(100L, 120L, 130L));
+        CashFlow cashFlow = new CashFlow(Arrays.asList(new BigDecimal(100), new BigDecimal(120), new BigDecimal(130)));
         InterestRate rate = new InterestRate(new BigDecimal("0.05"));
         
         Assert.assertEquals(316, cashFlow.presentValue(rate).intValue());

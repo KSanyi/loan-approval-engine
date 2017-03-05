@@ -3,6 +3,8 @@ package hu.lae.riskparameters;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.ibm.icu.text.NumberFormat;
+
 import hu.lae.util.MathUtil;
 
 public class InterestRate {
@@ -24,6 +26,11 @@ public class InterestRate {
     public BigDecimal discount(BigDecimal amount, int years) {
         double discountRate = Math.pow(1+value.doubleValue(), years);
         return MathUtil.div(amount, BigDecimal.valueOf(discountRate));
+    }
+    
+    @Override
+    public String toString() {
+        return NumberFormat.getPercentInstance().format(value);
     }
     
 }

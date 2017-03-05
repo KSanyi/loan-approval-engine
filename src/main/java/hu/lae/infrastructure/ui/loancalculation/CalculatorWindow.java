@@ -1,10 +1,13 @@
 package hu.lae.infrastructure.ui.loancalculation;
 
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -23,6 +26,8 @@ public class CalculatorWindow extends Window {
 
     private final TextField paybackYearsField = new TextField();
     
+    private final Button checkCalculationButton = new Button("Check calculations");
+    
     public CalculatorWindow(MaxLoanDistributor maxLoanDistributor) {
         this.maxLoanDistributor = maxLoanDistributor;
         setModal(true);
@@ -30,18 +35,21 @@ public class CalculatorWindow extends Window {
         paybackYearsField.setValue(DEFAULT_PAYBACK_YEARS.toString());
         calculate(DEFAULT_PAYBACK_YEARS);
         stLoanSlider.addLoanValueChangeListener(e -> calculate(Integer.parseInt(paybackYearsField.getValue())));
-        stLoanSlider.setMaxLoanValue(maxLoanDistributor.maxShortTermloan);
-        stLoanSlider.setLoanValue(maxLoanDistributor.maxShortTermloan / 2);
+        stLoanSlider.setMaxLoanValue(maxLoanDistributor.maxShortTermLoan);
+        stLoanSlider.setLoanValue(maxLoanDistributor.justifiableShortTermloan);
+        checkCalculationButton.addStyleName(ValoTheme.BUTTON_LINK);
+        checkCalculationButton.addClickListener(click -> UI.getCurrent().addWindow(new CalculationsWindow()));
     }
     
     private void createLayout() {
         setWidth("900px");
         setResizable(false);
         VerticalLayout layout = new VerticalLayout();
-        layout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
         layout.setSpacing(true);
         layout.setMargin(true);
-        layout.addComponents(createPaybackYearsField(), stLoanSlider, ltLoanSlider);
+        Component component = createPaybackYearsField();
+        layout.addComponents(component, stLoanSlider, ltLoanSlider);
+        layout.setComponentAlignment(component, Alignment.MIDDLE_CENTER);
         Panel panel = new Panel("Calculation", layout);
         panel.addStyleName("colored");
         setContent(panel);

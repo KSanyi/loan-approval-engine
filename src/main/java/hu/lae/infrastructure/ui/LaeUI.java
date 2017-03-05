@@ -42,7 +42,7 @@ public class LaeUI extends UI {
 	@Override
 	protected void init(VaadinRequest request) {
 
-        logger.debug("ErpUI initialized");
+        logger.debug("LAE-UI initialized");
         
         if(userInfo == null) {
             showLogin();
@@ -55,6 +55,7 @@ public class LaeUI extends UI {
 	}
 	
 	private void buildUI(UserInfo userInfo) {
+	    logger.info(userInfo.loginName + " logged in");
 	    RiskParametersPanel riskParametersPanel = new RiskParametersPanel(applicationService.riskParameterRepository);
 	    
 	    BalanceSheetPanel balanceSheetPanel = new BalanceSheetPanel(BalanceSheet.createEmpty());
@@ -68,7 +69,7 @@ public class LaeUI extends UI {
 	    calculateButton.addStyleName(ValoTheme.BUTTON_LARGE);
 	    
 	    calculateButton.addClickListener(click -> {
-	        RiskParameters riskParameters = applicationService.riskParameterRepository.loadRiskParameters();
+	        RiskParameters riskParameters = riskParametersPanel.getRiskParameters();
 	        MaxLoanDistributor maxLoanDistributor = new LoanCalculator(riskParameters).createMaxLoanDistributor(balanceSheetPanel.getBalanceSheet(), incomeStatementPanel.getIncomeStatement());
 	        UI.getCurrent().addWindow(new CalculatorWindow(maxLoanDistributor));
 	    });

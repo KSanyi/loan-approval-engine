@@ -41,7 +41,7 @@ public class LoanSlider extends HorizontalLayout {
     
     void setMaxLoanValue(long maxLoanValue) {
         slider.setMax((double)maxLoanValue);
-        maxAmountLabel.setValue("Max " + maxLoanValue + " millió Ft" );
+        maxAmountLabel.setValue("Max " + maxLoanValue + " million Ft" );
     }
     
     private AmountField createAmountField() {
@@ -66,8 +66,8 @@ public class LoanSlider extends HorizontalLayout {
     }
     
     private Label createMaxAmountLabel() {
-        Label label = new Label("Max 0 millió Ft");
-        label.setWidth("120px");
+        Label label = new Label("Max 0 million Ft");
+        //label.setWidth("130px");
         return label;
     }
 

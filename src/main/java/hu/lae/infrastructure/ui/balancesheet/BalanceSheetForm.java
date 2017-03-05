@@ -30,7 +30,7 @@ class BalanceSheetForm extends HorizontalLayout {
     }
     
     BalanceSheet getBalanceSheet() {
-        return new BalanceSheet(new Assets(arField.getAmount(), stockField.getAmount(), apField.getAmount(), otherAssetsField.getAmount()), 
+        return new BalanceSheet(new Assets(arField.getAmount(), stockField.getAmount(), cashField.getAmount(), otherAssetsField.getAmount()), 
                 new Liabilities(apField.getAmount(), otherLiabilitiesField.getAmount()));
     }
     

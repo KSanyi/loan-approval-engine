@@ -2,6 +2,7 @@ package hu.lae.loan;
 
 import java.math.BigDecimal;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import hu.lae.accounting.BalanceSheet;
@@ -25,19 +26,22 @@ public class LoanCalculatorTest {
         RiskParameters riskParameters = new RiskParameters("id1", "default", 
                 new BigDecimal("0.4"), 
                 haircuts,
-                new InterestRate(new BigDecimal("0.03")),
-                new InterestRate(new BigDecimal("0.03")),
+                new InterestRate(new BigDecimal("0.10")),
+                new InterestRate(new BigDecimal("0.10")),
                 new BigDecimal("1.2"));
         
         LoanCalculator loanCalculator = new LoanCalculator(riskParameters);
 
         BalanceSheet balanceSheet = new BalanceSheet(
-                new Assets(100, 80, 60, 40),
-                new Liabilities(80, 60));
+                new Assets(500, 0, 0, 0),
+                new Liabilities(20, 0));
         
-        IncomeStatement incomeStatement = new IncomeStatement(2016, 1000, 100, 200);
+        IncomeStatement incomeStatement = new IncomeStatement(2016, 100, 0, 0);
         
-        //loanCalculator.createMaxLoanDistributor(balanceSheet, incomeStatement, 5);
+        MaxLoanDistributor maxLoanDistributor = loanCalculator.createMaxLoanDistributor(balanceSheet, incomeStatement);
+        
+        Assert.assertEquals(196, maxLoanDistributor.maxLongTermLoan(5, 380));
+        Assert.assertEquals(199, maxLoanDistributor.maxLongTermLoan(5, 370));
     }
     
 }

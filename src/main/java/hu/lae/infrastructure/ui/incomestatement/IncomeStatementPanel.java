@@ -15,7 +15,7 @@ public class IncomeStatementPanel extends Panel {
     private final IncomeStatementForm form;
     
     public IncomeStatementPanel(IncomeStatement incomeStatement) {
-        setCaption("Cash Flow");
+        setCaption("Income Statement");
         form = new IncomeStatementForm(incomeStatement);
         
         updateButton.addStyleName(ValoTheme.BUTTON_PRIMARY);

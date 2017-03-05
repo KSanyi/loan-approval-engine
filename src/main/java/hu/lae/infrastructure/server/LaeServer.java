@@ -1,5 +1,7 @@
 package hu.lae.infrastructure.server;
 
+import java.lang.invoke.MethodHandles;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -10,7 +12,7 @@ import hu.lae.infrastructure.ui.LaeUI;
 
 public class LaeServer extends Server {
 
-	private static final Logger logger = LoggerFactory.getLogger(LaeServer.class);
+    private final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	public LaeServer(int httpPort, ApplicationService applicationService) {
 		super(httpPort);

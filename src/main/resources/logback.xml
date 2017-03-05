@@ -1,24 +1,24 @@
 <configuration>
 
-    <timestamp key="bySecond" datePattern="yyyy-MM-dd-HH-mm-ss"/>
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <File>logs/LAE_${bySecond}.log</File>
-        <encoder>
-            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{0} - %msg%n</pattern>
-        </encoder>
-    </appender>
+	<timestamp key="bySecond" datePattern="yyyy-MM-dd-HH-mm-ss" />
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<File>logs/LAE_${bySecond}.log</File>
+		<encoder>
+			<pattern>%d{HH:mm:ss} [%thread] %-5level %logger{0} - %msg%n</pattern>
+		</encoder>
+	</appender>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n</pattern>
-        </encoder>
-    </appender>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n</pattern>
+		</encoder>
+	</appender>
 
-  <logger name="hu.lae" level="DEBUG"/>
-  <logger name="com.vaadin" level="INFO"/>
-  <logger name="org.eclipse.jetty" level="INFO"/>
+	<logger name="hu.lae" level="DEBUG" />
+	<logger name="com.vaadin" level="INFO" />
+	<logger name="org.eclipse.jetty" level="INFO" />
 
-  <root level="INFO">
-	<appender-ref ref="STDOUT"/>
-  </root>
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
 </configuration>
