@@ -17,31 +17,35 @@ public class LoanCalculatorTest {
 
     @Test
     public void test() {
+        
         Haircuts haircuts = new Haircuts(
                 new BigDecimal("0.8"),
                 new BigDecimal("0.5"),
-                new BigDecimal("1.0"),
-                new BigDecimal("0.8"));
+                new BigDecimal("0.8"),
+                new BigDecimal("0.4"));
 
         RiskParameters riskParameters = new RiskParameters("id1", "default", 
                 new BigDecimal("0.4"), 
                 haircuts,
-                new InterestRate(new BigDecimal("0.10")),
-                new InterestRate(new BigDecimal("0.10")),
+                new InterestRate(new BigDecimal("0.03")),
+                new InterestRate(new BigDecimal("0.05")),
                 new BigDecimal("1.2"));
         
         LoanCalculator loanCalculator = new LoanCalculator(riskParameters);
 
         BalanceSheet balanceSheet = new BalanceSheet(
-                new Assets(500, 0, 0, 0),
-                new Liabilities(20, 0));
+                new Assets(400, 50, 20, 30),
+                new Liabilities(70, 0));
         
-        IncomeStatement incomeStatement = new IncomeStatement(2016, 100, 0, 0);
+        IncomeStatement incomeStatement = new IncomeStatement(2016, 300, 70, 30);
         
         MaxLoanDistributor maxLoanDistributor = loanCalculator.createMaxLoanDistributor(balanceSheet, incomeStatement);
         
-        Assert.assertEquals(196, maxLoanDistributor.maxLongTermLoan(5, 380));
-        Assert.assertEquals(199, maxLoanDistributor.maxLongTermLoan(5, 370));
+        Assert.assertEquals(303, maxLoanDistributor.justifiableShortTermloan);
+        Assert.assertEquals(1137, maxLoanDistributor.calculateMaxShortTermLoan(5));
+        
+        Assert.assertEquals(834, maxLoanDistributor.calculateMaxLongTermLoan(5, 303));
+        Assert.assertEquals(767, maxLoanDistributor.calculateMaxLongTermLoan(5, 370));
     }
     
 }

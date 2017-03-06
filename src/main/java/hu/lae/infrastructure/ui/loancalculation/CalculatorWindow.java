@@ -33,9 +33,8 @@ public class CalculatorWindow extends Window {
         setModal(true);
         createLayout();
         paybackYearsField.setValue(DEFAULT_PAYBACK_YEARS.toString());
-        calculate(DEFAULT_PAYBACK_YEARS);
-        stLoanSlider.addLoanValueChangeListener(e -> calculate(Integer.parseInt(paybackYearsField.getValue())));
-        stLoanSlider.setMaxLoanValue(maxLoanDistributor.maxShortTermLoan);
+        calculate(DEFAULT_PAYBACK_YEARS, maxLoanDistributor.justifiableShortTermloan);
+        stLoanSlider.addLoanValueChangeListener(loanValue -> calculate(Integer.parseInt(paybackYearsField.getValue()), loanValue));
         stLoanSlider.setLoanValue(maxLoanDistributor.justifiableShortTermloan);
         checkCalculationButton.addStyleName(ValoTheme.BUTTON_LINK);
         checkCalculationButton.addClickListener(click -> UI.getCurrent().addWindow(new CalculationsWindow()));
@@ -62,15 +61,15 @@ public class CalculatorWindow extends Window {
         paybackYearsField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
         paybackYearsField.setWidth("40px");
         paybackYearsField.setMaxLength(2);
-        paybackYearsField.addTextChangeListener(e -> calculate(Integer.parseInt(e.getText())));
+        paybackYearsField.addTextChangeListener(e -> calculate(Integer.parseInt(e.getText()), stLoanSlider.getLoanValue()));
         HorizontalLayout layout = new HorizontalLayout(label, paybackYearsField);
         layout.setSpacing(true);
         return layout;
     }
     
-    private void calculate(int paybackYears) {
-        long shortTermLoan = stLoanSlider.getLoanValue();
-        ltLoanSlider.setMaxLoanValue(maxLoanDistributor.maxLongTermLoan(paybackYears, shortTermLoan));
+    private void calculate(int paybackYears, long shortTermLoan) {
+        stLoanSlider.setMaxLoanValue(maxLoanDistributor.calculateMaxShortTermLoan(paybackYears));
+        ltLoanSlider.setMaxLoanValue(maxLoanDistributor.calculateMaxLongTermLoan(paybackYears, shortTermLoan));
     }
     
 }
