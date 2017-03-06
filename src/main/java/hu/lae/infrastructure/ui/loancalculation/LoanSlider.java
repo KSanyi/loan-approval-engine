@@ -48,7 +48,14 @@ public class LoanSlider extends HorizontalLayout {
         AmountField amountField = new AmountField(null);
         amountField.setWidth("50");
         amountField.removeStyleName(ValoTheme.TEXTFIELD_SMALL);
-        amountField.addTextChangeListener(event -> loanAmountChanged(Long.parseLong(event.getText())));
+        amountField.addTextChangeListener(event -> {
+            try {
+                loanAmountChanged(Long.parseLong(event.getText()));
+            } catch(NumberFormatException ex) {
+                loanAmountChanged(0L);
+            }
+            
+        });
         return amountField;
     }
     
