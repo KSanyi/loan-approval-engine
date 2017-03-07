@@ -1,7 +1,6 @@
 package hu.lae.accounting;
 
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -27,10 +26,10 @@ public class IncomeStatement {
         this.taxes = taxes;
     }
     
-    public BigDecimal normalizedFreeCashFlow(BigDecimal amortizationRate) {
+    public double normalizedFreeCashFlow(double amortizationRate) {
         logger.debug("Calculating normalized free cash flow: " + ebitda + " - " + amortization + " * " + amortizationRate + " - " + taxes);
-        int maintanenceCapex = amortizationRate.multiply(BigDecimal.valueOf(amortization)).intValue();
-        return BigDecimal.valueOf(ebitda - maintanenceCapex - taxes);
+        double maintanenceCapex = amortizationRate * amortization;
+        return ebitda - maintanenceCapex - taxes;
     }
     
     @Override

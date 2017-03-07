@@ -1,7 +1,5 @@
 package hu.lae.loan;
 
-import java.math.BigDecimal;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,18 +16,12 @@ public class LoanCalculatorTest {
     @Test
     public void test() {
         
-        Haircuts haircuts = new Haircuts(
-                new BigDecimal("0.8"),
-                new BigDecimal("0.5"),
-                new BigDecimal("0.8"),
-                new BigDecimal("0.4"));
+        Haircuts haircuts = new Haircuts(0.8, 0.5, 0.8, 0.4);
 
-        RiskParameters riskParameters = new RiskParameters("id1", "default", 
-                new BigDecimal("0.4"), 
-                haircuts,
-                new InterestRate(new BigDecimal("0.03")),
-                new InterestRate(new BigDecimal("0.05")),
-                new BigDecimal("1.2"));
+        RiskParameters riskParameters = new RiskParameters("id1", "default", 0.4, haircuts,
+                new InterestRate(0.03),
+                new InterestRate(0.05),
+                1.2);
         
         LoanCalculator loanCalculator = new LoanCalculator(riskParameters);
 
@@ -39,13 +31,15 @@ public class LoanCalculatorTest {
         
         IncomeStatement incomeStatement = new IncomeStatement(2016, 300, 70, 30);
         
-        MaxLoanDistributor maxLoanDistributor = loanCalculator.createMaxLoanDistributor(balanceSheet, incomeStatement);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, 5, 303);
         
-        Assert.assertEquals(303, maxLoanDistributor.justifiableShortTermloan);
-        Assert.assertEquals(1137, maxLoanDistributor.calculateMaxShortTermLoan(5));
+        Assert.assertEquals(303, loanApplicationResult.justifiableShortTermLoan, 0.1);
+        Assert.assertEquals(1136.7, loanApplicationResult.maxShortTermLoan, 0.1);
+        Assert.assertEquals(833.75, loanApplicationResult.maxLongTermLoan, 0.1);
         
-        Assert.assertEquals(834, maxLoanDistributor.calculateMaxLongTermLoan(5, 303));
-        Assert.assertEquals(767, maxLoanDistributor.calculateMaxLongTermLoan(5, 370));
+        loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, 5, 370);
+        
+        Assert.assertEquals(766.75, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
 }

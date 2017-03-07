@@ -15,16 +15,14 @@ public class MathUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    public static BigDecimal directProduct(List<Long> a, List<BigDecimal> b) {
+    public static double directProduct(List<Double> a, List<Double> b) {
         if(a.size() != b.size()) throw new IllegalArgumentException("Size of lists must be equal");
         
         List<String> logElements = new ArrayList<>();
-        BigDecimal sum = BigDecimal.ZERO;
+        double sum = 0;
         for(int i=0;i<a.size();i++) {
-            BigDecimal aValue = BigDecimal.valueOf(a.get(i));
-            BigDecimal bValue = b.get(i);
-            logElements.add(aValue + " * " + bValue);
-            sum = sum.add(aValue.multiply(bValue));
+            logElements.add(a.get(i) + " * " + b.get(i));
+            sum += a.get(i) * b.get(i);
         }
         logger.debug("Calculation: " + String.join(" + ", logElements));
         return sum;

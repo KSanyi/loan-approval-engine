@@ -1,21 +1,19 @@
 package hu.lae.riskparameters;
 
-import java.math.BigDecimal;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Haircuts {
 
-    public final BigDecimal accountsReceivable;
+    public final double accountsReceivable;
     
-    public final BigDecimal stock;
+    public final double stock;
 
-    public final BigDecimal cash;
+    public final double cash;
     
-    public final BigDecimal other;
+    public final double other;
 
-    public Haircuts(BigDecimal accountsReceivable, BigDecimal stock, BigDecimal cash, BigDecimal other) {
+    public Haircuts(double accountsReceivable, double stock, double cash, double other) {
         this.accountsReceivable = accountsReceivable;
         this.stock = stock;
         this.cash = cash;

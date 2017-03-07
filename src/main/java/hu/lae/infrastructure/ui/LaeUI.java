@@ -24,7 +24,6 @@ import hu.lae.infrastructure.ui.incomestatement.IncomeStatementPanel;
 import hu.lae.infrastructure.ui.loancalculation.CalculatorWindow;
 import hu.lae.infrastructure.ui.riskparameters.RiskParametersPanel;
 import hu.lae.loan.LoanCalculator;
-import hu.lae.loan.MaxLoanDistributor;
 import hu.lae.riskparameters.RiskParameters;
 import hu.lae.usermanagement.UserInfo;
 
@@ -70,8 +69,7 @@ public class LaeUI extends UI {
 	    
 	    calculateButton.addClickListener(click -> {
 	        RiskParameters riskParameters = riskParametersPanel.getRiskParameters();
-	        MaxLoanDistributor maxLoanDistributor = new LoanCalculator(riskParameters).createMaxLoanDistributor(balanceSheetPanel.getBalanceSheet(), incomeStatementPanel.getIncomeStatement());
-	        UI.getCurrent().addWindow(new CalculatorWindow(maxLoanDistributor));
+	        UI.getCurrent().addWindow(new CalculatorWindow(new LoanCalculator(riskParameters), balanceSheetPanel.getBalanceSheet(), incomeStatementPanel.getIncomeStatement()));
 	    });
 	    
 	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), new Menu(), mainLayout, calculateButton);

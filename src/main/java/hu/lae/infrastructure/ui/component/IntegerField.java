@@ -7,9 +7,9 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
-public class NumberField extends TextField {
+public class IntegerField extends TextField {
 
-    public NumberField(String caption) {
+    public IntegerField(String caption) {
         super(caption);
         setWidth("60px");
         addStyleName(ValoTheme.TEXTFIELD_SMALL);
@@ -17,33 +17,33 @@ public class NumberField extends TextField {
         setConverter(converter);
     }
     
-    public Double getNumber() {
-        return Double.parseDouble(getValue());
+    public Integer getNumber() {
+        return Integer.parseInt(getValue());
     }
     
-    public void setNumber(Double number) {
+    public void setNumber(Integer number) {
         setConvertedValue(number);
     }
     
-    private Converter<String, Double> converter = new Converter<String, Double>() {
+    private Converter<String, Integer> converter = new Converter<String, Integer>() {
 
         @Override
-        public Double convertToModel(String value, Class<? extends Double> targetType, Locale locale) throws ConversionException {
+        public Integer convertToModel(String value, Class<? extends Integer> targetType, Locale locale) throws ConversionException {
             try {
-                return Double.parseDouble(getValue());
+                return Integer.parseInt(value);
             } catch (Exception e) {
-                throw new ConversionException("Can not parse to number");
+                return 0;
             }
         }
 
         @Override
-        public String convertToPresentation(Double value, Class<? extends String> targetType, Locale locale) throws ConversionException {
+        public String convertToPresentation(Integer value, Class<? extends String> targetType, Locale locale) throws ConversionException {
             return value.toString();
         }
 
         @Override
-        public Class<Double> getModelType() {
-            return Double.class;
+        public Class<Integer> getModelType() {
+            return Integer.class;
         }
 
         @Override

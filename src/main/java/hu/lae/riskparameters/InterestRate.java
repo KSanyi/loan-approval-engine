@@ -1,31 +1,26 @@
 package hu.lae.riskparameters;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import com.ibm.icu.text.NumberFormat;
-
-import hu.lae.util.MathUtil;
 
 public class InterestRate {
 
-    public final BigDecimal value;
+    public final double value;
 
-    public InterestRate(BigDecimal value) {
+    public InterestRate(double value) {
         this.value = value;
     }
     
-    public BigDecimal calculatePrincipal(BigDecimal interest) {
-        return interest.divide(value, RoundingMode.HALF_UP);
+    public double calculatePrincipal(double interest) {
+        return interest / value;
     }
     
-    public BigDecimal multiply(BigDecimal amount) {
-        return value.multiply(amount);
+    public double multiply(double amount) {
+        return value * amount;
     }
     
-    public BigDecimal discount(BigDecimal amount, int years) {
-        double discountRate = Math.pow(1+value.doubleValue(), years);
-        return MathUtil.div(amount, BigDecimal.valueOf(discountRate));
+    public double discount(double amount, int years) {
+        double discountRate = Math.pow(1+value, years);
+        return amount / discountRate;
     }
     
     @Override

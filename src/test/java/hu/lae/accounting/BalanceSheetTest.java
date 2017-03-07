@@ -1,7 +1,5 @@
 package hu.lae.accounting;
 
-import java.math.BigDecimal;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,15 +16,11 @@ public class BalanceSheetTest {
                 new Assets(100, 80, 60, 40),
                 new Liabilities(80, 60));
         
-        Haircuts haircuts = new Haircuts(
-                new BigDecimal("0.8"),
-                new BigDecimal("0.5"),
-                new BigDecimal("1.0"),
-                new BigDecimal("0.8"));
+        Haircuts haircuts = new Haircuts(0.8, 0.5, 1.0, 0.8);
         
-        BigDecimal xxx = balanceSheet.calculateXXX(haircuts);
+        double xxx = balanceSheet.calculateXXX(haircuts);
         
-        Assert.assertEquals(new BigDecimal("72.0"), xxx);
+        Assert.assertEquals(72.0, xxx, 0.01);
     }
     
 }

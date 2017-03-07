@@ -1,7 +1,6 @@
 package hu.lae.accounting;
 
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -29,12 +28,12 @@ public class BalanceSheet {
         this.liabilities = liabilities;
     }
     
-    public BigDecimal calculateXXX(Haircuts haircuts) {
+    public double calculateXXX(Haircuts haircuts) {
         logger.debug("Calculating XXX");
-        BigDecimal assetsJustifiableValue = assets.evaluate(haircuts);
-        BigDecimal liabilitiesValue = liabilities.evaluate();
+        double assetsJustifiableValue = assets.evaluate(haircuts);
+        double liabilitiesValue = liabilities.evaluate();
         logger.debug("Calculation: " + assetsJustifiableValue + " - " + liabilitiesValue);
-        return assetsJustifiableValue.subtract(liabilitiesValue);
+        return assetsJustifiableValue - liabilitiesValue;
     }
     
     @Override
@@ -56,10 +55,10 @@ public class BalanceSheet {
             this.other = other;
         }
         
-        public BigDecimal evaluate(Haircuts haircuts) {
+        public double evaluate(Haircuts haircuts) {
             logger.debug("Calculating justifiable assets value");
-            BigDecimal justifiableValue = MathUtil.directProduct(
-                    Arrays.asList(accountsReceivable, stock, cash, other),
+            double justifiableValue = MathUtil.directProduct(
+                    Arrays.asList((double)accountsReceivable, (double)stock, (double)cash, (double)other),
                     Arrays.asList(haircuts.accountsReceivable, haircuts.stock, haircuts.cash, haircuts.other));
             logger.debug("Justifiable assets value: " + justifiableValue);
             return justifiableValue;
@@ -81,9 +80,9 @@ public class BalanceSheet {
             this.otherLiabilities = otherLiabilities;
         }
         
-        public BigDecimal evaluate() {
+        public double evaluate() {
             logger.debug("Calculating liabilities value");
-            BigDecimal value =  MathUtil.sum(accountsPayable, otherLiabilities);
+            double value = accountsPayable + otherLiabilities;
             logger.debug("Liabilities value: " + value);
             return value;
         }

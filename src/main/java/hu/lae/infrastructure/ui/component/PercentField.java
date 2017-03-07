@@ -1,6 +1,5 @@
 package hu.lae.infrastructure.ui.component;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Locale;
@@ -8,8 +7,6 @@ import java.util.Locale;
 import com.vaadin.data.util.converter.Converter;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
-
-import hu.lae.util.MathUtil;
 
 @SuppressWarnings("serial")
 public class PercentField extends TextField {
@@ -25,44 +22,40 @@ public class PercentField extends TextField {
         setImmediate(true);
     }
     
-    public BigDecimal getPercent() {
+    public double getPercent() {
         try {
-            return (BigDecimal)PF.parse(getValue());
+            return (Double)PF.parse(getValue());
         } catch (ParseException ex) {
             throw new RuntimeException(ex);
         }
     }
     
-    public void setNumber(BigDecimal number) {
+    public void setNumber(Double number) {
         setConvertedValue(number);
     }
     
-    private Converter<String, BigDecimal> converter = new Converter<String, BigDecimal>() {
+    private Converter<String, Double> converter = new Converter<String, Double>() {
 
-        {
-            PF.setParseBigDecimal(true);
-        }
-        
         @Override
-        public BigDecimal convertToModel(String value, Class<? extends BigDecimal> targetType, Locale locale) throws ConversionException {
+        public Double convertToModel(String value, Class<? extends Double> targetType, Locale locale) throws ConversionException {
             try {
                 if(!value.contains("%")) {
-                    return MathUtil.div(new BigDecimal(value).setScale(2), new BigDecimal("100"));
+                    return Double.parseDouble(value) / 100;
                 }
-                return (BigDecimal)PF.parse(value);
-            } catch (Exception e) {
+                return (Double)PF.parse(value);
+            } catch (Exception ex) {
                 throw new ConversionException("Can not parse to percent");
             }
         }
 
         @Override
-        public String convertToPresentation(BigDecimal value, Class<? extends String> targetType, Locale locale) throws ConversionException {
+        public String convertToPresentation(Double value, Class<? extends String> targetType, Locale locale) throws ConversionException {
             return PF.format(value);
         }
 
         @Override
-        public Class<BigDecimal> getModelType() {
-            return BigDecimal.class;
+        public Class<Double> getModelType() {
+            return Double.class;
         }
 
         @Override

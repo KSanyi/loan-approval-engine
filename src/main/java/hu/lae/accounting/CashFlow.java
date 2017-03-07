@@ -1,6 +1,5 @@
 package hu.lae.accounting;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,24 +7,20 @@ import hu.lae.riskparameters.InterestRate;
 
 public class CashFlow {
 
-    private final List<BigDecimal> values;
+    private final List<Double> values;
 
-    public CashFlow(List<BigDecimal> values) {
+    public CashFlow(List<Double> values) {
         this.values = Collections.unmodifiableList(values);
     }
     
-    public CashFlow(int numberOfElements, BigDecimal value) {
+    public CashFlow(int numberOfElements, Double value) {
         this.values = Collections.nCopies(numberOfElements, value);
     }
     
-    public CashFlow(int numberOfElements, long value) {
-        this.values = Collections.nCopies(numberOfElements, new BigDecimal(value));
-    }
-    
-    public BigDecimal presentValue(InterestRate rate) {
-        BigDecimal sum = BigDecimal.ZERO;
+    public double presentValue(InterestRate rate) {
+        double sum = 0;
         for(int i=0;i<values.size();i++) {
-            sum = sum.add(rate.discount(values.get(i), i+1));
+            sum += rate.discount(values.get(i), i+1);
         }
         return sum;
     }
