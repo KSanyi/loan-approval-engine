@@ -1,6 +1,11 @@
 package hu.lae.infrastructure.ui.loancalculation;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -11,7 +16,6 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.accounting.BalanceSheet;
 import hu.lae.accounting.IncomeStatement;
-import hu.lae.infrastructure.ui.component.IntegerField;
 import hu.lae.loan.LoanApplicationResult;
 import hu.lae.loan.LoanCalculator;
 
@@ -29,8 +33,8 @@ public class CalculatorWindow extends Window {
     private final LoanSlider stLoanSlider = new LoanSlider("Short term loan");
     private final LoanSlider ltLoanSlider = new LoanSlider("Long term loan");
 
-    private final IntegerField paybackYearsField = new IntegerField(null);
-    
+    private final ComboBox paybackYearsCombo = new ComboBox(null, generateComboValues());
+ 
     //private final Button checkCalculationButton = new Button("Check calculations");
     
     public CalculatorWindow(LoanCalculator loanCalculator, BalanceSheet balanceSheet, IncomeStatement incomeStatement) {
@@ -39,15 +43,8 @@ public class CalculatorWindow extends Window {
         this.incomeStatement = incomeStatement;
         setModal(true);
         createLayout();
-        paybackYearsField.addTextChangeListener(e -> {
-            try{
-                paybackYearsChanged(Integer.parseInt(e.getText()));      
-            } catch(NumberFormatException ex) {
-                paybackYearsChanged(DEFAULT_PAYBACK_YEARS);
-            }
-             
-        });
-        paybackYearsField.setNumber(DEFAULT_PAYBACK_YEARS);
+        paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged((Integer)value.getProperty().getValue()));
+        paybackYearsCombo.setValue(DEFAULT_PAYBACK_YEARS);
         stLoanSlider.addLoanValueChangeListener(loanValue -> shortTermloanChanged(loanValue));
         //checkCalculationButton.addStyleName(ValoTheme.BUTTON_LINK);
         //checkCalculationButton.addClickListener(click -> UI.getCurrent().addWindow(new CalculationsWindow()));
@@ -72,11 +69,11 @@ public class CalculatorWindow extends Window {
     private HorizontalLayout createPaybackYearsField() {
         Label label = new Label("Payback years");
         label.addStyleName(ValoTheme.LABEL_H2);
-        paybackYearsField.addStyleName(ValoTheme.TEXTFIELD_LARGE);
-        paybackYearsField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
-        paybackYearsField.setWidth("40px");
-        paybackYearsField.setMaxLength(2);
-        HorizontalLayout layout = new HorizontalLayout(label, paybackYearsField);
+        paybackYearsCombo.addStyleName(ValoTheme.COMBOBOX_ALIGN_CENTER);
+        paybackYearsCombo.addStyleName(ValoTheme.COMBOBOX_LARGE);
+        paybackYearsCombo.setWidth("85px");
+        paybackYearsCombo.setNullSelectionAllowed(false);
+        HorizontalLayout layout = new HorizontalLayout(label, paybackYearsCombo);
         layout.setSpacing(true);
         return layout;
     }
@@ -88,8 +85,12 @@ public class CalculatorWindow extends Window {
     }
     
     private void shortTermloanChanged(long shortTermLoan) {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, Integer.parseInt(paybackYearsField.getValue()), shortTermLoan);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, (Integer)paybackYearsCombo.getValue(), shortTermLoan);
         ltLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxLongTermLoan);
+    }
+    
+    private static List<Integer> generateComboValues() {
+        return IntStream.range(1, 31).mapToObj(i -> i).collect(Collectors.toList());
     }
     
 }
