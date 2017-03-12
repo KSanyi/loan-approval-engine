@@ -59,6 +59,10 @@ public class CalculatorWindow extends Window {
         layout.setSpacing(true);
         layout.setMargin(true);
         Component component = createPaybackYearsField();
+        
+        long justifiableShortTermLoan = (long)loanCalculator.calculate(balanceSheet, incomeStatement, DEFAULT_PAYBACK_YEARS, 0).justifiableShortTermLoan;
+        stLoanSlider.setDescription("Justifiable short term loan:<br/><center>" + justifiableShortTermLoan + " million Ft</center>");
+        
         layout.addComponents(component, stLoanSlider, ltLoanSlider);
         layout.setComponentAlignment(component, Alignment.MIDDLE_CENTER);
         Panel panel = new Panel("Calculation", layout);
@@ -82,6 +86,7 @@ public class CalculatorWindow extends Window {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, paybackYears, stLoanSlider.getLoanValue());
         stLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxShortTermLoan);
         stLoanSlider.setLoanValue((long)loanApplicationResult.justifiableShortTermLoan);
+        ltLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxLongTermLoan);
     }
     
     private void shortTermloanChanged(long shortTermLoan) {
