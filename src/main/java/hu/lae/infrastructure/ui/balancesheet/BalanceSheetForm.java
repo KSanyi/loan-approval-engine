@@ -18,11 +18,9 @@ class BalanceSheetForm extends HorizontalLayout {
     private final AmountField stockField = new AmountField("Stock");
     private final AmountField cashField = new AmountField("Cash");
     private final AmountField otherAssetsField = new AmountField("Other");
-    private final AmountField assetsSumField = new AmountField("Sum");
     
     private final AmountField apField = new AmountField("Accounts payable");
     private final AmountField otherLiabilitiesField = new AmountField("Other");
-    private final AmountField liabilitiesSumField = new AmountField("Sum");
     
     BalanceSheetForm(BalanceSheet balanceSheet) {
         setSpacing(true);
@@ -35,10 +33,14 @@ class BalanceSheetForm extends HorizontalLayout {
     }
     
     private Layout createAssetsLayout(Assets assets) {
+        
+        arField.setAmount(assets.accountsReceivable);
+        stockField.setAmount(assets.stock);
+        cashField.setAmount(assets.cash);
+        otherAssetsField.setAmount(assets.other);
+        
         Label header = new Label("Assets");
         header.addStyleName(ValoTheme.LABEL_H4);
-        assetsSumField.setReadOnly(true);
-        assetsSumField.addStyleName(ValoTheme.TEXTFIELD_BORDERLESS);
         FormLayout layout = new FormLayout(header, arField, stockField, cashField, otherAssetsField);
         layout.setSpacing(false);
         layout.setMargin(false);
@@ -47,10 +49,12 @@ class BalanceSheetForm extends HorizontalLayout {
     }
     
     private Layout createLiabilitiesLayout(Liabilities liabilities) {
+        
+        apField.setAmount(liabilities.accountsPayable);
+        otherLiabilitiesField.setAmount(liabilities.otherLiabilities);
+        
         Label header = new Label("Liabilities");
         header.addStyleName(ValoTheme.LABEL_H4);
-        liabilitiesSumField.setReadOnly(true);
-        liabilitiesSumField.addStyleName(ValoTheme.TEXTFIELD_BORDERLESS);
         FormLayout layout = new FormLayout(header, apField, otherLiabilitiesField, new Label(""), new Label(""));
         layout.setSpacing(false);
         layout.setMargin(false);

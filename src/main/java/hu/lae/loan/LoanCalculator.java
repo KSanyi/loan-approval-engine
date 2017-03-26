@@ -27,24 +27,24 @@ public class LoanCalculator {
         logger.debug(balanceSheet + ", " + incomeStatement);
         logger.debug("Payback years: " + paybackYears + ", short term loan: " + shortTermLoan);
         
-        double xxx = balanceSheet.calculateXXX(riskParameters.haircuts);
-        logger.debug("xxx: " + xxx);
+        double justifiableShortTermLoan = balanceSheet.calculateJustifiableShortTermLoan(riskParameters.haircuts);
+        logger.debug("Justifiable short term loan: " + justifiableShortTermLoan);
 
         double freeCashFlow = incomeStatement.normalizedFreeCashFlow(riskParameters.amortizationRate);
         logger.debug("Normalized free cash flow: " + freeCashFlow);
         
         InterestRate shortTermInterestRate = riskParameters.shortTermInterestRate;
         
-        double justifiableSTLoan = Math.min(xxx, freeCashFlow / shortTermInterestRate.multiply(riskParameters.dscrThreshold));
+        double effectiveJustifiableSTLoan = Math.min(justifiableShortTermLoan, freeCashFlow / shortTermInterestRate.multiply(riskParameters.dscrThreshold));
         
-        logger.debug("Justifiable short term loan: " + justifiableSTLoan + " = Min(" + xxx + ", " + freeCashFlow + " / (" + riskParameters.dscrThreshold + " * " + shortTermInterestRate + "))");
+        logger.debug("Justifiable short term loan: " + effectiveJustifiableSTLoan + " = Min(" + justifiableShortTermLoan + ", " + freeCashFlow + " / (" + riskParameters.dscrThreshold + " * " + shortTermInterestRate + "))");
         
-        double maxShortTermLoan = justifiableSTLoan + calculateMaxLongTermLoan(paybackYears, justifiableSTLoan, justifiableSTLoan, freeCashFlow, incomeStatement.ebitda); 
-        logger.debug("Max short term loan: " + maxShortTermLoan + " = " + justifiableSTLoan + " + maxLongTermLoan(" + paybackYears + ", " + justifiableSTLoan + ")");
+        double maxShortTermLoan = effectiveJustifiableSTLoan + calculateMaxLongTermLoan(paybackYears, effectiveJustifiableSTLoan, effectiveJustifiableSTLoan, freeCashFlow, incomeStatement.ebitda); 
+        logger.debug("Max short term loan: " + maxShortTermLoan + " = " + effectiveJustifiableSTLoan + " + maxLongTermLoan(" + paybackYears + ", " + effectiveJustifiableSTLoan + ")");
         
-        double maxLongTermLoan = calculateMaxLongTermLoan(paybackYears, shortTermLoan, justifiableSTLoan, freeCashFlow, incomeStatement.ebitda); 
+        double maxLongTermLoan = calculateMaxLongTermLoan(paybackYears, shortTermLoan, effectiveJustifiableSTLoan, freeCashFlow, incomeStatement.ebitda); 
         
-        LoanApplicationResult result = new LoanApplicationResult(justifiableSTLoan, maxShortTermLoan, maxLongTermLoan);
+        LoanApplicationResult result = new LoanApplicationResult(effectiveJustifiableSTLoan, maxShortTermLoan, maxLongTermLoan);
         
         logger.info("Calculation done: " + result);
         

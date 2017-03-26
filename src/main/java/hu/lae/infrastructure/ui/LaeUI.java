@@ -57,8 +57,8 @@ public class LaeUI extends UI {
 	    logger.info(userInfo.loginName + " logged in");
 	    RiskParametersPanel riskParametersPanel = new RiskParametersPanel(applicationService.riskParameterRepository);
 	    
-	    BalanceSheetPanel balanceSheetPanel = new BalanceSheetPanel(BalanceSheet.createEmpty());
-	    IncomeStatementPanel incomeStatementPanel = new IncomeStatementPanel(IncomeStatement.createEmpty(LocalDate.now().getYear()-1));
+	    BalanceSheetPanel balanceSheetPanel = new BalanceSheetPanel(BalanceSheet.createDefault());
+	    IncomeStatementPanel incomeStatementPanel = new IncomeStatementPanel(IncomeStatement.createDefault(LocalDate.now().getYear()-1));
 	    HorizontalLayout mainLayout = new HorizontalLayout(riskParametersPanel, balanceSheetPanel, incomeStatementPanel);
 	    mainLayout.setSpacing(true);
 	    mainLayout.setMargin(true);

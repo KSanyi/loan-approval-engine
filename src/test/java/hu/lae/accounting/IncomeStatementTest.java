@@ -10,7 +10,8 @@ public class IncomeStatementTest {
         
         IncomeStatement incomeStatement = new IncomeStatement(2016, 1000, 100, 200);
         
-        Double normalizedFreeCashFlow = incomeStatement.normalizedFreeCashFlow(0.1);
+        double amortizationRate = 0.1;
+        Double normalizedFreeCashFlow = incomeStatement.normalizedFreeCashFlow(amortizationRate);
         
         Assert.assertEquals(790, normalizedFreeCashFlow.intValue());
         

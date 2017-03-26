@@ -41,4 +41,8 @@ public class IncomeStatement {
         return new IncomeStatement(year, 0, 0, 0);
     }
     
+    public static IncomeStatement createDefault(int year) {
+        return new IncomeStatement(year, 300, 70, 30);
+    }
+    
 }

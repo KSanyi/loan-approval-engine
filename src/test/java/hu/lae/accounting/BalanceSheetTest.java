@@ -18,9 +18,9 @@ public class BalanceSheetTest {
         
         Haircuts haircuts = new Haircuts(0.8, 0.5, 1.0, 0.8);
         
-        double xxx = balanceSheet.calculateXXX(haircuts);
+        double justifiableShortTermLoan = balanceSheet.calculateJustifiableShortTermLoan(haircuts);
         
-        Assert.assertEquals(72.0, xxx, 0.01);
+        Assert.assertEquals(72.0, justifiableShortTermLoan, 0.01);
     }
     
 }

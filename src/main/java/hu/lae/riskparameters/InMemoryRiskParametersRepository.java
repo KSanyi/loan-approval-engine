@@ -8,7 +8,7 @@ public class InMemoryRiskParametersRepository implements RiskParameterRepository
         riskParameters = new RiskParameters("", "",
                 0.4, new Haircuts(0.8, 0.5, 0.8, 0.4),
                 new InterestRate(0.03),
-                new InterestRate(0.03),
+                new InterestRate(0.05),
                 1.2);
     }
     

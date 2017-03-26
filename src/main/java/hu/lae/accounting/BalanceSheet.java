@@ -19,6 +19,10 @@ public class BalanceSheet {
         return new BalanceSheet(new Assets(0, 0, 0, 0), new Liabilities(0, 0));
     }
     
+    public static BalanceSheet createDefault() {
+        return new BalanceSheet(new Assets(400, 50, 20, 30), new Liabilities(70, 0));
+    }
+    
     public final Assets assets;
     
     public final Liabilities liabilities;
@@ -28,8 +32,8 @@ public class BalanceSheet {
         this.liabilities = liabilities;
     }
     
-    public double calculateXXX(Haircuts haircuts) {
-        logger.debug("Calculating XXX");
+    public double calculateJustifiableShortTermLoan(Haircuts haircuts) {
+        logger.debug("Calculating justifiable short term loan");
         double assetsJustifiableValue = assets.evaluate(haircuts);
         double liabilitiesValue = liabilities.evaluate();
         logger.debug("Calculation: " + assetsJustifiableValue + " - " + liabilitiesValue);
