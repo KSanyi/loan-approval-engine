@@ -30,7 +30,7 @@ public class NumberField extends TextField {
         @Override
         public Double convertToModel(String value, Class<? extends Double> targetType, Locale locale) throws ConversionException {
             try {
-                return Double.parseDouble(getValue());
+                return Double.parseDouble(value);
             } catch (Exception e) {
                 throw new ConversionException("Can not parse to number");
             }
