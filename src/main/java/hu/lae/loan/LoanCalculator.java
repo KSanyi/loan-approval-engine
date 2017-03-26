@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.bankmonitor.mortgage.evaluation.calculation.ExcelFunctions;
 import hu.lae.accounting.BalanceSheet;
 import hu.lae.accounting.CashFlow;
 import hu.lae.accounting.IncomeStatement;
@@ -52,6 +53,18 @@ public class LoanCalculator {
     }
     
     private double calculateMaxLongTermLoan(int paybackYears, double shortTermLoanAmount, double justifiableShortTermloan, double freeCashFlow, long ebitda) {
+        
+        double loanServiceCF = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, riskParameters.maxLoanDuration, shortTermLoanAmount - justifiableShortTermloan);
+        logger.debug("Cash flow for loan service: " + loanServiceCF);
+        double cashFlowForLongtermLoans = freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(justifiableShortTermloan) - 0 - loanServiceCF;
+        logger.debug("Cash flow for remaining for long term loans: " + cashFlowForLongtermLoans);
+        
+        return new CashFlow(paybackYears, cashFlowForLongtermLoans).presentValue(riskParameters.longTermInterestRate);
+    }
+    
+    
+    @SuppressWarnings("unused")
+    private double calculateMaxLongTermLoanOld(int paybackYears, double shortTermLoanAmount, double justifiableShortTermloan, double freeCashFlow, long ebitda) {
         if(shortTermLoanAmount <= justifiableShortTermloan) {
             logger.debug("Calculating long term debt capacity for " + shortTermLoanAmount + " short term loan and " + paybackYears + " years payback");
             double interestForSTLoan = riskParameters.shortTermInterestRate.multiply(shortTermLoanAmount);
@@ -66,7 +79,6 @@ public class LoanCalculator {
         } else {
             return calculateMaxLongTermLoan(paybackYears, justifiableShortTermloan, justifiableShortTermloan, freeCashFlow, ebitda) - (shortTermLoanAmount - justifiableShortTermloan);
         }
-        
     }
     
 }
