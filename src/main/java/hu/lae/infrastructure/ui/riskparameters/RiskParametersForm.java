@@ -42,6 +42,7 @@ public class RiskParametersForm extends FormLayout {
         
         amortizationRateField.setNumber(riskParameters.amortizationRate);
         dscrThresholdField.setNumber(riskParameters.dscrThreshold);
+        dscrThresholdField.setImmediate(true);
         shortTermInterestRateField.setNumber(riskParameters.shortTermInterestRate.value);
         maxLoanDurationCombo.setValue(riskParameters.maxLoanDuration);
         longTermInterestRateField.setNumber(riskParameters.longTermInterestRate.value);

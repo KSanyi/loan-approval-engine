@@ -33,7 +33,7 @@ public class CalculatorWindow extends Window {
     private final LoanSlider stLoanSlider = new LoanSlider("Short term loan");
     private final LoanSlider ltLoanSlider = new LoanSlider("Long term loan");
 
-    private final ComboBox paybackYearsCombo = new ComboBox(null, generateComboValues());
+    private final ComboBox paybackYearsCombo;
  
     //private final Button checkCalculationButton = new Button("Check calculations");
     
@@ -42,12 +42,14 @@ public class CalculatorWindow extends Window {
         this.balanceSheet = balanceSheet;
         this.incomeStatement = incomeStatement;
         setModal(true);
-        createLayout();
+        paybackYearsCombo = new ComboBox(null, generateComboValues(loanCalculator.riskParameters.maxLoanDuration));
         paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged((Integer)value.getProperty().getValue()));
         paybackYearsCombo.setValue(DEFAULT_PAYBACK_YEARS);
         stLoanSlider.addLoanValueChangeListener(loanValue -> shortTermloanChanged(loanValue));
         //checkCalculationButton.addStyleName(ValoTheme.BUTTON_LINK);
         //checkCalculationButton.addClickListener(click -> UI.getCurrent().addWindow(new CalculationsWindow()));
+        
+        createLayout();
         
         paybackYearsChanged(DEFAULT_PAYBACK_YEARS);
     }
@@ -94,8 +96,8 @@ public class CalculatorWindow extends Window {
         ltLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxLongTermLoan);
     }
     
-    private static List<Integer> generateComboValues() {
-        return IntStream.range(1, 31).mapToObj(i -> i).collect(Collectors.toList());
+    private static List<Integer> generateComboValues(int maxValue) {
+        return IntStream.range(1, maxValue + 1).mapToObj(i -> i).collect(Collectors.toList());
     }
     
 }

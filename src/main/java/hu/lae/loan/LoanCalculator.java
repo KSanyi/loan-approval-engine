@@ -16,7 +16,7 @@ public class LoanCalculator {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final RiskParameters riskParameters;
+    public final RiskParameters riskParameters;
 
     public LoanCalculator(RiskParameters riskParameters) {
         this.riskParameters = riskParameters;
