@@ -44,7 +44,7 @@ public class CalculatorWindow extends Window {
         setModal(true);
         paybackYearsCombo = new ComboBox(null, generateComboValues(loanCalculator.riskParameters.maxLoanDuration));
         paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged((Integer)value.getProperty().getValue()));
-        paybackYearsCombo.setValue(DEFAULT_PAYBACK_YEARS);
+        paybackYearsCombo.setValue(DEFAULT_PAYBACK_YEARS <=  loanCalculator.riskParameters.maxLoanDuration ? DEFAULT_PAYBACK_YEARS : loanCalculator.riskParameters.maxLoanDuration);
         stLoanSlider.addLoanValueChangeListener(loanValue -> shortTermloanChanged(loanValue));
         //checkCalculationButton.addStyleName(ValoTheme.BUTTON_LINK);
         //checkCalculationButton.addClickListener(click -> UI.getCurrent().addWindow(new CalculationsWindow()));
