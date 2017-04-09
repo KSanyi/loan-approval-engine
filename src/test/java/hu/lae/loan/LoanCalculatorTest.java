@@ -40,6 +40,10 @@ public class LoanCalculatorTest {
         loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, 5, 370);
         
         Assert.assertEquals(766.75, loanApplicationResult.maxLongTermLoan, 0.1);
+        
+        loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, 5, 250);
+        
+        Assert.assertEquals(886.75, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
@@ -59,6 +63,10 @@ public class LoanCalculatorTest {
         loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, 4, 370);
         
         Assert.assertEquals(627.99, loanApplicationResult.maxLongTermLoan, 0.1);
+        
+        loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, 4, 250);
+        
+        Assert.assertEquals(726.27, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
 }
