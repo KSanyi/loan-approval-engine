@@ -18,6 +18,14 @@ public class LoanCalculatorTest {
 
     private LoanCalculator loanCalculator;
     
+    private BalanceSheet balanceSheet = new BalanceSheet(
+            new Assets(400, 50, 20, 30),
+            new Liabilities(70, 0));
+    
+    private IncomeStatement incomeStatement = new IncomeStatement(2016, 300, 70, 30);
+    
+    private ExistingLoans noExistingLoans = ExistingLoans.createEmpty();
+    
     @Before
     public void init() {
         Haircuts haircuts = new Haircuts(0.8, 0.5, 0.8, 0.4);
@@ -26,53 +34,32 @@ public class LoanCalculatorTest {
     }
     
     @Test
-    public void test1() {
-        BalanceSheet balanceSheet = new BalanceSheet(
-                new Assets(400, 50, 20, 30),
-                new Liabilities(70, 0));
-        
-        IncomeStatement incomeStatement = new IncomeStatement(2016, 300, 70, 30);
-        
-        ExistingLoans existingLoans = ExistingLoans.createEmpty();
-        
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, 5, 303);
+    public void shortTermLoan() {
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, noExistingLoans, 5, 0);
         
         Assert.assertEquals(303, loanApplicationResult.justifiableShortTermLoan, 0.1);
         Assert.assertEquals(1136.7, loanApplicationResult.maxShortTermLoan, 0.1);
-        Assert.assertEquals(833.75, loanApplicationResult.maxLongTermLoan, 0.1);
-        
-        loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, 5, 370);
-        
-        Assert.assertEquals(766.75, loanApplicationResult.maxLongTermLoan, 0.1);
-        
-        loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, 5, 150);
-        
-        Assert.assertEquals(986.75, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
-    public void test2() {
-        BalanceSheet balanceSheet = new BalanceSheet(
-                new Assets(400, 50, 20, 30),
-                new Liabilities(70, 0));
+    public void tlongTermLoanWithJustifiableShortTermLoan() {
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, noExistingLoans, 5, 303);
         
-        IncomeStatement incomeStatement = new IncomeStatement(2016, 300, 70, 30);
-        
-        ExistingLoans existingLoans = ExistingLoans.createEmpty();
-        
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, 5, 303);
-        
-        Assert.assertEquals(303, loanApplicationResult.justifiableShortTermLoan, 0.1);
-        Assert.assertEquals(1136.7, loanApplicationResult.maxShortTermLoan, 0.1);
         Assert.assertEquals(833.75, loanApplicationResult.maxLongTermLoan, 0.1);
+    }
+    
+    @Test
+    public void longTermLoanWithHigherThenJustifiableShortTermLoan() {
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, noExistingLoans, 5, 370);
         
-        loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, 4, 370);
+        Assert.assertEquals(766.75, loanApplicationResult.maxLongTermLoan, 0.1);
+    }
+    
+    @Test
+    public void longTermLoanWithLowerThenJustifiableShortTermLoan() {
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, noExistingLoans, 5, 150);
         
-        Assert.assertEquals(627.99, loanApplicationResult.maxLongTermLoan, 0.1);
-        
-        loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, 4, 250);
-        
-        Assert.assertEquals(726.27, loanApplicationResult.maxLongTermLoan, 0.1);
+        Assert.assertEquals(853.63, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
 }

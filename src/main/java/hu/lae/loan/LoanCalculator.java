@@ -58,38 +58,26 @@ public class LoanCalculator {
     
     private double calculateMaxLongTermLoan(int paybackYears, double shortTermLoanAmount, double justifiableShortTermloan, double freeCashFlow, long ebitda, ExistingLoans existingLoans) {
         
-        double loanServiceCF = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, riskParameters.maxLoanDuration, shortTermLoanAmount - justifiableShortTermloan);
-        logger.debug("Cash flow for loan service: " + loanServiceCF);
+        double cashFlowForNewLongTermLoans;
         
-        double cashFlowForLongtermLoans = freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(justifiableShortTermloan) - loanServiceCF;
-        logger.debug("Cash flow remaining for long term loans: " + cashFlowForLongtermLoans);
-  
+        if(shortTermLoanAmount >= justifiableShortTermloan) {
+            double amountAboveJustifiableSTLoan = shortTermLoanAmount - justifiableShortTermloan;
+            logger.info("Amount above justifiable ST loan: " + amountAboveJustifiableSTLoan);
+            double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, riskParameters.maxLoanDuration, amountAboveJustifiableSTLoan);
+            logger.info("CF needed for above: " + cfNeededForStDebtService);
+            cashFlowForNewLongTermLoans = freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(justifiableShortTermloan) - cfNeededForStDebtService;
+        } else {
+            cashFlowForNewLongTermLoans = freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(shortTermLoanAmount);
+        }
+        
+        logger.info("Cash flow remaining for long term loans: " + cashFlowForNewLongTermLoans);
+        
         if(!existingLoans.isToBeRefinanced) {
             double yealyDebtServiceForExistingLoans = existingLoans.yealyDebtService(riskParameters.longTermInterestRate, currentDate);
-            cashFlowForLongtermLoans -= yealyDebtServiceForExistingLoans;
+            cashFlowForNewLongTermLoans -= yealyDebtServiceForExistingLoans;
         }
         
-        return new CashFlow(paybackYears, cashFlowForLongtermLoans).presentValue(riskParameters.longTermInterestRate);
-    }
-    
-    
-    @SuppressWarnings("unused")
-    private double calculateMaxLongTermLoanOld(int paybackYears, double shortTermLoanAmount, double justifiableShortTermloan, double freeCashFlow, long ebitda) {
-        
-        if(shortTermLoanAmount <= justifiableShortTermloan) {
-            logger.debug("Calculating long term debt capacity for " + shortTermLoanAmount + " short term loan and " + paybackYears + " years payback");
-            double interestForSTLoan = riskParameters.shortTermInterestRate.multiply(shortTermLoanAmount);
-            logger.debug("Interest for short term loan " + shortTermLoanAmount + ": " + interestForSTLoan + " = " + riskParameters.shortTermInterestRate + " * " + shortTermLoanAmount);
-            double freeCashFlowElement = freeCashFlow / riskParameters.dscrThreshold - interestForSTLoan;
-            logger.debug("Free cash flow: " + freeCashFlowElement + " = " + freeCashFlow + " / " + riskParameters.dscrThreshold + " - " + interestForSTLoan);
-            CashFlow cashFlow = new CashFlow(paybackYears, freeCashFlowElement);
-            double ltDebtCapacity = cashFlow.presentValue(riskParameters.longTermInterestRate);
-            logger.debug("Long term debt capacity: " + ltDebtCapacity + " = PV(" + freeCashFlowElement + ", " + paybackYears + ", " + riskParameters.longTermInterestRate + ")");
-            
-            return Math.min(ltDebtCapacity, ebitda * 5);
-        } else {
-            return calculateMaxLongTermLoanOld(paybackYears, justifiableShortTermloan, justifiableShortTermloan, freeCashFlow, ebitda) - (shortTermLoanAmount - justifiableShortTermloan);
-        }
+        return new CashFlow(paybackYears, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate); 
     }
     
 }
