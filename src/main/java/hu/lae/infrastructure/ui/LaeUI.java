@@ -1,6 +1,7 @@
 package hu.lae.infrastructure.ui;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ import hu.lae.loan.ExistingLoans;
 import hu.lae.loan.LoanCalculator;
 import hu.lae.riskparameters.RiskParameters;
 import hu.lae.usermanagement.UserInfo;
+import hu.lae.util.Clock;
 import hu.lae.util.DateUtil;
 
 @Theme("lae")
@@ -64,6 +66,7 @@ public class LaeUI extends UI {
 	    currentDateField.setValue(DateUtil.convertToDate(LocalDate.of(2017, 4, 1)));
 	    currentDateField.addStyleName(ValoTheme.DATEFIELD_SMALL);
 	    currentDateField.setWidth("120px");
+	    currentDateField.addValueChangeListener(e -> Clock.setStaticTime(DateUtil.convertToLocalDate((Date)e.getProperty().getValue())));
 	    
 	    RiskParametersPanel riskParametersPanel = new RiskParametersPanel(applicationService.riskParameterRepository);
 	    
@@ -80,7 +83,7 @@ public class LaeUI extends UI {
 	    
 	    calculateButton.addClickListener(click -> {
 	        RiskParameters riskParameters = riskParametersPanel.getRiskParameters();
-	        LocalDate currentDate = DateUtil.convertToLocalDate(currentDateField.getValue());
+	        LocalDate currentDate = Clock.date();
 	        
 	        CalculatorWindow calculatorWindow = new CalculatorWindow(new LoanCalculator(riskParameters, currentDate), balanceSheetPanel.getBalanceSheet(),
 	                incomeStatementPanel.getIncomeStatement(), existingLoansPanel.getExistingLoans(), currentDate);

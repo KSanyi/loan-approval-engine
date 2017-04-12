@@ -82,7 +82,7 @@ public class CalculatorWindow extends Window {
         TextField textField = new TextField();
         textField.setValue(String.format("%.2f", yearlyDebtServiceForExistingLoans));
         textField.setReadOnly(true);
-        textField.setWidth("80px");
+        textField.setWidth("100px");
         textField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
         HorizontalLayout layout = new HorizontalLayout(label, textField);
         layout.setSpacing(true);

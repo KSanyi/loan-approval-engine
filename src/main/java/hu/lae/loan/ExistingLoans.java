@@ -12,7 +12,7 @@ import hu.lae.util.ExcelFunctions;
 public class ExistingLoans {
     
     public static ExistingLoans createEmpty() {
-        return new ExistingLoans(0, 0, LocalDate.of(2017, 1, 1), 0, false);
+        return new ExistingLoans(0, 0, LocalDate.of(2018, 1, 1), 0, false);
     }
 
     public final long shortTermLoans;

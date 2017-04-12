@@ -9,6 +9,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.loan.ExistingLoans;
+import hu.lae.util.Clock;
 import hu.lae.util.DateUtil;
 
 @SuppressWarnings("serial")
@@ -35,6 +36,7 @@ class ExistingLoansForm extends HorizontalLayout {
         
         expirityField.addStyleName(ValoTheme.DATEFIELD_SMALL);
         expirityField.setWidth("120px");
+        expirityField.setRangeStart(DateUtil.convertToDate(Clock.date()));
         
         FormLayout layout = new FormLayout(shortTermLoansField, longTermLoansField, bulletField, expirityField, isToBeRefinancedCheckBox);
         layout.setSpacing(false);
