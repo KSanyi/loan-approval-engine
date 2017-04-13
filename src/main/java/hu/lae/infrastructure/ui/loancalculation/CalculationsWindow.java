@@ -12,7 +12,6 @@ class CalculationsWindow extends Window {
         setCaption("Calculations");
         TextArea textArea = new TextArea();
         textArea.setValue("");
-        textArea.setColumns(50);
         textArea.setRows(17);
         setContent(textArea);
     }

@@ -14,7 +14,7 @@ import hu.lae.infrastructure.ui.component.AmountField;
 @SuppressWarnings("serial")
 public class LoanSlider extends HorizontalLayout {
 
-    private final Slider slider;
+    private final MySlider slider;
     
     private final Label maxAmountLabel = createMaxAmountLabel();
     
@@ -24,15 +24,14 @@ public class LoanSlider extends HorizontalLayout {
     
     LoanSlider(String caption) {
         slider = createSlider();
-        setSpacing(true);
         
         addComponents(createCaptionLabel(caption), amountField, slider, maxAmountLabel);
         
-        slider.addValueChangeListener(v -> loanAmountChanged(((Double)v.getProperty().getValue()).longValue()));
+        slider.addValueChangeListener(v -> loanAmountChanged(v.getValue().longValue()));
     }
     
     void setLoanValue(long loanValue) {
-        slider.setValue((double)loanValue);
+        slider.setLoanValue(loanValue);
     }
     
     long getLoanValue() {
@@ -48,19 +47,18 @@ public class LoanSlider extends HorizontalLayout {
         AmountField amountField = new AmountField(null);
         amountField.setWidth("50");
         amountField.removeStyleName(ValoTheme.TEXTFIELD_SMALL);
-        amountField.addTextChangeListener(event -> {
+        amountField.addValueChangeListener(event -> {
             try {
-                loanAmountChanged(Long.parseLong(event.getText()));
+                loanAmountChanged(Long.parseLong(event.getValue()));
             } catch(NumberFormatException ex) {
                 loanAmountChanged(0L);
             }
-            
         });
         return amountField;
     }
     
-    private Slider createSlider() {
-        Slider slider = new Slider();
+    private MySlider createSlider() {
+        MySlider slider = new MySlider();
         slider.setOrientation(SliderOrientation.HORIZONTAL);
         slider.setWidth("500px");
         return slider;
@@ -91,6 +89,13 @@ public class LoanSlider extends HorizontalLayout {
     
     static interface LoanValueChangeListener {
         void loanValueChanged(long loanValue);
+    }
+    
+    private static class MySlider extends Slider {
+        
+        void setLoanValue(long loanValue) {
+            doSetValue((double)loanValue);
+        }
     }
     
 }

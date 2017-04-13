@@ -35,7 +35,7 @@ public class CalculatorWindow extends Window {
     private final LoanSlider stLoanSlider = new LoanSlider("Short term loan");
     private final LoanSlider ltLoanSlider = new LoanSlider("Long term loan");
 
-    private final ComboBox paybackYearsCombo;
+    private final ComboBox<Integer> paybackYearsCombo;
  
     //private final Button checkCalculationButton = new Button("Check calculations");
     
@@ -46,35 +46,30 @@ public class CalculatorWindow extends Window {
         this.existingLoans = existingLoans;
         
         setModal(true);
-        paybackYearsCombo = new ComboBox(null, generateComboValues(loanCalculator.riskParameters.maxLoanDuration));
-        paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged((Integer)value.getProperty().getValue()));
-        paybackYearsCombo.setValue(DEFAULT_PAYBACK_YEARS <=  loanCalculator.riskParameters.maxLoanDuration ? DEFAULT_PAYBACK_YEARS : loanCalculator.riskParameters.maxLoanDuration);
+        paybackYearsCombo = new ComboBox<>(null, generateComboValues(loanCalculator.riskParameters.maxLoanDuration));
+        paybackYearsCombo.setValue(Math.min(DEFAULT_PAYBACK_YEARS, loanCalculator.riskParameters.maxLoanDuration));
+        paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged(value.getValue()));
         stLoanSlider.addLoanValueChangeListener(loanValue -> shortTermloanChanged(loanValue));
         //checkCalculationButton.addStyleName(ValoTheme.BUTTON_LINK);
         //checkCalculationButton.addClickListener(click -> UI.getCurrent().addWindow(new CalculationsWindow()));
         
         double yearlyDebtServiceForExistingLoans = existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
-        createLayout(yearlyDebtServiceForExistingLoans);
+        setContent(createLayout(yearlyDebtServiceForExistingLoans));
         
         paybackYearsChanged(DEFAULT_PAYBACK_YEARS);
     }
     
-    private void createLayout(double yearlyDebtServiceForExistingLoans) {
+    private Component createLayout(double yearlyDebtServiceForExistingLoans) {
         setWidth("900px");
         setResizable(false);
         VerticalLayout layout = new VerticalLayout();
-        layout.setSpacing(true);
-        layout.setMargin(true);
         Component component = createPaybackYearsField();
-        
-        long justifiableShortTermLoan = (long)loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, DEFAULT_PAYBACK_YEARS, 0).justifiableShortTermLoan;
-        stLoanSlider.setDescription("Justifiable short term loan:<br/><center>" + justifiableShortTermLoan + " million Ft</center>");
         
         layout.addComponents(component, stLoanSlider, ltLoanSlider, createExistingDebtServiceField(yearlyDebtServiceForExistingLoans));
         layout.setComponentAlignment(component, Alignment.MIDDLE_CENTER);
         Panel panel = new Panel("Calculation", layout);
         panel.addStyleName("colored");
-        setContent(panel);
+        return panel;
     }
     
     private Component createExistingDebtServiceField(double yearlyDebtServiceForExistingLoans) {
@@ -85,7 +80,6 @@ public class CalculatorWindow extends Window {
         textField.setWidth("100px");
         textField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
         HorizontalLayout layout = new HorizontalLayout(label, textField);
-        layout.setSpacing(true);
         return layout;
     }
     
@@ -95,9 +89,8 @@ public class CalculatorWindow extends Window {
         paybackYearsCombo.addStyleName(ValoTheme.COMBOBOX_ALIGN_CENTER);
         paybackYearsCombo.addStyleName(ValoTheme.COMBOBOX_LARGE);
         paybackYearsCombo.setWidth("85px");
-        paybackYearsCombo.setNullSelectionAllowed(false);
+        paybackYearsCombo.setEmptySelectionAllowed(false);
         HorizontalLayout layout = new HorizontalLayout(label, paybackYearsCombo);
-        layout.setSpacing(true);
         return layout;
     }
     
@@ -106,6 +99,7 @@ public class CalculatorWindow extends Window {
         stLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxShortTermLoan);
         stLoanSlider.setLoanValue((long)loanApplicationResult.justifiableShortTermLoan);
         ltLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxLongTermLoan);
+        stLoanSlider.setDescription("Justifiable short term loan:<br/><center>" + loanApplicationResult.justifiableShortTermLoan + " million Ft</center>");
     }
     
     private void shortTermloanChanged(long shortTermLoan) {

@@ -3,11 +3,10 @@ package hu.lae.infrastructure.ui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.server.ThemeResource;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
@@ -31,9 +30,7 @@ public class Header extends HorizontalLayout implements Button.ClickListener {
 	    
 		this.userInfo = userInfo;
 		setSizeFull();
-		setHeight("135px");
-		setSpacing(true);
-		setMargin(true);
+		setHeight("150px");
 		setStyleName("dark");
 
 		Layout logoLayout = createLogoLayout();
@@ -53,16 +50,15 @@ public class Header extends HorizontalLayout implements Button.ClickListener {
 	}
 
 	private Layout createUserInfoLayout() {
-		Embedded userPic = new Embedded(null, new ThemeResource("../runo/icons/16/user.png"));
-		userPic.setSizeUndefined();
 
 		Label userLabel = new Label(userInfo.name);
 		userLabel.addStyleName(ValoTheme.LABEL_COLORED);
 
 		logoutButton.setStyleName(ValoTheme.BUTTON_SMALL);
+		logoutButton.setIcon(VaadinIcons.USER);
 		
-		HorizontalLayout userInfoLayout = new HorizontalLayout(logoutButton, userPic, userLabel);
-        userInfoLayout.setSpacing(true);
+		HorizontalLayout userInfoLayout = new HorizontalLayout(logoutButton, userLabel);
+		userInfoLayout.setMargin(true);
 
 		return userInfoLayout;
 	}

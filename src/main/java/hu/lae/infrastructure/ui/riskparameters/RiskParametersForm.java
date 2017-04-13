@@ -26,7 +26,7 @@ public class RiskParametersForm extends FormLayout {
     private final PercentField otherField = new PercentField("Other justifiable ratio");
     private final NumberField dscrThresholdField = new NumberField("DSCR threshold");
     private final PercentField shortTermInterestRateField = new PercentField("Short term interest rate");
-    private final ComboBox maxLoanDurationCombo = new ComboBox("Max loan duration years", generateComboValues());
+    private final ComboBox<Integer> maxLoanDurationCombo = new ComboBox<>("Max loan duration years", generateComboValues());
     private final PercentField longTermInterestRateField = new PercentField("Long term interest rate");
 
     public RiskParametersForm(RiskParameters riskParameters) {
@@ -37,20 +37,19 @@ public class RiskParametersForm extends FormLayout {
         addComponents(amortizationRateField, arField, stockField, cashField, otherField, dscrThresholdField, shortTermInterestRateField, longTermInterestRateField, maxLoanDurationCombo);
         
         maxLoanDurationCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
-        maxLoanDurationCombo.setNullSelectionAllowed(false);
+        maxLoanDurationCombo.setEmptySelectionAllowed(false);
         maxLoanDurationCombo.setWidth("60px");
         
-        amortizationRateField.setNumber(riskParameters.amortizationRate);
+        amortizationRateField.setPercent(riskParameters.amortizationRate);
         dscrThresholdField.setNumber(riskParameters.dscrThreshold);
-        dscrThresholdField.setImmediate(true);
-        shortTermInterestRateField.setNumber(riskParameters.shortTermInterestRate.value);
+        shortTermInterestRateField.setPercent(riskParameters.shortTermInterestRate.value);
         maxLoanDurationCombo.setValue(riskParameters.maxLoanDuration);
-        longTermInterestRateField.setNumber(riskParameters.longTermInterestRate.value);
+        longTermInterestRateField.setPercent(riskParameters.longTermInterestRate.value);
         
-        arField.setNumber(riskParameters.haircuts.accountsReceivable);
-        stockField.setNumber(riskParameters.haircuts.stock);
-        cashField.setNumber(riskParameters.haircuts.cash);
-        otherField.setNumber(riskParameters.haircuts.other);
+        arField.setPercent(riskParameters.haircuts.accountsReceivable);
+        stockField.setPercent(riskParameters.haircuts.stock);
+        cashField.setPercent(riskParameters.haircuts.cash);
+        otherField.setPercent(riskParameters.haircuts.other);
     }
     
     public RiskParameters getRiskParameters() {

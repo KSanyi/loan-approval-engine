@@ -9,7 +9,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.PopupView;
-import com.vaadin.ui.Table;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -71,18 +71,15 @@ class LoginWindow extends Window {
         }
     }
     
-    private static class UsersTable extends Table {
+    private static class UsersTable extends Grid<UserInfo> {
         
         UsersTable() {
-            addContainerProperty("UserName", String.class, "");
-            addContainerProperty("Role", String.class, "");
+            addColumn(u -> u.name).setCaption("UserName");
+            addColumn(u -> u.role).setCaption("Role");
             
-            for(UserInfo userInfo : DemoAuthenticator.users.keySet()) {
-                addItem(new Object[]{userInfo.loginName, userInfo.role.toString()}, userInfo);
-            }
+            setItems(DemoAuthenticator.users.keySet());
             
-            setPageLength(0);
-            addStyleName(ValoTheme.TABLE_SMALL);
+            setSelectionMode(SelectionMode.NONE);
         }
     }
     

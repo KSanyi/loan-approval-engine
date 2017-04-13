@@ -1,7 +1,6 @@
 package hu.lae.infrastructure.ui;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,6 @@ import hu.lae.loan.LoanCalculator;
 import hu.lae.riskparameters.RiskParameters;
 import hu.lae.usermanagement.UserInfo;
 import hu.lae.util.Clock;
-import hu.lae.util.DateUtil;
 
 @Theme("lae")
 public class LaeUI extends UI {
@@ -63,10 +61,10 @@ public class LaeUI extends UI {
 	    logger.info(userInfo.loginName + " logged in");
 	    
 	    DateField currentDateField = new DateField("Current date");
-	    currentDateField.setValue(DateUtil.convertToDate(LocalDate.of(2017, 4, 1)));
+	    currentDateField.setValue(LocalDate.of(2017, 4, 1));
 	    currentDateField.addStyleName(ValoTheme.DATEFIELD_SMALL);
 	    currentDateField.setWidth("120px");
-	    currentDateField.addValueChangeListener(e -> Clock.setStaticTime(DateUtil.convertToLocalDate((Date)e.getProperty().getValue())));
+	    currentDateField.addValueChangeListener(e -> Clock.setStaticTime(e.getValue()));
 	    
 	    RiskParametersPanel riskParametersPanel = new RiskParametersPanel(applicationService.riskParameterRepository);
 	    
@@ -74,7 +72,6 @@ public class LaeUI extends UI {
 	    IncomeStatementPanel incomeStatementPanel = new IncomeStatementPanel(IncomeStatement.createDefault(LocalDate.now().getYear()-1));
 	    ExistingLoansPanel existingLoansPanel = new ExistingLoansPanel(ExistingLoans.createEmpty());
 	    HorizontalLayout mainLayout = new HorizontalLayout(riskParametersPanel, balanceSheetPanel, incomeStatementPanel, existingLoansPanel);
-	    mainLayout.setSpacing(true);
 	    mainLayout.setMargin(true);
 	    
 	    Button calculateButton = new Button("Calculate");
@@ -90,7 +87,9 @@ public class LaeUI extends UI {
 	        UI.getCurrent().addWindow(calculatorWindow);
 	    });
 	    
-	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), new Menu(), currentDateField, mainLayout, calculateButton);
+	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), currentDateField, mainLayout, calculateButton);
+	    pageLayout.setMargin(false);
+	    pageLayout.setSpacing(false);
 	    pageLayout.setComponentAlignment(currentDateField, Alignment.MIDDLE_CENTER);
 	    pageLayout.setComponentAlignment(calculateButton, Alignment.MIDDLE_CENTER);
 		setContent(pageLayout);

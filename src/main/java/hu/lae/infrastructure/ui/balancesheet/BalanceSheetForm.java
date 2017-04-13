@@ -23,7 +23,6 @@ class BalanceSheetForm extends HorizontalLayout {
     private final AmountField otherLiabilitiesField = new AmountField("Other");
     
     BalanceSheetForm(BalanceSheet balanceSheet) {
-        setSpacing(true);
         addComponents(createAssetsLayout(balanceSheet.assets), createLiabilitiesLayout(balanceSheet.liabilities));
     }
     
@@ -42,7 +41,6 @@ class BalanceSheetForm extends HorizontalLayout {
         Label header = new Label("Assets");
         header.addStyleName(ValoTheme.LABEL_H4);
         FormLayout layout = new FormLayout(header, arField, stockField, cashField, otherAssetsField);
-        layout.setSpacing(false);
         layout.setMargin(false);
 
         return layout;
@@ -56,7 +54,6 @@ class BalanceSheetForm extends HorizontalLayout {
         Label header = new Label("Liabilities");
         header.addStyleName(ValoTheme.LABEL_H4);
         FormLayout layout = new FormLayout(header, apField, otherLiabilitiesField, new Label(""), new Label(""));
-        layout.setSpacing(false);
         layout.setMargin(false);
         return layout;
     }

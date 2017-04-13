@@ -18,10 +18,10 @@ public class HaircutsForm extends FormLayout {
         
         addComponents(arField, stockField, cashField, otherField);
         
-        arField.setNumber(haircuts.accountsReceivable);
-        stockField.setNumber(haircuts.stock);
-        cashField.setNumber(haircuts.cash);
-        otherField.setNumber(haircuts.other);
+        arField.setPercent(haircuts.accountsReceivable);
+        stockField.setPercent(haircuts.stock);
+        cashField.setPercent(haircuts.cash);
+        otherField.setPercent(haircuts.other);
     }
     
     public Haircuts getHaircuts() {
