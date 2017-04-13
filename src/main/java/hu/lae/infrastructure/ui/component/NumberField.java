@@ -1,5 +1,6 @@
 package hu.lae.infrastructure.ui.component;
 
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -11,8 +12,8 @@ public class NumberField extends TextField {
         setWidth("60px");
         addStyleName(ValoTheme.TEXTFIELD_SMALL);
         addStyleName(ValoTheme.TEXTAREA_ALIGN_RIGHT);
-        
         addValueChangeListener(event -> valueChanged(event.getValue()));
+        setValueChangeMode(ValueChangeMode.BLUR);
     }
     
     private void valueChanged(String value) {

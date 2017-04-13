@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -22,13 +23,12 @@ public class AmountField extends TextField {
     
     public AmountField(String caption) {
         super(caption);
-        
         setWidth("90px");   
         setMaxLength(8);
         addStyleName(ValoTheme.TEXTFIELD_SMALL);
         addStyleName(ValoTheme.TEXTAREA_ALIGN_RIGHT);
-        
         addValueChangeListener(event -> valueChanged(event.getValue()));
+        setValueChangeMode(ValueChangeMode.BLUR);
     }
     
     private void valueChanged(String value) {
