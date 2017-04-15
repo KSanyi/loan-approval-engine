@@ -27,7 +27,7 @@ public class PercentField extends TextField {
     
     private void valueChanged(String value) {
         try {
-            percentValue = FORMATTTER.parse(value).doubleValue() * 100;
+            percentValue = FORMATTTER.parse(value).doubleValue();
             setPercent(percentValue);
         } catch(ParseException ex) {
             setPercent(createNumber(value));
@@ -40,7 +40,7 @@ public class PercentField extends TextField {
     
     public void setPercent(Double percent) {
         this.percentValue = percent;
-        doSetValue(FORMATTTER.format(percent / 100));
+        doSetValue(FORMATTTER.format(percent));
     }
     
     private static double createNumber(String value) {
@@ -51,7 +51,7 @@ public class PercentField extends TextField {
         if(clearedValue.isEmpty()) {
             clearedValue = "0";
         }
-        return Double.parseDouble(clearedValue);
+        return Double.parseDouble(clearedValue) / 100;
     }
     
 }
