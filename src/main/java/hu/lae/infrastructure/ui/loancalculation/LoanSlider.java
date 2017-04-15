@@ -32,6 +32,7 @@ public class LoanSlider extends HorizontalLayout {
     
     void setLoanValue(long loanValue) {
         slider.setLoanValue(loanValue);
+        
     }
     
     long getLoanValue() {
@@ -94,7 +95,7 @@ public class LoanSlider extends HorizontalLayout {
     private static class MySlider extends Slider {
         
         void setLoanValue(long loanValue) {
-            doSetValue((double)loanValue);
+            setValue((double)loanValue);
         }
     }
     

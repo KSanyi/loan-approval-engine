@@ -5,19 +5,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.accounting.BalanceSheet;
 import hu.lae.accounting.IncomeStatement;
+import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.loan.ExistingLoans;
 import hu.lae.loan.LoanApplicationResult;
 import hu.lae.loan.LoanCalculator;
@@ -50,6 +51,8 @@ public class CalculatorWindow extends Window {
         paybackYearsCombo.setValue(Math.min(DEFAULT_PAYBACK_YEARS, loanCalculator.riskParameters.maxLoanDuration));
         paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged(value.getValue()));
         stLoanSlider.addLoanValueChangeListener(loanValue -> shortTermloanChanged(loanValue));
+        ltLoanSlider.setLoanValue(1);
+        ltLoanSlider.setLoanValue(0);
         //checkCalculationButton.addStyleName(ValoTheme.BUTTON_LINK);
         //checkCalculationButton.addClickListener(click -> UI.getCurrent().addWindow(new CalculationsWindow()));
         
@@ -74,12 +77,11 @@ public class CalculatorWindow extends Window {
     
     private Component createExistingDebtServiceField(double yearlyDebtServiceForExistingLoans) {
         Label label = new Label("Yearly Debt Service For Existing Loans:");
-        TextField textField = new TextField();
-        textField.setValue(String.format("%.2f", yearlyDebtServiceForExistingLoans));
-        textField.setReadOnly(true);
-        textField.setWidth("100px");
-        textField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
-        HorizontalLayout layout = new HorizontalLayout(label, textField);
+        AmountField amountField = new AmountField(null);
+        amountField.setAmount((long)yearlyDebtServiceForExistingLoans);
+        amountField.setReadOnly(true);
+        amountField.setWidth("80px");
+        HorizontalLayout layout = new HorizontalLayout(label, amountField);
         return layout;
     }
     
@@ -99,7 +101,7 @@ public class CalculatorWindow extends Window {
         stLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxShortTermLoan);
         stLoanSlider.setLoanValue((long)loanApplicationResult.justifiableShortTermLoan);
         ltLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxLongTermLoan);
-        stLoanSlider.setDescription("Justifiable short term loan:<br/><center>" + loanApplicationResult.justifiableShortTermLoan + " million Ft</center>");
+        stLoanSlider.setDescription("Justifiable short term loan:<br/><center>" + loanApplicationResult.justifiableShortTermLoan + " million Ft</center>", ContentMode.HTML);
     }
     
     private void shortTermloanChanged(long shortTermLoan) {
