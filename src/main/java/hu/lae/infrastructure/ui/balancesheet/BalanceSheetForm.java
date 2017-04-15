@@ -42,6 +42,7 @@ class BalanceSheetForm extends HorizontalLayout {
         header.addStyleName(ValoTheme.LABEL_H4);
         FormLayout layout = new FormLayout(header, arField, stockField, cashField, otherAssetsField);
         layout.setMargin(false);
+        layout.setSpacing(false);
 
         return layout;
     }
@@ -55,6 +56,7 @@ class BalanceSheetForm extends HorizontalLayout {
         header.addStyleName(ValoTheme.LABEL_H4);
         FormLayout layout = new FormLayout(header, apField, otherLiabilitiesField, new Label(""), new Label(""));
         layout.setMargin(false);
+        layout.setSpacing(false);
         return layout;
     }
     
