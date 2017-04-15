@@ -5,16 +5,12 @@ import java.util.function.Consumer;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.PopupView;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.infrastructure.demo.DemoAuthenticator;
 import hu.lae.usermanagement.Authenticator;
 import hu.lae.usermanagement.Authenticator.AuthenticationException;
 import hu.lae.usermanagement.Authenticator.WrongPasswordException;
@@ -49,14 +45,8 @@ class LoginWindow extends Window {
         layout.setMargin(true);
         setContent(layout);
         
-        PopupView popup = new PopupView("Help", new UsersTable());
-        layout.addComponent(popup);
-        HorizontalLayout buttonBar = new HorizontalLayout(button, popup);
-        buttonBar.setSizeFull();
-        buttonBar.setComponentAlignment(button, Alignment.MIDDLE_CENTER);
-        buttonBar.setComponentAlignment(popup, Alignment.BOTTOM_RIGHT);
-        
-        layout.addComponent(buttonBar);
+        layout.addComponent(button);
+        layout.setComponentAlignment(button, Alignment.MIDDLE_CENTER);
     }
 
     private void logIn() {
@@ -68,18 +58,6 @@ class LoginWindow extends Window {
             Notification.show("Login failed", "Wrong user name or password", Notification.Type.ERROR_MESSAGE);
         } catch (AuthenticationException ex) {
             Notification.show("Login failed", "Error durong authentication", Notification.Type.ERROR_MESSAGE);
-        }
-    }
-    
-    private static class UsersTable extends Grid<UserInfo> {
-        
-        UsersTable() {
-            addColumn(u -> u.name).setCaption("UserName");
-            addColumn(u -> u.role).setCaption("Role");
-            
-            setItems(DemoAuthenticator.users.keySet());
-            
-            setSelectionMode(SelectionMode.NONE);
         }
     }
     
