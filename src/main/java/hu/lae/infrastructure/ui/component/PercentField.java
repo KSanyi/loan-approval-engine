@@ -4,13 +4,19 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.infrastructure.ui.LaeUI;
+
 @SuppressWarnings("serial")
 public class PercentField extends TextField {
+    
+    private static final Logger logger = LoggerFactory.getLogger(LaeUI.class);
 
     private static final DecimalFormat FORMATTTER = new DecimalFormat("0.0%");
     
@@ -27,6 +33,7 @@ public class PercentField extends TextField {
     
     private void valueChanged(String value) {
         try {
+            logger.debug(getCaption() + " is set to " + value + " %");
             percentValue = FORMATTTER.parse(value).doubleValue();
             setPercent(percentValue);
         } catch(ParseException ex) {

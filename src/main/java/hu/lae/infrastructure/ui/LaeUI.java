@@ -79,6 +79,7 @@ public class LaeUI extends UI {
 	    calculateButton.addStyleName(ValoTheme.BUTTON_LARGE);
 	    
 	    calculateButton.addClickListener(click -> {
+	        logger.info("Clicking on calculate");
 	        RiskParameters riskParameters = riskParametersPanel.getRiskParameters();
 	        LocalDate currentDate = Clock.date();
 	        

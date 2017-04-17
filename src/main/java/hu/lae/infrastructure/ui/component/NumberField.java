@@ -1,14 +1,20 @@
 package hu.lae.infrastructure.ui.component;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.infrastructure.ui.LaeUI;
+
 @SuppressWarnings("serial")
 public class NumberField extends TextField {
 
+    private static final Logger logger = LoggerFactory.getLogger(LaeUI.class);
+    
     public NumberField(String caption) {
         super(caption);
         setWidth("60px");
@@ -20,6 +26,7 @@ public class NumberField extends TextField {
     
     private void valueChanged(String value) {
         try {
+            logger.debug(getCaption() + " is set to " + value);
             double doubleValue = Double.parseDouble(value);
             setNumber(doubleValue);
         } catch(NumberFormatException ex) {

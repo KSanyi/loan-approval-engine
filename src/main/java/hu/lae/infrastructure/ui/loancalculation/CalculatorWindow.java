@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
@@ -18,6 +21,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.accounting.BalanceSheet;
 import hu.lae.accounting.IncomeStatement;
+import hu.lae.infrastructure.ui.LaeUI;
 import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.loan.ExistingLoans;
 import hu.lae.loan.LoanApplicationResult;
@@ -25,6 +29,8 @@ import hu.lae.loan.LoanCalculator;
 
 @SuppressWarnings("serial")
 public class CalculatorWindow extends Window {
+    
+    private static final Logger logger = LoggerFactory.getLogger(LaeUI.class);
 
     private static final Integer DEFAULT_PAYBACK_YEARS = 5;
     
@@ -97,6 +103,7 @@ public class CalculatorWindow extends Window {
     }
     
     private void paybackYearsChanged(int paybackYears) {
+        logger.debug("Payback years combo is set to " + paybackYears);
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, paybackYears, stLoanSlider.getLoanValue());
         stLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxShortTermLoan);
         stLoanSlider.setLoanValue((long)loanApplicationResult.justifiableShortTermLoan);
@@ -111,6 +118,12 @@ public class CalculatorWindow extends Window {
     
     private static List<Integer> generateComboValues(int maxValue) {
         return IntStream.range(1, maxValue + 1).mapToObj(i -> i).collect(Collectors.toList());
+    }
+    
+    @Override
+    public void close() {
+        logger.debug("Calculation window is closed");
+        super.close();
     }
     
 }
