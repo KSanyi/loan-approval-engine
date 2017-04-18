@@ -65,16 +65,16 @@ public class LoanCalculator {
             logger.info("Amount above justifiable ST loan: " + amountAboveJustifiableSTLoan);
             double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, riskParameters.maxLoanDuration, amountAboveJustifiableSTLoan);
             logger.info("CF needed for above: " + cfNeededForStDebtService);
-            cashFlowForNewLongTermLoans = freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(justifiableShortTermloan) - cfNeededForStDebtService;
+            cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(justifiableShortTermloan) - cfNeededForStDebtService);
         } else {
-            cashFlowForNewLongTermLoans = freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(shortTermLoanAmount);
+            cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(shortTermLoanAmount));
         }
         
         logger.info("Cash flow remaining for long term loans: " + cashFlowForNewLongTermLoans);
         
         if(!existingLoans.isToBeRefinanced) {
             double yealyDebtServiceForExistingLoans = existingLoans.yealyDebtService(riskParameters.longTermInterestRate, currentDate);
-            cashFlowForNewLongTermLoans -= yealyDebtServiceForExistingLoans;
+            cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yealyDebtServiceForExistingLoans);
         }
         
         return new CashFlow(paybackYears, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate); 
