@@ -53,8 +53,8 @@ public class ClientPanel extends Panel {
         industryCombo.setItemCaptionGenerator(i -> i.displayName);
         
         HorizontalLayout row1 = new HorizontalLayout(nameField, industryCombo);
-        HorizontalLayout row2 = new HorizontalLayout(balanceSheetPanel, incomeStatementPanel, existingLoansPanel);
-        VerticalLayout mainLayout = new VerticalLayout(row1, row2);
+        HorizontalLayout row2 = new HorizontalLayout(balanceSheetPanel, incomeStatementPanel);
+        VerticalLayout mainLayout = new VerticalLayout(row1, row2, existingLoansPanel);
         
         return mainLayout;
     }
