@@ -20,6 +20,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.Client;
+import hu.lae.accounting.FreeCashFlowCalculator;
 import hu.lae.infrastructure.ui.LaeUI;
 import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.loan.LoanApplicationResult;
@@ -99,7 +100,7 @@ public class CalculatorWindow extends Window {
     
     private void paybackYearsChanged(int paybackYears) {
         logger.debug("Payback years combo is set to " + paybackYears);
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, stLoanSlider.getLoanValue());
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, stLoanSlider.getLoanValue(), FreeCashFlowCalculator.lastYear);
         stLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxShortTermLoan);
         stLoanSlider.setLoanValue((long)loanApplicationResult.justifiableShortTermLoan);
         ltLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxLongTermLoan);
@@ -107,7 +108,7 @@ public class CalculatorWindow extends Window {
     }
     
     private void shortTermloanChanged(long shortTermLoan) {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, (Integer)paybackYearsCombo.getValue(), shortTermLoan);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, (Integer)paybackYearsCombo.getValue(), shortTermLoan, FreeCashFlowCalculator.lastYear);
         ltLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxLongTermLoan);
     }
     

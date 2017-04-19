@@ -34,7 +34,7 @@ public class ClientPanel extends Panel {
         nameField.setValue(client.name);
         industryCombo.setValue(client.industry);
         balanceSheetPanel = new BalanceSheetPanel(client.balanceSheet);
-        incomeStatementPanel = new IncomeStatementPanel(client.incomeStatement);
+        incomeStatementPanel = new IncomeStatementPanel(client.incomeStatementData);
         existingLoansPanel = new ExistingLoansPanel(client.existingLoans);
         
         setContent(createLayout());
@@ -60,7 +60,7 @@ public class ClientPanel extends Panel {
     }
 
     public Client getClient() {
-        return new Client(nameField.getValue(), industryCombo.getValue(), balanceSheetPanel.getBalanceSheet(), incomeStatementPanel.getIncomeStatement(), existingLoansPanel.getExistingLoans());
+        return new Client(nameField.getValue(), industryCombo.getValue(), balanceSheetPanel.getBalanceSheet(), incomeStatementPanel.getIncomeStatements(), existingLoansPanel.getExistingLoans());
     }
     
 }

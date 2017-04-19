@@ -4,7 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import hu.lae.accounting.BalanceSheet;
-import hu.lae.accounting.IncomeStatement;
+import hu.lae.accounting.IncomeStatementData;
 import hu.lae.loan.ExistingLoans;
 import hu.lae.riskparameters.Industry;
 
@@ -18,13 +18,13 @@ public class Client {
     
     public final BalanceSheet balanceSheet;
     
-    public final IncomeStatement incomeStatement;
+    public final IncomeStatementData incomeStatementData;
 
-    public Client(String name, Industry industry, BalanceSheet balanceSheet, IncomeStatement incomeStatement, ExistingLoans existingLoans) {
+    public Client(String name, Industry industry, BalanceSheet balanceSheet, IncomeStatementData incomeStatementData, ExistingLoans existingLoans) {
         this.name = name;
         this.industry = industry;
         this.balanceSheet = balanceSheet;
-        this.incomeStatement = incomeStatement;
+        this.incomeStatementData = incomeStatementData;
         this.existingLoans = existingLoans;
     }
     
@@ -34,7 +34,7 @@ public class Client {
     }
 
     public static Client createDefault() {
-        return new Client("", Industry.AUTOMOTIVE, BalanceSheet.createDefault(), IncomeStatement.createDefault(2016), ExistingLoans.createEmpty());
+        return new Client("", Industry.AUTOMOTIVE, BalanceSheet.createDefault(), IncomeStatementData.createDefault(2016), ExistingLoans.createEmpty());
     }
     
 }

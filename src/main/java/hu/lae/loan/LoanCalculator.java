@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import hu.lae.Client;
 import hu.lae.accounting.CashFlow;
+import hu.lae.accounting.FreeCashFlowCalculator;
 import hu.lae.riskparameters.Industry;
 import hu.lae.riskparameters.InterestRate;
 import hu.lae.riskparameters.RiskParameters;
@@ -26,7 +27,7 @@ public class LoanCalculator {
         this.currentDate = currentDate;
     }
     
-    public LoanApplicationResult calculate(Client client, int paybackYears, long shortTermLoan) {
+    public LoanApplicationResult calculate(Client client, int paybackYears, long shortTermLoan, FreeCashFlowCalculator freeCashFlowCalculator) {
         
         logger.debug("------------------------- Calculation starts -------------------------");
         logger.debug(client.toString());
@@ -35,7 +36,7 @@ public class LoanCalculator {
         double justifiableShortTermLoan = client.balanceSheet.calculateJustifiableShortTermLoan(riskParameters.haircuts);
         logger.debug("Justifiable short term loan: " + justifiableShortTermLoan);
 
-        double freeCashFlow = client.incomeStatement.normalizedFreeCashFlow(riskParameters.amortizationRate);
+        double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementData, riskParameters.amortizationRate);
         logger.debug("Normalized free cash flow: " + freeCashFlow);
         
         InterestRate shortTermInterestRate = riskParameters.shortTermInterestRate;
@@ -44,10 +45,10 @@ public class LoanCalculator {
         
         logger.debug("Justifiable short term loan: " + effectiveJustifiableSTLoan + " = Min(" + justifiableShortTermLoan + ", " + freeCashFlow + " / (" + riskParameters.dscrThreshold + " * " + shortTermInterestRate + "))");
         
-        double maxShortTermLoan = effectiveJustifiableSTLoan + calculateMaxLongTermLoan(paybackYears, effectiveJustifiableSTLoan, effectiveJustifiableSTLoan, freeCashFlow, client.incomeStatement.ebitda, client.existingLoans, client.industry); 
+        double maxShortTermLoan = effectiveJustifiableSTLoan + calculateMaxLongTermLoan(paybackYears, effectiveJustifiableSTLoan, effectiveJustifiableSTLoan, freeCashFlow, client.existingLoans, client.industry); 
         logger.debug("Max short term loan: " + maxShortTermLoan + " = " + effectiveJustifiableSTLoan + " + maxLongTermLoan(" + paybackYears + ", " + effectiveJustifiableSTLoan + ")");
         
-        double maxLongTermLoan = calculateMaxLongTermLoan(paybackYears, shortTermLoan, effectiveJustifiableSTLoan, freeCashFlow, client.incomeStatement.ebitda, client.existingLoans, client.industry); 
+        double maxLongTermLoan = calculateMaxLongTermLoan(paybackYears, shortTermLoan, effectiveJustifiableSTLoan, freeCashFlow, client.existingLoans, client.industry); 
         
         LoanApplicationResult result = new LoanApplicationResult(effectiveJustifiableSTLoan, maxShortTermLoan, maxLongTermLoan);
         
@@ -56,7 +57,7 @@ public class LoanCalculator {
         return result;
     }
     
-    private double calculateMaxLongTermLoan(int paybackYears, double shortTermLoanAmount, double justifiableShortTermloan, double freeCashFlow, long ebitda, ExistingLoans existingLoans, Industry industry) {
+    private double calculateMaxLongTermLoan(int paybackYears, double shortTermLoanAmount, double justifiableShortTermloan, double freeCashFlow, ExistingLoans existingLoans, Industry industry) {
         
         double cashFlowForNewLongTermLoans;
         

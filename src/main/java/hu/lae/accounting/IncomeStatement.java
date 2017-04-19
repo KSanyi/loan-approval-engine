@@ -1,16 +1,10 @@
 package hu.lae.accounting;
 
-import java.lang.invoke.MethodHandles;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IncomeStatement {
 
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    
     public int year;
     
     public final long ebitda;
@@ -26,12 +20,6 @@ public class IncomeStatement {
         this.taxes = taxes;
     }
     
-    public double normalizedFreeCashFlow(double amortizationRate) {
-        logger.debug("Calculating normalized free cash flow: " + ebitda + " - " + amortization + " * " + amortizationRate + " - " + taxes);
-        double maintanenceCapex = amortizationRate * amortization;
-        return ebitda - maintanenceCapex - taxes;
-    }
-    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
@@ -43,6 +31,10 @@ public class IncomeStatement {
     
     public static IncomeStatement createDefault(int year) {
         return new IncomeStatement(year, 300, 70, 30);
+    }
+    
+    public int year() {
+        return year;
     }
     
 }
