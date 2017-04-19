@@ -1,5 +1,6 @@
-package hu.lae.infrastructure.ui.incomestatement;
+package hu.lae.infrastructure.ui.client.incomestatement;
 
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -21,9 +22,9 @@ public class IncomeStatementPanel extends Panel {
         updateButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
         updateButton.addStyleName(ValoTheme.BUTTON_SMALL);
         VerticalLayout layout = new VerticalLayout(form);
-        layout.setMargin(true);
+        layout.setMargin(new MarginInfo(false, true, true, true));
         //layout.setComponentAlignment(updateButton, Alignment.BOTTOM_CENTER);
-        addStyleName("colored");
+        //addStyleName("colored");
         setContent(layout);
     }
     

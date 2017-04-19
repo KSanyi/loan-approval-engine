@@ -16,16 +16,12 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.accounting.BalanceSheet;
-import hu.lae.accounting.IncomeStatement;
+import hu.lae.Client;
 import hu.lae.infrastructure.server.ApplicationService;
 import hu.lae.infrastructure.server.LaeServlet;
-import hu.lae.infrastructure.ui.balancesheet.BalanceSheetPanel;
-import hu.lae.infrastructure.ui.existingloans.ExistingLoansPanel;
-import hu.lae.infrastructure.ui.incomestatement.IncomeStatementPanel;
+import hu.lae.infrastructure.ui.client.ClientPanel;
 import hu.lae.infrastructure.ui.loancalculation.CalculatorWindow;
 import hu.lae.infrastructure.ui.riskparameters.RiskParametersPanel;
-import hu.lae.loan.ExistingLoans;
 import hu.lae.loan.LoanCalculator;
 import hu.lae.riskparameters.RiskParameters;
 import hu.lae.usermanagement.UserInfo;
@@ -68,10 +64,9 @@ public class LaeUI extends UI {
 	    
 	    RiskParametersPanel riskParametersPanel = new RiskParametersPanel(applicationService.riskParameterRepository);
 	    
-	    BalanceSheetPanel balanceSheetPanel = new BalanceSheetPanel(BalanceSheet.createDefault());
-	    IncomeStatementPanel incomeStatementPanel = new IncomeStatementPanel(IncomeStatement.createDefault(LocalDate.now().getYear()-1));
-	    ExistingLoansPanel existingLoansPanel = new ExistingLoansPanel(ExistingLoans.createEmpty());
-	    HorizontalLayout mainLayout = new HorizontalLayout(riskParametersPanel, balanceSheetPanel, incomeStatementPanel, existingLoansPanel);
+	    ClientPanel clientPanel = new ClientPanel(Client.createDefault());
+	    
+	    HorizontalLayout mainLayout = new HorizontalLayout(riskParametersPanel, clientPanel);
 	    mainLayout.setMargin(true);
 	    
 	    Button calculateButton = new Button("Calculate");
@@ -83,8 +78,7 @@ public class LaeUI extends UI {
 	        RiskParameters riskParameters = riskParametersPanel.getRiskParameters();
 	        LocalDate currentDate = Clock.date();
 	        
-	        CalculatorWindow calculatorWindow = new CalculatorWindow(new LoanCalculator(riskParameters, currentDate), balanceSheetPanel.getBalanceSheet(),
-	                incomeStatementPanel.getIncomeStatement(), existingLoansPanel.getExistingLoans(), currentDate);
+	        CalculatorWindow calculatorWindow = new CalculatorWindow(new LoanCalculator(riskParameters, currentDate), clientPanel.getClient(), currentDate);
 	        UI.getCurrent().addWindow(calculatorWindow);
 	    });
 	    

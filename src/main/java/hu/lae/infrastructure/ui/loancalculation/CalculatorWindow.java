@@ -19,11 +19,9 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.accounting.BalanceSheet;
-import hu.lae.accounting.IncomeStatement;
+import hu.lae.Client;
 import hu.lae.infrastructure.ui.LaeUI;
 import hu.lae.infrastructure.ui.component.AmountField;
-import hu.lae.loan.ExistingLoans;
 import hu.lae.loan.LoanApplicationResult;
 import hu.lae.loan.LoanCalculator;
 
@@ -35,9 +33,7 @@ public class CalculatorWindow extends Window {
     private static final Integer DEFAULT_PAYBACK_YEARS = 5;
     
     private final LoanCalculator loanCalculator;
-    private final BalanceSheet balanceSheet;
-    private final IncomeStatement incomeStatement;
-    private final ExistingLoans existingLoans;    
+    private final Client client;
     
     private final LoanSlider stLoanSlider = new LoanSlider("Short term loan");
     private final LoanSlider ltLoanSlider = new LoanSlider("Long term loan");
@@ -46,15 +42,14 @@ public class CalculatorWindow extends Window {
  
     //private final Button checkCalculationButton = new Button("Check calculations");
     
-    public CalculatorWindow(LoanCalculator loanCalculator, BalanceSheet balanceSheet, IncomeStatement incomeStatement, ExistingLoans existingLoans, LocalDate currentDate) {
+    public CalculatorWindow(LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
         this.loanCalculator = loanCalculator;
-        this.balanceSheet = balanceSheet;
-        this.incomeStatement = incomeStatement;
-        this.existingLoans = existingLoans;
+        this.client = client;
         
         setModal(true);
-        paybackYearsCombo = new ComboBox<>(null, generateComboValues(loanCalculator.riskParameters.maxLoanDuration));
-        paybackYearsCombo.setValue(Math.min(DEFAULT_PAYBACK_YEARS, loanCalculator.riskParameters.maxLoanDuration));
+        int maxLoanDuration = loanCalculator.riskParameters.maxLoanDurations.maxLoanDuration(client.industry); 
+        paybackYearsCombo = new ComboBox<>(null, generateComboValues(maxLoanDuration));
+        paybackYearsCombo.setValue(Math.min(DEFAULT_PAYBACK_YEARS, maxLoanDuration));
         paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged(value.getValue()));
         stLoanSlider.addLoanValueChangeListener(loanValue -> shortTermloanChanged(loanValue));
         ltLoanSlider.setLoanValue(1);
@@ -62,7 +57,7 @@ public class CalculatorWindow extends Window {
         //checkCalculationButton.addStyleName(ValoTheme.BUTTON_LINK);
         //checkCalculationButton.addClickListener(click -> UI.getCurrent().addWindow(new CalculationsWindow()));
         
-        double yearlyDebtServiceForExistingLoans = existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
+        double yearlyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
         setContent(createLayout(yearlyDebtServiceForExistingLoans));
         
         paybackYearsChanged(DEFAULT_PAYBACK_YEARS);
@@ -104,7 +99,7 @@ public class CalculatorWindow extends Window {
     
     private void paybackYearsChanged(int paybackYears) {
         logger.debug("Payback years combo is set to " + paybackYears);
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, paybackYears, stLoanSlider.getLoanValue());
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, stLoanSlider.getLoanValue());
         stLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxShortTermLoan);
         stLoanSlider.setLoanValue((long)loanApplicationResult.justifiableShortTermLoan);
         ltLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxLongTermLoan);
@@ -112,7 +107,7 @@ public class CalculatorWindow extends Window {
     }
     
     private void shortTermloanChanged(long shortTermLoan) {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(balanceSheet, incomeStatement, existingLoans, (Integer)paybackYearsCombo.getValue(), shortTermLoan);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, (Integer)paybackYearsCombo.getValue(), shortTermLoan);
         ltLoanSlider.setMaxLoanValue((long)loanApplicationResult.maxLongTermLoan);
     }
     

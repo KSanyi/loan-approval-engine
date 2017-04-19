@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.incomestatement;
+package hu.lae.infrastructure.ui.client.incomestatement;
 
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;

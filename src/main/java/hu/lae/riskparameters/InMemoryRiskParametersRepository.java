@@ -1,5 +1,7 @@
 package hu.lae.riskparameters;
 
+import hu.lae.util.MapFactory;
+
 public class InMemoryRiskParametersRepository implements RiskParameterRepository {
 
     private RiskParameters riskParameters;
@@ -8,7 +10,7 @@ public class InMemoryRiskParametersRepository implements RiskParameterRepository
         riskParameters = new RiskParameters("", "",
                 0.4, new Haircuts(0.8, 0.5, 0.8, 0.4),
                 new InterestRate(0.03),
-                5,
+                new MaxLoanDurations(MapFactory.of(Industry.CONSTRUCTION, 2, Industry.AUTOMOTIVE, 5)),
                 new InterestRate(0.05),
                 1.2);
     }

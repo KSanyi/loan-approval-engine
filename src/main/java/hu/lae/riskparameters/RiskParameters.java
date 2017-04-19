@@ -15,20 +15,20 @@ public class RiskParameters {
     
     public final InterestRate shortTermInterestRate;
     
-    public final int maxLoanDuration;
+    public final MaxLoanDurations maxLoanDurations;
     
     public final InterestRate longTermInterestRate;
     
     public final double dscrThreshold;
 
     public RiskParameters(String id, String name, double amortizationRate, Haircuts haircuts, InterestRate shortTermInterestRate,
-            int maxLoanDuration, InterestRate longTermInterestRate, double dscrThreshold) {
+            MaxLoanDurations maxLoanDurations, InterestRate longTermInterestRate, double dscrThreshold) {
         this.id = id;
         this.name = name;
         this.amortizationRate = amortizationRate;
         this.haircuts = haircuts;
         this.shortTermInterestRate = shortTermInterestRate;
-        this.maxLoanDuration = maxLoanDuration;
+        this.maxLoanDurations = maxLoanDurations;
         this.longTermInterestRate = longTermInterestRate;
         this.dscrThreshold = dscrThreshold;
     }

@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.existingloans;
+package hu.lae.infrastructure.ui.client.existingloans;
 
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -15,9 +15,8 @@ public class ExistingLoansPanel extends Panel {
         form = new ExistingLoansForm(existingLoans);
         
         VerticalLayout layout = new VerticalLayout(form);
-        layout.setMargin(true);
         //layout.setComponentAlignment(updateButton, Alignment.BOTTOM_CENTER);
-        addStyleName("colored");
+        //addStyleName("colored");
         setContent(layout);
     }
     

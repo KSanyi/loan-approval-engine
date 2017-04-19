@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.existingloans;
+package hu.lae.infrastructure.ui.client.existingloans;
 
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.DateField;

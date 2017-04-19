@@ -1,12 +1,7 @@
 package hu.lae.infrastructure.ui.riskparameters;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.ui.VerticalLayout;
 
 import hu.lae.infrastructure.ui.component.NumberField;
 import hu.lae.infrastructure.ui.component.PercentField;
@@ -15,7 +10,7 @@ import hu.lae.riskparameters.InterestRate;
 import hu.lae.riskparameters.RiskParameters;
 
 @SuppressWarnings("serial")
-public class RiskParametersForm extends FormLayout {
+public class RiskParametersForm extends VerticalLayout {
 
     private final RiskParameters riskParameters;
     
@@ -26,30 +21,31 @@ public class RiskParametersForm extends FormLayout {
     private final PercentField otherField = new PercentField("Other justifiable ratio");
     private final NumberField dscrThresholdField = new NumberField("DSCR threshold");
     private final PercentField shortTermInterestRateField = new PercentField("Short term interest rate");
-    private final ComboBox<Integer> maxLoanDurationCombo = new ComboBox<>("Max loan duration years", generateComboValues());
+    private final MaxLoanDurationsForm maxLoanDurationsForm;
     private final PercentField longTermInterestRateField = new PercentField("Long term interest rate");
 
     public RiskParametersForm(RiskParameters riskParameters) {
         this.riskParameters = riskParameters;
 
+        maxLoanDurationsForm = new MaxLoanDurationsForm(riskParameters.maxLoanDurations);
+        
         setSpacing(false);
         setMargin(false);
-        addComponents(amortizationRateField, arField, stockField, cashField, otherField, dscrThresholdField, shortTermInterestRateField, longTermInterestRateField, maxLoanDurationCombo);
-        
-        maxLoanDurationCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
-        maxLoanDurationCombo.setEmptySelectionAllowed(false);
-        maxLoanDurationCombo.setWidth("60px");
+        FormLayout layout = new FormLayout(amortizationRateField, arField, stockField, cashField, otherField, dscrThresholdField, shortTermInterestRateField, longTermInterestRateField);
+        layout.setSpacing(false);
+        layout.setMargin(false);
+        addComponents(layout, maxLoanDurationsForm);
         
         amortizationRateField.setPercent(riskParameters.amortizationRate);
         dscrThresholdField.setNumber(riskParameters.dscrThreshold);
         shortTermInterestRateField.setPercent(riskParameters.shortTermInterestRate.value);
-        maxLoanDurationCombo.setValue(riskParameters.maxLoanDuration);
         longTermInterestRateField.setPercent(riskParameters.longTermInterestRate.value);
         
         arField.setPercent(riskParameters.haircuts.accountsReceivable);
         stockField.setPercent(riskParameters.haircuts.stock);
         cashField.setPercent(riskParameters.haircuts.cash);
         otherField.setPercent(riskParameters.haircuts.other);
+        
     }
     
     public RiskParameters getRiskParameters() {
@@ -57,13 +53,9 @@ public class RiskParametersForm extends FormLayout {
                 amortizationRateField.getPercent(), 
                 new Haircuts(arField.getPercent(), stockField.getPercent(), cashField.getPercent(),  otherField.getPercent()),
                 new InterestRate(shortTermInterestRateField.getPercent()),
-                (int)maxLoanDurationCombo.getValue(),
+                maxLoanDurationsForm.getMaxLoanDurations(),
                 new InterestRate(longTermInterestRateField.getPercent()),
                 dscrThresholdField.getNumber());
-    }
-    
-    private static List<Integer> generateComboValues() {
-        return IntStream.range(1, 31).mapToObj(i -> i).collect(Collectors.toList());
     }
     
 }

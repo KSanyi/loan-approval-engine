@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.balancesheet;
+package hu.lae.infrastructure.ui.client.balancesheet;
 
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
