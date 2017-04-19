@@ -12,9 +12,9 @@ public class IncomeStatementForm extends FormLayout {
 
     final Integer year;
     
-    private final AmountField ebitdaField = new AmountField("EBITDA");
-    private final AmountField amortizationField = new AmountField("Amortization");
-    private final AmountField taxField = new AmountField("Taxes");
+    private final AmountField ebitdaField = new AmountField(null);
+    private final AmountField amortizationField = new AmountField(null);
+    private final AmountField taxField = new AmountField(null);
     
     IncomeStatementForm(IncomeStatement incomeStatement) {
         
@@ -28,8 +28,6 @@ public class IncomeStatementForm extends FormLayout {
         Label yearLabel = new Label(year.toString());
         yearLabel.addStyleName(ValoTheme.LABEL_H4);
         addComponents(yearLabel, ebitdaField, amortizationField, taxField);
-        
-        //setComponentAlignment(yearLabel, Alignment.TOP_LEFT);
     }
 
     public IncomeStatement getIncomeStatement() {
