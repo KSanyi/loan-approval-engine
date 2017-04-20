@@ -31,8 +31,6 @@ public class CalculatorWindow extends Window {
     
     private static final Logger logger = LoggerFactory.getLogger(LaeUI.class);
 
-    private static final Integer DEFAULT_PAYBACK_YEARS = 5;
-    
     private final LoanCalculator loanCalculator;
     private final Client client;
     
@@ -50,8 +48,8 @@ public class CalculatorWindow extends Window {
         setModal(true);
         int maxLoanDuration = loanCalculator.riskParameters.maxLoanDurations.maxLoanDuration(client.industry); 
         paybackYearsCombo = new ComboBox<>(null, generateComboValues(maxLoanDuration));
-        paybackYearsCombo.setValue(Math.min(DEFAULT_PAYBACK_YEARS, maxLoanDuration));
         paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged(value.getValue()));
+        paybackYearsCombo.setValue(maxLoanDuration);
         stLoanSlider.addLoanValueChangeListener(loanValue -> shortTermloanChanged(loanValue));
         ltLoanSlider.setLoanValue(1);
         ltLoanSlider.setLoanValue(0);
@@ -60,8 +58,6 @@ public class CalculatorWindow extends Window {
         
         double yearlyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
         setContent(createLayout(yearlyDebtServiceForExistingLoans));
-        
-        paybackYearsChanged(DEFAULT_PAYBACK_YEARS);
     }
     
     private Component createLayout(double yearlyDebtServiceForExistingLoans) {
