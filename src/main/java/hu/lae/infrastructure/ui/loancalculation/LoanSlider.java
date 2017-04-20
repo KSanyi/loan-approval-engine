@@ -20,6 +20,8 @@ public class LoanSlider extends HorizontalLayout {
     
     private final AmountField amountField = createAmountField();
     
+    private long minLoanValue = 0;
+    
     private final List<LoanValueChangeListener> loanValueChangeListeners = new ArrayList<>();
     
     LoanSlider(String caption) {
@@ -32,7 +34,6 @@ public class LoanSlider extends HorizontalLayout {
     
     void setLoanValue(long loanValue) {
         slider.setLoanValue(loanValue);
-        
     }
     
     long getLoanValue() {
@@ -42,6 +43,13 @@ public class LoanSlider extends HorizontalLayout {
     void setMaxLoanValue(long maxLoanValue) {
         slider.setMax((double)maxLoanValue);
         maxAmountLabel.setValue("Max " + maxLoanValue + " million Ft" );
+    }
+    
+    void setMinLoanValue(long minLoanValue) {
+        this.minLoanValue = minLoanValue;
+        if(slider.getValue() < minLoanValue) {
+            setLoanValue(minLoanValue);
+        }
     }
     
     private AmountField createAmountField() {
@@ -77,11 +85,21 @@ public class LoanSlider extends HorizontalLayout {
         return label;
     }
 
-    public void loanAmountChanged(Long loanAmount) {
-        long effectiveLoanAmount = loanAmount > slider.getMax() ? (long)slider.getMax() : loanAmount;
+    public void loanAmountChanged(long loanAmount) {
+        long effectiveLoanAmount = effectiveLoanAmount(loanAmount);
         amountField.setAmount(effectiveLoanAmount);
         slider.setValue((double)effectiveLoanAmount);
         loanValueChangeListeners.stream().forEach(listener -> listener.loanValueChanged(effectiveLoanAmount));
+    }
+    
+    private long effectiveLoanAmount(long loanAmount) {
+        if(loanAmount < minLoanValue) {
+            return minLoanValue;
+        }
+        if(loanAmount > slider.getMax()) {
+            return (long)slider.getMax();
+        }
+        return loanAmount;
     }
     
     void addLoanValueChangeListener(LoanValueChangeListener loanValueChangeListener) {

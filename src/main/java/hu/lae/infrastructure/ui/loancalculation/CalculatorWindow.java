@@ -39,6 +39,7 @@ public class CalculatorWindow extends Window {
 
     private final ComboBox<Integer> paybackYearsCombo;
  
+    
     //private final Button checkCalculationButton = new Button("Check calculations");
     
     public CalculatorWindow(LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
@@ -58,6 +59,9 @@ public class CalculatorWindow extends Window {
         
         double yearlyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
         setContent(createLayout(yearlyDebtServiceForExistingLoans));
+        if(client.existingLoans.isToBeRefinanced) {
+            ltLoanSlider.setMinLoanValue((long)yearlyDebtServiceForExistingLoans);
+        }
     }
     
     private Component createLayout(double yearlyDebtServiceForExistingLoans) {
