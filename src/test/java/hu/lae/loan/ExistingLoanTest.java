@@ -13,10 +13,10 @@ public class ExistingLoanTest {
     public void test() {
         long shortTermLoans = 0;
         long longTermLoans = 100;
-        LocalDate expirity = LocalDate.of(2019, 6, 30);
+        LocalDate expiry = LocalDate.of(2019, 6, 30);
         long bullet = 0;
         boolean isToBeRefinanced = false;
-        ExistingLoans existingLoans = new ExistingLoans(shortTermLoans, longTermLoans, expirity, bullet, isToBeRefinanced);
+        ExistingLoans existingLoans = new ExistingLoans(shortTermLoans, longTermLoans, expiry, bullet, isToBeRefinanced);
         
         double yealyDebtService = existingLoans.yealyDebtService(new InterestRate(0.05), LocalDate.of(2017, 4, 9));
         

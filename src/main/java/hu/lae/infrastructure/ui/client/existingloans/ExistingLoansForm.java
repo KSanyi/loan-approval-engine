@@ -17,7 +17,7 @@ class ExistingLoansForm extends HorizontalLayout {
     private final AmountField shortTermLoansField = new AmountField("Short term loans");
     private final AmountField longTermLoansField = new AmountField("Long term loans");
     private final AmountField bulletField = new AmountField("Bullet");
-    private final DateField expirityField = new DateField("Expirity");
+    private final DateField expiryField = new DateField("Expiry");
     private final CheckBox isToBeRefinancedCheckBox = new CheckBox("Is to be refinanced");
     
     ExistingLoansForm(ExistingLoans existingLoans) {
@@ -29,14 +29,14 @@ class ExistingLoansForm extends HorizontalLayout {
         shortTermLoansField.setAmount(existingLoans.shortTermLoans);
         longTermLoansField.setAmount(existingLoans.longTermLoans);
         bulletField.setAmount(existingLoans.bullet);
-        expirityField.setValue(existingLoans.expirity);
+        expiryField.setValue(existingLoans.expiry);
         isToBeRefinancedCheckBox.setValue(existingLoans.isToBeRefinanced);
         
-        expirityField.addStyleName(ValoTheme.DATEFIELD_SMALL);
-        expirityField.setWidth("120px");
-        expirityField.setRangeStart(Clock.date());
+        expiryField.addStyleName(ValoTheme.DATEFIELD_SMALL);
+        expiryField.setWidth("120px");
+        expiryField.setRangeStart(Clock.date());
         
-        FormLayout layout = new FormLayout(shortTermLoansField, longTermLoansField, bulletField, expirityField, isToBeRefinancedCheckBox);
+        FormLayout layout = new FormLayout(shortTermLoansField, longTermLoansField, bulletField, expiryField, isToBeRefinancedCheckBox);
         layout.setSpacing(false);
         layout.setMargin(false);
 
@@ -44,7 +44,7 @@ class ExistingLoansForm extends HorizontalLayout {
     }
     
     public ExistingLoans getExistingLoans() {
-        return new ExistingLoans(shortTermLoansField.getAmount(), longTermLoansField.getAmount(), expirityField.getValue(),
+        return new ExistingLoans(shortTermLoansField.getAmount(), longTermLoansField.getAmount(), expiryField.getValue(),
                 bulletField.getAmount(), isToBeRefinancedCheckBox.getValue());
     }
     

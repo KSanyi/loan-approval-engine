@@ -19,22 +19,22 @@ public class ExistingLoans {
     
     public final long longTermLoans;
     
-    public final LocalDate expirity;
+    public final LocalDate expiry;
     
     public final long bullet;
     
     public final boolean isToBeRefinanced;
 
-    public ExistingLoans(long shortTermLoans, long longTermLoans, LocalDate expirity, long bullet, boolean isToBeRefinanced) {
+    public ExistingLoans(long shortTermLoans, long longTermLoans, LocalDate expiry, long bullet, boolean isToBeRefinanced) {
         this.shortTermLoans = shortTermLoans;
         this.longTermLoans = longTermLoans;
-        this.expirity = expirity;
+        this.expiry = expiry;
         this.bullet = bullet;
         this.isToBeRefinanced = isToBeRefinanced;
     }
     
     public double yealyDebtService(InterestRate longTermInterestRate, LocalDate currentDate) {
-        double quartersUntilMaturity = ChronoUnit.DAYS.between(currentDate, expirity) / 90.0;
+        double quartersUntilMaturity = ChronoUnit.DAYS.between(currentDate, expiry) / 90.0;
         return -ExcelFunctions.pmt(longTermInterestRate.value, quartersUntilMaturity, longTermLoans, bullet, 0) * 4;
     }
     
