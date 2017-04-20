@@ -1,9 +1,12 @@
 package hu.lae;
 
+import java.time.LocalDate;
+
 import hu.lae.infrastructure.demo.DemoAuthenticator;
 import hu.lae.infrastructure.server.ApplicationService;
 import hu.lae.infrastructure.server.LaeServer;
 import hu.lae.riskparameters.InMemoryRiskParametersRepository;
+import hu.lae.util.Clock;
 
 public class Main {
 
@@ -13,6 +16,8 @@ public class Main {
 
         ApplicationService applicationService = new ApplicationService(new DemoAuthenticator(), new InMemoryRiskParametersRepository());
 
+        Clock.setStaticDate(LocalDate.of(2017, 4, 1));
+        
         new LaeServer(port, applicationService).startServer();
     }
 

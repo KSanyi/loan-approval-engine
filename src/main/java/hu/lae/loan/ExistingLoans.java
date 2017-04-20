@@ -7,12 +7,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import hu.lae.riskparameters.InterestRate;
+import hu.lae.util.Clock;
 import hu.lae.util.ExcelFunctions;
 
 public class ExistingLoans {
     
     public static ExistingLoans createEmpty() {
-        return new ExistingLoans(0, 0, LocalDate.of(2018, 1, 1), 0, false);
+        return new ExistingLoans(0, 0, Clock.date().plusYears(1), 0, false);
     }
 
     public final long shortTermLoans;
@@ -36,6 +37,10 @@ public class ExistingLoans {
     public double yealyDebtService(InterestRate longTermInterestRate, LocalDate currentDate) {
         double quartersUntilMaturity = ChronoUnit.DAYS.between(currentDate, expiry) / 90.0;
         return -ExcelFunctions.pmt(longTermInterestRate.value, quartersUntilMaturity, longTermLoans, bullet, 0) * 4;
+    }
+    
+    public boolean isValid(LocalDate date) {
+        return longTermLoans == 0 || !expiry.isBefore(date.plusYears(1));
     }
     
     @Override

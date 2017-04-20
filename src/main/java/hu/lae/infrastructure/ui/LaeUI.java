@@ -12,6 +12,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -57,10 +58,10 @@ public class LaeUI extends UI {
 	    logger.info(userInfo.loginName + " logged in");
 	    
 	    DateField currentDateField = new DateField("Current date");
-	    currentDateField.setValue(LocalDate.of(2017, 4, 1));
+	    currentDateField.setValue(Clock.date());
 	    currentDateField.addStyleName(ValoTheme.DATEFIELD_SMALL);
 	    currentDateField.setWidth("120px");
-	    currentDateField.addValueChangeListener(e -> Clock.setStaticTime(e.getValue()));
+	    currentDateField.addValueChangeListener(e -> Clock.setStaticDate(e.getValue()));
 	    
 	    RiskParametersPanel riskParametersPanel = new RiskParametersPanel(applicationService.riskParameterRepository);
 	    
@@ -78,8 +79,13 @@ public class LaeUI extends UI {
 	        RiskParameters riskParameters = riskParametersPanel.getRiskParameters();
 	        LocalDate currentDate = Clock.date();
 	        
-	        CalculatorWindow calculatorWindow = new CalculatorWindow(new LoanCalculator(riskParameters, currentDate), clientPanel.getClient(), currentDate);
-	        UI.getCurrent().addWindow(calculatorWindow);
+	        Client client = clientPanel.getClient();
+	        if(!client.existingLoans.isValid(Clock.date())) {
+	            Notification.show("Validation error", "Change the expiry of existing loans", Notification.Type.ERROR_MESSAGE);
+	        } else {
+	            CalculatorWindow calculatorWindow = new CalculatorWindow(new LoanCalculator(riskParameters, currentDate), client, currentDate);
+	            UI.getCurrent().addWindow(calculatorWindow);	            
+	        }
 	    });
 	    
 	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), currentDateField, mainLayout, calculateButton);

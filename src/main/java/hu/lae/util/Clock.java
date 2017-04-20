@@ -13,7 +13,7 @@ public class Clock {
     
     private static LocalDate staticDate; 
     
-    public static void setStaticTime(LocalDate date) {
+    public static void setStaticDate(LocalDate date) {
         staticDate = date;
     }
     

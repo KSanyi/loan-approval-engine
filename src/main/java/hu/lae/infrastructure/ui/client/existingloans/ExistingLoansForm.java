@@ -1,5 +1,7 @@
 package hu.lae.infrastructure.ui.client.existingloans;
 
+import java.time.LocalDate;
+
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
@@ -34,7 +36,14 @@ class ExistingLoansForm extends HorizontalLayout {
         
         expiryField.addStyleName(ValoTheme.DATEFIELD_SMALL);
         expiryField.setWidth("120px");
-        expiryField.setRangeStart(Clock.date());
+        expiryField.setRangeStart(Clock.date().plusYears(1));
+        expiryField.addValueChangeListener(e -> {
+            LocalDate firstValidDate = Clock.date().plusYears(1);
+            if(e.getValue().isBefore(firstValidDate)) {
+                expiryField.setRangeStart(firstValidDate);
+                expiryField.setValue(firstValidDate);
+            }
+        });
         
         FormLayout layout = new FormLayout(shortTermLoansField, longTermLoansField, bulletField, expiryField, isToBeRefinancedCheckBox);
         layout.setSpacing(false);
