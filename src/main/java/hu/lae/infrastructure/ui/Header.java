@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
@@ -16,13 +15,13 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.usermanagement.UserInfo;
 
-public class Header extends HorizontalLayout implements Button.ClickListener {
+public class Header extends HorizontalLayout {
 
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = LoggerFactory.getLogger(Header.class);
 
-	private final Button logoutButton = new Button("Logout", this);
+	private final Button logoutButton = new Button("Logout", click -> logout());
 
 	private final UserInfo userInfo;
 
@@ -63,13 +62,10 @@ public class Header extends HorizontalLayout implements Button.ClickListener {
 		return userInfoLayout;
 	}
 
-	@Override
-	public void buttonClick(ClickEvent event) {
-		if (event.getButton() == logoutButton) {
-			logger.info("User " + userInfo.loginName + " logged out");
-			UI.getCurrent().getPage().setLocation("/");
-			UI.getCurrent().getSession().close();
-		} 
+	public void logout() {
+		logger.info("User " + userInfo.loginName + " logged out");
+		UI.getCurrent().getPage().setLocation("/");
+		UI.getCurrent().getSession().close(); 
 	}
 }
 

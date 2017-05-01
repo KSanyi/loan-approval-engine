@@ -12,9 +12,9 @@ public class IncomeStatementForm extends FormLayout {
 
     final Integer year;
     
-    private final AmountField ebitdaField = new AmountField(null);
-    private final AmountField amortizationField = new AmountField(null);
-    private final AmountField taxField = new AmountField(null);
+    private final AmountField ebitdaField = new AmountField(null, "ebitda");
+    private final AmountField amortizationField = new AmountField(null, "amortization");
+    private final AmountField taxField = new AmountField(null, "tax");
     
     IncomeStatementForm(IncomeStatement incomeStatement) {
         

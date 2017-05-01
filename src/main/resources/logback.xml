@@ -15,7 +15,6 @@
 	</appender>
 
 	<logger name="hu.lae" level="DEBUG" />
-	<logger name="com.vaadin" level="INFO" />
 	<logger name="org.eclipse.jetty" level="INFO" />
 
 	<root level="INFO">

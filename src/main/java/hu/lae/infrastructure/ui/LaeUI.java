@@ -21,7 +21,7 @@ import hu.lae.Client;
 import hu.lae.infrastructure.server.ApplicationService;
 import hu.lae.infrastructure.server.LaeServlet;
 import hu.lae.infrastructure.ui.client.ClientPanel;
-import hu.lae.infrastructure.ui.loancalculation.CalculatorWindow;
+import hu.lae.infrastructure.ui.loancalculation.ProposalWindow;
 import hu.lae.infrastructure.ui.riskparameters.RiskParametersPanel;
 import hu.lae.loan.LoanCalculator;
 import hu.lae.riskparameters.RiskParameters;
@@ -83,7 +83,7 @@ public class LaeUI extends UI {
 	        if(!client.existingLoans.isValid(Clock.date())) {
 	            Notification.show("Validation error", "Change the expiry of existing loans", Notification.Type.ERROR_MESSAGE);
 	        } else {
-	            CalculatorWindow calculatorWindow = new CalculatorWindow(new LoanCalculator(riskParameters, currentDate), client, currentDate);
+	            ProposalWindow calculatorWindow = new ProposalWindow(new LoanCalculator(riskParameters, currentDate), client, currentDate);
 	            UI.getCurrent().addWindow(calculatorWindow);	            
 	        }
 	    });

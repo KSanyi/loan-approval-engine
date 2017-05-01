@@ -1,120 +1,97 @@
 package hu.lae.infrastructure.ui.loancalculation;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.shared.ui.slider.SliderOrientation;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Slider;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.infrastructure.ui.component.AmountField;
+import hu.lae.util.Formatters;
 
 @SuppressWarnings("serial")
-public class LoanSlider extends HorizontalLayout {
+public class LoanSlider extends CustomField<Double> {
 
-    private final MySlider slider;
+    private final AmountField amountField = createAmountField();
+    
+    private final Slider slider = createSlider();
     
     private final Label maxAmountLabel = createMaxAmountLabel();
     
-    private final AmountField amountField = createAmountField();
-    
-    private long minLoanValue = 0;
-    
-    private final List<LoanValueChangeListener> loanValueChangeListeners = new ArrayList<>();
+    private double loanValue;
     
     LoanSlider(String caption) {
-        slider = createSlider();
-        
-        addComponents(createCaptionLabel(caption), amountField, slider, maxAmountLabel);
-        
-        slider.addValueChangeListener(v -> loanAmountChanged(v.getValue().longValue()));
-    }
-    
-    void setLoanValue(long loanValue) {
-        slider.setLoanValue(loanValue);
-    }
-    
-    long getLoanValue() {
-        return slider.getValue().longValue();
-    }
-    
-    void setMaxLoanValue(long maxLoanValue) {
-        slider.setMax((double)maxLoanValue);
-        maxAmountLabel.setValue("Max " + maxLoanValue + " million Ft" );
-    }
-    
-    void setMinLoanValue(long minLoanValue) {
-        this.minLoanValue = minLoanValue;
-        if(slider.getValue() < minLoanValue) {
-            setLoanValue(minLoanValue);
-        }
+        setCaption(caption);
+        slider.setValue(0d);
+        amountField.setValue("0");
+        slider.addValueChangeListener(v -> setValue(v.getValue()));
     }
     
     private AmountField createAmountField() {
-        AmountField amountField = new AmountField(null);
+        AmountField amountField = new AmountField(null, "loan amount");
         amountField.setWidth("50");
+        amountField.setValueChangeMode(ValueChangeMode.LAZY);
         amountField.removeStyleName(ValoTheme.TEXTFIELD_SMALL);
-        amountField.addValueChangeListener(event -> {
+        amountField.addValueChangeListener(v -> {
             try {
-                loanAmountChanged(Long.parseLong(event.getValue()));
+                double doubleValue = Double.parseDouble(v.getValue());
+                setValue(doubleValue);
             } catch(NumberFormatException ex) {
-                loanAmountChanged(0L);
+                setValue(0d);
             }
         });
         return amountField;
     }
     
-    private MySlider createSlider() {
-        MySlider slider = new MySlider();
+    private Slider createSlider() {
+        Slider slider = new Slider();
         slider.setOrientation(SliderOrientation.HORIZONTAL);
-        slider.setWidth("500px");
+        slider.setWidth("300px");
         return slider;
     }
     
-    private Label createCaptionLabel(String caption) {
-        Label label = new Label(caption);
-        label.setWidth("120px");
+    private Label createMaxAmountLabel() {
+        Label label = new Label("<center>Max</center>0 million Ft", ContentMode.HTML);
         return label;
     }
     
-    private Label createMaxAmountLabel() {
-        Label label = new Label("Max 0 million Ft");
-        //label.setWidth("130px");
-        return label;
+    @Override
+    public Double getValue() {
+        return loanValue;
     }
 
-    public void loanAmountChanged(long loanAmount) {
-        long effectiveLoanAmount = effectiveLoanAmount(loanAmount);
-        amountField.setAmount(effectiveLoanAmount);
-        slider.setValue((double)effectiveLoanAmount);
-        loanValueChangeListeners.stream().forEach(listener -> listener.loanValueChanged(effectiveLoanAmount));
+    @Override
+    protected Component initContent() {
+        HorizontalLayout layout = new HorizontalLayout(amountField, slider, maxAmountLabel);
+        layout.setSpacing(false);
+        return layout;
     }
-    
-    private long effectiveLoanAmount(long loanAmount) {
-        if(loanAmount < minLoanValue) {
-            return minLoanValue;
+
+    @Override
+    protected void doSetValue(Double value) {
+        if(value > slider.getMax()) {
+            value = slider.getMax();
         }
-        if(loanAmount > slider.getMax()) {
-            return (long)slider.getMax();
+        if(value < 0) {
+            value = 0d;
         }
-        return loanAmount;
-    }
-    
-    void addLoanValueChangeListener(LoanValueChangeListener loanValueChangeListener) {
-        loanValueChangeListeners.add(loanValueChangeListener);
-    }
-    
-    static interface LoanValueChangeListener {
-        void loanValueChanged(long loanValue);
-    }
-    
-    private static class MySlider extends Slider {
-        
-        void setLoanValue(long loanValue) {
-            setValue((double)loanValue);
+        if(Math.abs(value - loanValue) > 1) {
+            loanValue = value;
+            slider.setValue(value);
+            amountField.setValue(value + "");
         }
+    }
+    
+    void setMaxLoanValue(double maxLoanValue) {
+        if(maxLoanValue < loanValue) {
+            doSetValue(maxLoanValue);
+        }
+        slider.setMax(maxLoanValue);
+        maxAmountLabel.setValue("<center>Max</center>" + Formatters.formateAmount(maxLoanValue) + " million Ft" );
     }
     
 }

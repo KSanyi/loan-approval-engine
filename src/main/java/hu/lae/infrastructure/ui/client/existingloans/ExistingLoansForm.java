@@ -2,7 +2,6 @@ package hu.lae.infrastructure.ui.client.existingloans;
 
 import java.time.LocalDate;
 
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -16,11 +15,10 @@ import hu.lae.util.Clock;
 @SuppressWarnings("serial")
 class ExistingLoansForm extends HorizontalLayout {
 
-    private final AmountField shortTermLoansField = new AmountField("Short term loans");
-    private final AmountField longTermLoansField = new AmountField("Long term loans");
-    private final AmountField bulletField = new AmountField("Bullet");
+    private final AmountField shortTermLoansField = new AmountField("Short term loans", "existing st loan");
+    private final AmountField longTermLoansField = new AmountField("Long term loans", "existing lt loan");
+    private final AmountField bulletField = new AmountField("Bullet", "bullet");
     private final DateField expiryField = new DateField("Expiry");
-    private final CheckBox isToBeRefinancedCheckBox = new CheckBox("Is to be refinanced");
     
     ExistingLoansForm(ExistingLoans existingLoans) {
         addComponents(createLayout(existingLoans));
@@ -32,7 +30,6 @@ class ExistingLoansForm extends HorizontalLayout {
         longTermLoansField.setAmount(existingLoans.longTermLoans);
         bulletField.setAmount(existingLoans.bullet);
         expiryField.setValue(existingLoans.expiry);
-        isToBeRefinancedCheckBox.setValue(existingLoans.isToBeRefinanced);
         
         expiryField.addStyleName(ValoTheme.DATEFIELD_SMALL);
         expiryField.setWidth("120px");
@@ -45,7 +42,7 @@ class ExistingLoansForm extends HorizontalLayout {
             }
         });
         
-        FormLayout layout = new FormLayout(shortTermLoansField, longTermLoansField, bulletField, expiryField, isToBeRefinancedCheckBox);
+        FormLayout layout = new FormLayout(shortTermLoansField, longTermLoansField, bulletField, expiryField);
         layout.setSpacing(false);
         layout.setMargin(false);
 
@@ -54,7 +51,7 @@ class ExistingLoansForm extends HorizontalLayout {
     
     public ExistingLoans getExistingLoans() {
         return new ExistingLoans(shortTermLoansField.getAmount(), longTermLoansField.getAmount(), expiryField.getValue(),
-                bulletField.getAmount(), isToBeRefinancedCheckBox.getValue());
+                bulletField.getAmount());
     }
     
 }

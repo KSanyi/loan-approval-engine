@@ -13,7 +13,7 @@ import hu.lae.util.ExcelFunctions;
 public class ExistingLoans {
     
     public static ExistingLoans createEmpty() {
-        return new ExistingLoans(0, 0, Clock.date().plusYears(1), 0, false);
+        return new ExistingLoans(0, 0, Clock.date().plusYears(1), 0);
     }
 
     public final long shortTermLoans;
@@ -24,14 +24,11 @@ public class ExistingLoans {
     
     public final long bullet;
     
-    public final boolean isToBeRefinanced;
-
-    public ExistingLoans(long shortTermLoans, long longTermLoans, LocalDate expiry, long bullet, boolean isToBeRefinanced) {
+    public ExistingLoans(long shortTermLoans, long longTermLoans, LocalDate expiry, long bullet) {
         this.shortTermLoans = shortTermLoans;
         this.longTermLoans = longTermLoans;
         this.expiry = expiry;
         this.bullet = bullet;
-        this.isToBeRefinanced = isToBeRefinanced;
     }
     
     public double yealyDebtService(InterestRate longTermInterestRate, LocalDate currentDate) {

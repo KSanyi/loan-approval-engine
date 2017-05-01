@@ -27,7 +27,7 @@ public class LoanCalculator {
         this.currentDate = currentDate;
     }
     
-    public LoanApplicationResult calculate(Client client, int paybackYears, long shortTermLoan, FreeCashFlowCalculator freeCashFlowCalculator) {
+    public LoanApplicationResult calculate(Client client, int paybackYears, double shortTermLoan, FreeCashFlowCalculator freeCashFlowCalculator) {
         
         logger.debug("------------------------- Calculation starts -------------------------");
         logger.debug(client.toString());
@@ -74,10 +74,10 @@ public class LoanCalculator {
         
         logger.info("Cash flow remaining for long term loans: " + cashFlowForNewLongTermLoans);
         
-        if(!existingLoans.isToBeRefinanced) {
-            double yealyDebtServiceForExistingLoans = existingLoans.yealyDebtService(riskParameters.longTermInterestRate, currentDate);
-            cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yealyDebtServiceForExistingLoans);
-        }
+        //if(!existingLoans.isToBeRefinanced) {
+        //    double yealyDebtServiceForExistingLoans = existingLoans.yealyDebtService(riskParameters.longTermInterestRate, currentDate);
+        //    cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yealyDebtServiceForExistingLoans);
+        //}
         
         return new CashFlow(paybackYears, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate); 
     }

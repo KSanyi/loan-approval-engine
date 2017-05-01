@@ -29,8 +29,15 @@ public class AmountField extends TextField {
     
     private long amount;
     
+    private String name;
+    
     public AmountField(String caption) {
+        this(caption, "noname");
+    }
+    
+    public AmountField(String caption, String name) {
         super(caption);
+        this.name = name;
         setWidth("90px");   
         setMaxLength(8);
         addStyleName(ValoTheme.TEXTFIELD_SMALL);
@@ -39,9 +46,16 @@ public class AmountField extends TextField {
         setValueChangeMode(ValueChangeMode.BLUR);
     }
     
+    @Override
+    public boolean setValue(String value, boolean userOriginated) {
+        if(userOriginated) {
+            logger.debug(name + " is set to " + value);
+        }
+        return super.setValue(value, userOriginated);
+    }
+    
     private void valueChanged(String value) {
         try {
-            logger.debug(getCaption() + " amount is set to " + value);
             long numberValue = FORMATTTER.parse(value).longValue();
             setAmount(numberValue);
         } catch(ParseException ex) {

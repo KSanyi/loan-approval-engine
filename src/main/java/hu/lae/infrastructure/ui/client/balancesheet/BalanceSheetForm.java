@@ -14,13 +14,13 @@ import hu.lae.infrastructure.ui.component.AmountField;
 @SuppressWarnings("serial")
 class BalanceSheetForm extends HorizontalLayout {
 
-    private final AmountField arField = new AmountField("Accounts R");
-    private final AmountField stockField = new AmountField("Stock");
-    private final AmountField cashField = new AmountField("Cash");
-    private final AmountField otherAssetsField = new AmountField("Other");
+    private final AmountField arField = new AmountField("Accounts R", "amortization");
+    private final AmountField stockField = new AmountField("Stock", "stock");
+    private final AmountField cashField = new AmountField("Cash", "cash");
+    private final AmountField otherAssetsField = new AmountField("Other", "other assets");
     
-    private final AmountField apField = new AmountField("Accounts P");
-    private final AmountField otherLiabilitiesField = new AmountField("Other");
+    private final AmountField apField = new AmountField("Accounts P", "accounts payable");
+    private final AmountField otherLiabilitiesField = new AmountField("Other", "other liabilities");
     
     BalanceSheetForm(BalanceSheet balanceSheet) {
         addComponents(createAssetsLayout(balanceSheet.assets), createLiabilitiesLayout(balanceSheet.liabilities));
