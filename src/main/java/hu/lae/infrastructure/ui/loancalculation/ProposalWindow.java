@@ -16,6 +16,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -44,7 +45,7 @@ public class ProposalWindow extends Window {
     
     private final int maxLoanDuration; 
     
-    private final Button submitButton = new Button("Submit for proposal");
+    private final Button submitButton = new Button("Submit for proposal", click -> submit());
     
     public ProposalWindow(LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
         this.loanCalculator = loanCalculator;
@@ -174,6 +175,11 @@ public class ProposalWindow extends Window {
         panel.setSizeUndefined();
         
         return panel;
+    }
+    
+    private void submit() {
+        super.close();
+        UI.getCurrent().addWindow(new DecisionWindow(client));
     }
     
     @Override

@@ -31,4 +31,9 @@ $v-font-family: 'Lora', sans-serif, 'Source Sans Pro';
        @include valo-panel-caption-style($background-color: hsl(220, 5%, 38%));
     }
     
+    .gridSmall .v-grid-body .v-grid-cell {  
+        line-height: 30px;
+        font-size: 14px;
+    }
+    
 }

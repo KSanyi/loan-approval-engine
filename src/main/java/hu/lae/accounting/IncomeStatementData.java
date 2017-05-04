@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class IncomeStatementData {
@@ -27,7 +28,11 @@ public class IncomeStatementData {
     }
 
     public IncomeStatement lastIncomeStatement() {
-        return incomeStatements.stream().sorted(Comparator.comparing(IncomeStatement::year).reversed()).findFirst().get();
+        return incomeStatements().sorted(Comparator.comparing(IncomeStatement::year).reversed()).findFirst().get();
+    }
+    
+    public List<Long> ebitdas() {
+        return incomeStatements().map(statement -> statement.ebitda).collect(Collectors.toList());
     }
     
 }
