@@ -47,7 +47,7 @@ public class LoanCalculatorTest {
     
     @Test
     public void shortTermLoan() {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 0, FreeCashFlowCalculator.lastYear);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 0, FreeCashFlowCalculator.lastYear, false);
         
         Assert.assertEquals(303, loanApplicationResult.justifiableShortTermLoan, 0.1);
         Assert.assertEquals(1136.7, loanApplicationResult.maxShortTermLoan, 0.1);
@@ -55,45 +55,43 @@ public class LoanCalculatorTest {
     
     @Test
     public void longTermLoanWithJustifiableShortTermLoan() {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, false);
         
         Assert.assertEquals(833.75, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
     public void longTermLoanWithHigherThenJustifiableShortTermLoan() {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 370, FreeCashFlowCalculator.lastYear);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 370, FreeCashFlowCalculator.lastYear, false);
         
         Assert.assertEquals(766.75, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
     public void longTermLoanWithLowerThenJustifiableShortTermLoan() {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 150, FreeCashFlowCalculator.lastYear);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 150, FreeCashFlowCalculator.lastYear, false);
         
         Assert.assertEquals(853.63, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
-    /*
     @Test
     public void longTermLoanWithExistingLoans() {
-        ExistingLoans existingLoans = new ExistingLoans(0, 100, LocalDate.of(2019, 1, 1), 0, false);
+        ExistingLoans existingLoans = new ExistingLoans(0, 100, LocalDate.of(2019, 1, 1), 0);
         Client client = new Client("Test client", Industry.AUTOMOTIVE, balanceSheet, incomeStatementData, existingLoans);
         
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, false);
         
         Assert.assertEquals(538.39, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
     public void longTermLoanWithExistingRefinansableLoans() {
-        ExistingLoans existingLoans = new ExistingLoans(0, 100, LocalDate.of(2019, 1, 1), 0, true);
+        ExistingLoans existingLoans = new ExistingLoans(0, 100, LocalDate.of(2019, 1, 1), 0);
         Client client = new Client("Test client", Industry.AUTOMOTIVE, balanceSheet, incomeStatementData, existingLoans);
         
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, true);
         
         Assert.assertEquals(833.75, loanApplicationResult.maxLongTermLoan, 0.1);
     }
-    */
     
 }

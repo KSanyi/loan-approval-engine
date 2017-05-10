@@ -29,7 +29,7 @@ class DecisionWindow extends Window {
         GridLayout layout = new GridLayout(2, 2);
         layout.setMargin(true);
         layout.setSpacing(true);
-        layout.addComponents(createEbitdaTable(), createWarningsTable(), createEbitdaTable());
+        layout.addComponents(createEbitdaTable(), createWarningsTable());
         return layout;
     }
     

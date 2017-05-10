@@ -21,20 +21,29 @@ public class LoanSelector extends CustomField<LoanRequest> {
     private final LoanCalculator loanCalculator;
     private final Client client;
     private final FreeCashFlowCalculator freeCashFlowCalculator;
+    private final boolean refinanceExistingLongTermLoans;
     
     private final LoanSlider stLoanSlider = new LoanSlider("Short term loan");
     private final LoanSlider ltLoanSlider = new LoanSlider("Long term loan");
 
-    public LoanSelector(LoanCalculator loanCalculator, Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator) {
+    public LoanSelector(LoanCalculator loanCalculator, Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator, LoanRequest loanRequest, boolean refinanceExistingLongTermLoans) {
         this.loanCalculator = loanCalculator;
         this.client = client;
         this.freeCashFlowCalculator = freeCashFlowCalculator;
         this.paybackYears = paybackYears;
+        this.refinanceExistingLongTermLoans = refinanceExistingLongTermLoans;
         stLoanSlider.addValueChangeListener(v -> shortTermloanChanged(v.getValue()));
+        
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, 0, freeCashFlowCalculator, refinanceExistingLongTermLoans); 
+        stLoanSlider.setMaxLoanValue(loanApplicationResult.maxShortTermLoan);
+        ltLoanSlider.setMaxLoanValue(loanApplicationResult.maxLongTermLoan);
+        
+        stLoanSlider.setValue(loanRequest.shortTermLoan);
+        ltLoanSlider.setValue(loanRequest.longTermLoan);
     }
     
     private void shortTermloanChanged(double shortTermLoan) {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, shortTermLoan, freeCashFlowCalculator);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, shortTermLoan, freeCashFlowCalculator, refinanceExistingLongTermLoans);
         ltLoanSlider.setMaxLoanValue(loanApplicationResult.maxLongTermLoan);
     }
 
@@ -60,7 +69,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
     
     public void setPaybackYears(int paybackYears) {
         this.paybackYears = paybackYears;
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, stLoanSlider.getValue(), freeCashFlowCalculator);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, stLoanSlider.getValue(), freeCashFlowCalculator, refinanceExistingLongTermLoans);
         stLoanSlider.setMaxLoanValue(loanApplicationResult.maxShortTermLoan);
         stLoanSlider.setValue(loanApplicationResult.justifiableShortTermLoan);
         stLoanSlider.setDescription("Justifiable short term loan:<br/><center>" + loanApplicationResult.justifiableShortTermLoan + " million Ft</center>", ContentMode.HTML);

@@ -27,6 +27,7 @@ import hu.lae.accounting.FreeCashFlowCalculator;
 import hu.lae.infrastructure.ui.LaeUI;
 import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.loan.LoanCalculator;
+import hu.lae.loan.LoanRequest;
 
 @SuppressWarnings("serial")
 public class ProposalWindow extends Window {
@@ -110,7 +111,14 @@ public class ProposalWindow extends Window {
         layout.setSizeUndefined();
         layout.setMargin(true);
         
-        Button helpButton = new Button("Help", click -> UI.getCurrent().addWindow(new LoanHelperWindow(loanCalculator, client, paybackYearsCombo.getValue(), cashflowCalculatorCombo.getValue())));
+        Button helpButton = new Button("Help", click -> UI.getCurrent().addWindow(
+                new LoanHelperWindow(loanCalculator, client, paybackYearsCombo.getValue(), cashflowCalculatorCombo.getValue(),
+                        new LoanRequest(shortTermLoanField.getAmount(), longTermLoanField.getAmount()),
+                        ltLoanRefinanceCheck.getValue(),
+                        loanRequest -> {
+                            shortTermLoanField.setAmount((long)loanRequest.shortTermLoan);
+                            longTermLoanField.setAmount((long)loanRequest.longTermLoan);
+                        })));
         helpButton.addStyleName(ValoTheme.BUTTON_LINK);
         
         HorizontalLayout panelLayout = new HorizontalLayout(layout, helpButton);
@@ -167,7 +175,7 @@ public class ProposalWindow extends Window {
     private Component createIdealStructurePanel() {
         
         double justifiableShortTermLoan = client.balanceSheet.calculateJustifiableShortTermLoan(loanCalculator.riskParameters.haircuts);
-        double maxLongTermloan = loanCalculator.calculate(client, maxLoanDuration, justifiableShortTermLoan, FreeCashFlowCalculator.average).maxLongTermLoan;
+        double maxLongTermloan = loanCalculator.calculate(client, maxLoanDuration, justifiableShortTermLoan, FreeCashFlowCalculator.average, ltLoanRefinanceCheck.getValue()).maxLongTermLoan;
         
         Label stlabel = new Label("Ideal short term loan");
         stlabel.setWidth("150px");
