@@ -13,6 +13,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -38,10 +39,13 @@ public class ProposalWindow extends Window {
     private final LoanCalculator loanCalculator;
     private final Client client;
     
-    private final LoanSelector loanSelector1;
-    private final LoanSelector loanSelector2;
-
     private final ComboBox<Integer> paybackYearsCombo;
+    
+    private final ComboBox<FreeCashFlowCalculator> cashflowCalculatorCombo = new ComboBox<>("EBITDA calculation", FreeCashFlowCalculator.calculators());
+    
+    private final AmountField shortTermLoanField = new AmountField("Short term loan");
+    
+    private final AmountField longTermLoanField = new AmountField("Long term loan");
     
     private final int maxLoanDuration; 
     
@@ -53,11 +57,13 @@ public class ProposalWindow extends Window {
         setModal(true);
         maxLoanDuration = loanCalculator.riskParameters.maxLoanDurations.maxLoanDuration(client.industry); 
 
-        loanSelector1 = new LoanSelector("Average EBITDA", loanCalculator, client, maxLoanDuration, FreeCashFlowCalculator.average);
-        loanSelector2 = new LoanSelector("Last year EBITDA", loanCalculator, client, maxLoanDuration, FreeCashFlowCalculator.lastYear);
-        paybackYearsCombo = new ComboBox<>(null, generateComboValues(maxLoanDuration));
+        //loanSelector1 = new LoanSelector("Average EBITDA", loanCalculator, client, maxLoanDuration, FreeCashFlowCalculator.average);
+        paybackYearsCombo = new ComboBox<>("Select l/t number of years", generateComboValues(maxLoanDuration));
         paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged(value.getValue()));
         paybackYearsCombo.setValue(maxLoanDuration);
+        
+        cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.lastYear);
+        cashflowCalculatorCombo.addValueChangeListener(value -> cashFlowCalculationStrategyChanged(value.getValue()));
         
         double yearlyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
         setContent(createLayout(yearlyDebtServiceForExistingLoans));
@@ -91,28 +97,36 @@ public class ProposalWindow extends Window {
     }
     
     private Component createMiddlePanel() {
-        Component paybackYearsField = createPaybackYearsField();
-        VerticalLayout layout = new VerticalLayout(paybackYearsField,
-                new HorizontalLayout(loanSelector1, loanSelector2)) ;
-        layout.setComponentAlignment(paybackYearsField, Alignment.MIDDLE_CENTER);
-        return new Panel(layout);
-    }
-    
-    private Component createPaybackYearsField() {
-        Label label = new Label("Select l/t number of years");
-        label.addStyleName(ValoTheme.LABEL_H2);
         paybackYearsCombo.addStyleName(ValoTheme.COMBOBOX_ALIGN_CENTER);
         paybackYearsCombo.setWidth("85px");
         paybackYearsCombo.setEmptySelectionAllowed(false);
-        HorizontalLayout layout = new HorizontalLayout(label, paybackYearsCombo);
-        layout.setComponentAlignment(paybackYearsCombo, Alignment.MIDDLE_RIGHT);
-        return layout;
+        
+        cashflowCalculatorCombo.setEmptySelectionAllowed(false);
+        
+        shortTermLoanField.removeStyleName(ValoTheme.TEXTFIELD_SMALL);
+        longTermLoanField.removeStyleName(ValoTheme.TEXTFIELD_SMALL);
+        
+        FormLayout layout = new FormLayout(paybackYearsCombo, cashflowCalculatorCombo, shortTermLoanField, longTermLoanField);
+        layout.setSizeUndefined();
+        layout.setMargin(true);
+        
+        Button helpButton = new Button("Help", click -> UI.getCurrent().addWindow(new LoanHelperWindow(loanCalculator, client, paybackYearsCombo.getValue(), cashflowCalculatorCombo.getValue())));
+        helpButton.addStyleName(ValoTheme.BUTTON_LINK);
+        
+        HorizontalLayout panelLayout = new HorizontalLayout(layout, helpButton);
+        panelLayout.setComponentAlignment(helpButton, Alignment.MIDDLE_CENTER);
+        
+        return new Panel(panelLayout);
     }
     
     private void paybackYearsChanged(int paybackYears) {
         logger.debug("Payback years combo is set to " + paybackYears);
-        loanSelector1.setPaybackYears(paybackYears);
-        loanSelector2.setPaybackYears(paybackYears);
+        //loanSelector1.setPaybackYears(paybackYears);
+    }
+    
+    private void cashFlowCalculationStrategyChanged(FreeCashFlowCalculator calculator) {
+        logger.debug("Cash flow calculator strategy changed to " + calculator);
+        //loanSelector1.setPaybackYears(paybackYears);
     }
     
     private static List<Integer> generateComboValues(int maxValue) {

@@ -1,6 +1,8 @@
 package hu.lae.accounting;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,11 @@ public interface FreeCashFlowCalculator {
             double maintanenceCapex = amortizationRate * amortization;
             return ebitda - maintanenceCapex - tax; 
         }
+        
+        @Override
+        public String toString() {
+            return "Last year";
+        }
     };
     
     public static final FreeCashFlowCalculator average = new FreeCashFlowCalculator() {
@@ -40,7 +47,16 @@ public interface FreeCashFlowCalculator {
             double maintanenceCapex = amortizationRate * lastYearAmortization;
             return averageEbitda - maintanenceCapex - averageTax; 
         }
+        
+        @Override
+        public String toString() {
+            return "Average";
+        }
     };
+    
+    public static List<FreeCashFlowCalculator> calculators() {
+        return Arrays.asList(lastYear, average);
+    }
     
 }
 

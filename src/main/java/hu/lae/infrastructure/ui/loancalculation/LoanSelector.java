@@ -25,10 +25,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
     private final LoanSlider stLoanSlider = new LoanSlider("Short term loan");
     private final LoanSlider ltLoanSlider = new LoanSlider("Long term loan");
 
-    private final String caption;
-    
-    public LoanSelector(String caption, LoanCalculator loanCalculator, Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator) {
-        this.caption = caption;
+    public LoanSelector(LoanCalculator loanCalculator, Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator) {
         this.loanCalculator = loanCalculator;
         this.client = client;
         this.freeCashFlowCalculator = freeCashFlowCalculator;
@@ -51,7 +48,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
         VerticalLayout layout = new VerticalLayout(stLoanSlider, ltLoanSlider);
         layout.setMargin(new MarginInfo(false, true));
         layout.setSpacing(false);
-        Panel panel = new Panel(caption, layout);
+        Panel panel = new Panel(layout);
         panel.setSizeUndefined();
         return panel;
     }
