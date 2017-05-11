@@ -36,7 +36,7 @@ class ExistingLoansForm extends HorizontalLayout {
         expiryField.setRangeStart(Clock.date().plusYears(1));
         expiryField.addValueChangeListener(e -> {
             LocalDate firstValidDate = Clock.date().plusYears(1);
-            if(e.getValue().isBefore(firstValidDate)) {
+            if(e.getValue() == null || e.getValue().isBefore(firstValidDate)) {
                 expiryField.setRangeStart(firstValidDate);
                 expiryField.setValue(firstValidDate);
             }

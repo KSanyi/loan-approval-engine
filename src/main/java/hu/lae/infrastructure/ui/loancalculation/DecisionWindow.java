@@ -6,8 +6,9 @@ import java.util.stream.Collectors;
 
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import hu.lae.Client;
@@ -23,13 +24,12 @@ class DecisionWindow extends Window {
         setModal(true);
         setCaption("Decision");
         setContent(createLayout());
+        setSizeUndefined();
     }
     
     private Layout createLayout() {
-        GridLayout layout = new GridLayout(2, 2);
-        layout.setMargin(true);
-        layout.setSpacing(true);
-        layout.addComponents(createEbitdaTable(), createWarningsTable());
+        VerticalLayout layout = new VerticalLayout(
+                new HorizontalLayout(createEbitdaTable(), createWarningsTable()));
         return layout;
     }
     

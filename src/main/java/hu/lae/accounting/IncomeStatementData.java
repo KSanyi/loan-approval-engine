@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class IncomeStatementData {
 
     private final List<IncomeStatement> incomeStatements;
@@ -33,6 +36,11 @@ public class IncomeStatementData {
     
     public List<Long> ebitdas() {
         return incomeStatements().map(statement -> statement.ebitda).collect(Collectors.toList());
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
     
 }
