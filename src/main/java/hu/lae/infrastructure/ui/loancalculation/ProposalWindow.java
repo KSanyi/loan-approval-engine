@@ -1,6 +1,7 @@
 package hu.lae.infrastructure.ui.loancalculation;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -8,6 +9,7 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
@@ -16,6 +18,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -26,6 +30,7 @@ import hu.lae.Client;
 import hu.lae.accounting.FreeCashFlowCalculator;
 import hu.lae.infrastructure.ui.LaeUI;
 import hu.lae.infrastructure.ui.component.AmountField;
+import hu.lae.loan.LoanApplicationResult;
 import hu.lae.loan.LoanCalculator;
 import hu.lae.loan.LoanRequest;
 
@@ -58,7 +63,6 @@ public class ProposalWindow extends Window {
         setModal(true);
         maxLoanDuration = loanCalculator.riskParameters.maxLoanDurations.maxLoanDuration(client.industry); 
 
-        //loanSelector1 = new LoanSelector("Average EBITDA", loanCalculator, client, maxLoanDuration, FreeCashFlowCalculator.average);
         paybackYearsCombo = new ComboBox<>("Select l/t number of years", generateComboValues(maxLoanDuration));
         paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged(value.getValue()));
         paybackYearsCombo.setValue(maxLoanDuration);
@@ -68,9 +72,6 @@ public class ProposalWindow extends Window {
         
         double yearlyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
         setContent(createLayout(yearlyDebtServiceForExistingLoans));
-        //if(client.existingLoans.isToBeRefinanced) {
-        //    ltLoanSlider.setMinLoanValue((long)yearlyDebtServiceForExistingLoans);
-        //}
     }
     
     private Component createLayout(double yearlyDebtServiceForExistingLoans) {
@@ -103,8 +104,11 @@ public class ProposalWindow extends Window {
         paybackYearsCombo.setEmptySelectionAllowed(false);
         
         cashflowCalculatorCombo.setEmptySelectionAllowed(false);
+        cashflowCalculatorCombo.setWidth("120px");
         
+        shortTermLoanField.setIcon(VaadinIcons.MONEY);
         shortTermLoanField.removeStyleName(ValoTheme.TEXTFIELD_SMALL);
+        longTermLoanField.setIcon(VaadinIcons.MONEY);
         longTermLoanField.removeStyleName(ValoTheme.TEXTFIELD_SMALL);
         
         FormLayout layout = new FormLayout(paybackYearsCombo, cashflowCalculatorCombo, shortTermLoanField, longTermLoanField);
@@ -119,10 +123,13 @@ public class ProposalWindow extends Window {
                             shortTermLoanField.setAmount((long)loanRequest.shortTermLoan);
                             longTermLoanField.setAmount((long)loanRequest.longTermLoan);
                         })));
-        helpButton.addStyleName(ValoTheme.BUTTON_LINK);
+        helpButton.setIcon(VaadinIcons.SLIDER);
+        helpButton.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         
         HorizontalLayout panelLayout = new HorizontalLayout(layout, helpButton);
-        panelLayout.setComponentAlignment(helpButton, Alignment.MIDDLE_CENTER);
+        panelLayout.setComponentAlignment(helpButton, Alignment.TOP_RIGHT);
+        panelLayout.setMargin(true);
+        panelLayout.setSizeFull();
         
         return new Panel(panelLayout);
     }
@@ -168,14 +175,13 @@ public class ProposalWindow extends Window {
         layout.setComponentAlignment(debtServiceLayout, Alignment.BOTTOM_CENTER);
         Panel panel = new Panel("Existing loans", layout);
         panel.setSizeUndefined();
-        
         return panel;
     }
     
     private Component createIdealStructurePanel() {
         
         double justifiableShortTermLoan = client.balanceSheet.calculateJustifiableShortTermLoan(loanCalculator.riskParameters.haircuts);
-        double maxLongTermloan = loanCalculator.calculate(client, maxLoanDuration, justifiableShortTermLoan, FreeCashFlowCalculator.average, ltLoanRefinanceCheck.getValue()).maxLongTermLoan;
+        double maxLongTermloan = loanCalculator.calculate(client, maxLoanDuration, justifiableShortTermLoan, cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue()).maxLongTermLoan;
         
         Label stlabel = new Label("Ideal short term loan");
         stlabel.setWidth("150px");
@@ -200,8 +206,37 @@ public class ProposalWindow extends Window {
     }
     
     private void submit() {
-        super.close();
-        UI.getCurrent().addWindow(new DecisionWindow(client));
+        List<String> errorMessages = validate();
+        if(errorMessages.isEmpty()) {
+            super.close();
+            UI.getCurrent().addWindow(new DecisionWindow(client));
+        } else {
+            Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
+        }
+    }
+    
+    private List<String> validate() {
+        
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), 0, cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
+        long maxShortTermLoan = (long)loanApplicationResult.maxShortTermLoan;
+        
+        List<String> errorMessages = new ArrayList<>();
+        long shortTermLoan = shortTermLoanField.getAmount();
+        long longTermLoan = longTermLoanField.getAmount();
+        if(ltLoanRefinanceCheck.getValue()) {
+            if(longTermLoan < client.existingLoans.longTermLoans) {
+                errorMessages.add("Long term loan request must be enough to cover the existing long term loans");
+            }
+        }
+        if(shortTermLoan > maxShortTermLoan) {
+            errorMessages.add("Short term loan must not exceed " + maxShortTermLoan);
+        }
+        loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), shortTermLoan, cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
+        if(longTermLoan > loanApplicationResult.maxLongTermLoan) {
+            errorMessages.add("Long term loan must not exceed " + (long)loanApplicationResult.maxLongTermLoan);
+        }
+        
+        return errorMessages;
     }
     
     @Override

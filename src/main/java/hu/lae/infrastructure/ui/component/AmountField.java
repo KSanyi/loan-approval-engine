@@ -42,6 +42,7 @@ public class AmountField extends TextField {
         setMaxLength(8);
         addStyleName(ValoTheme.TEXTFIELD_SMALL);
         addStyleName(ValoTheme.TEXTAREA_ALIGN_RIGHT);
+        setAmount(0l);
         addValueChangeListener(event -> valueChanged(event.getValue()));
         setValueChangeMode(ValueChangeMode.BLUR);
     }
@@ -63,7 +64,7 @@ public class AmountField extends TextField {
         }
     }
     
-    public Long getAmount() {
+    public long getAmount() {
         return amount;
     }
     
