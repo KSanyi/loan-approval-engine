@@ -27,6 +27,16 @@ public class LoanCalculator {
         this.currentDate = currentDate;
     }
     
+    public LoanRequest calculateIdealLoanRequest(Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator) {
+        LoanApplicationResult result = calculate(client, paybackYears, 0, freeCashFlowCalculator, true);
+        
+        double idealShortTermLoan = client.balanceSheet.calculateJustifiableShortTermLoan(riskParameters.haircuts);
+        result = calculate(client, paybackYears, idealShortTermLoan, freeCashFlowCalculator, true);
+        double idealLongTermLoan = result.maxLongTermLoan;
+        
+        return new LoanRequest(idealShortTermLoan, idealLongTermLoan);
+    }
+    
     public LoanApplicationResult calculate(Client client, int paybackYears, double shortTermLoan, FreeCashFlowCalculator freeCashFlowCalculator, boolean refinanceExistingLongTermLoans) {
         
         logger.debug("------------------------- Calculation starts -------------------------");

@@ -180,13 +180,12 @@ public class ProposalWindow extends Window {
     
     private Component createIdealStructurePanel() {
         
-        double justifiableShortTermLoan = client.balanceSheet.calculateJustifiableShortTermLoan(loanCalculator.riskParameters.haircuts);
-        double maxLongTermloan = loanCalculator.calculate(client, maxLoanDuration, justifiableShortTermLoan, cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue()).maxLongTermLoan;
+        LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, maxLoanDuration, cashflowCalculatorCombo.getValue());
         
         Label stlabel = new Label("Ideal short term loan");
         stlabel.setWidth("150px");
         AmountField stLoanField = new AmountField(null);
-        stLoanField.setAmount((long)justifiableShortTermLoan);
+        stLoanField.setAmount((long)idealLoanRequest.shortTermLoan);
         stLoanField.setWidth("60px");
         stLoanField.setReadOnly(true);
         HorizontalLayout stLayout = new HorizontalLayout(stlabel, stLoanField);
@@ -194,7 +193,7 @@ public class ProposalWindow extends Window {
         Label ltlabel = new Label("Ideal long term loan");
         ltlabel.setWidth("150px");
         AmountField ltLoanField = new AmountField(null);
-        ltLoanField.setAmount((long)maxLongTermloan);
+        ltLoanField.setAmount((long)idealLoanRequest.longTermLoan);
         ltLoanField.setWidth("60px");
         ltLoanField.setReadOnly(true);
         HorizontalLayout ltLayout = new HorizontalLayout(ltlabel, ltLoanField);        

@@ -94,4 +94,15 @@ public class LoanCalculatorTest {
         Assert.assertEquals(833.75, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
+    @Test
+    public void idealStructure() {
+        ExistingLoans existingLoans = new ExistingLoans(10, 100, LocalDate.of(2019, 1, 1), 0);
+        Client client = new Client("Test client", Industry.AUTOMOTIVE, balanceSheet, incomeStatementData, existingLoans);
+        
+        LoanRequest loanRequest = loanCalculator.calculateIdealLoanRequest(client, 5, FreeCashFlowCalculator.lastYear);
+        
+        Assert.assertEquals(303, loanRequest.shortTermLoan, 0.1);
+        Assert.assertEquals(833.75, loanRequest.longTermLoan, 0.1);
+    }
+    
 }
