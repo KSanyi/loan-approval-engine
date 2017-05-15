@@ -30,9 +30,9 @@ public class LoanCalculatorTest {
             new Liabilities(70, 0));
     
     private IncomeStatementData incomeStatementData = new IncomeStatementData(Arrays.asList(
-            new IncomeStatement(2014, 300, 70, 30),
-            new IncomeStatement(2015, 300, 70, 30),
-            new IncomeStatement(2016, 300, 70, 30)));
+            new IncomeStatement(2014, 600, 300, 70, 30),
+            new IncomeStatement(2015, 600, 300, 70, 30),
+            new IncomeStatement(2016, 600, 300, 70, 30)));
     
     private Client client = new Client("Test client", Industry.AUTOMOTIVE, balanceSheet, incomeStatementData, ExistingLoans.createEmpty());
     

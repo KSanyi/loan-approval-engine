@@ -38,6 +38,20 @@ public class IncomeStatementData {
         return incomeStatements().map(statement -> statement.ebitda).collect(Collectors.toList());
     }
     
+    public List<Long> sales() {
+        return incomeStatements().map(statement -> statement.sales).collect(Collectors.toList());
+    }
+    
+    public double ebitdaGrowt() {
+        int n = incomeStatements.size();
+        return (double)incomeStatements.get(n-1).ebitda / incomeStatements.get(n-2).ebitda - 1; 
+    }
+    
+    public double salesGrowt() {
+        int n = incomeStatements.size();
+        return (double)incomeStatements.get(n-1).sales / incomeStatements.get(n-2).sales - 1; 
+    }
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

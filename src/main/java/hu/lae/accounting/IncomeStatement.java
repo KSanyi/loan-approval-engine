@@ -7,14 +7,17 @@ public class IncomeStatement {
 
     public int year;
     
+    public final long sales;
+    
     public final long ebitda;
     
     public final long amortization;
     
     public final long taxes;
 
-    public IncomeStatement(int year, long ebitda, long amortization, long taxes) {
+    public IncomeStatement(int year, long sales, long ebitda, long amortization, long taxes) {
         this.year = year;
+        this.sales = sales;
         this.ebitda = ebitda;
         this.amortization = amortization;
         this.taxes = taxes;
@@ -26,11 +29,11 @@ public class IncomeStatement {
     }
 
     public static IncomeStatement createEmpty(int year) {
-        return new IncomeStatement(year, 0, 0, 0);
+        return new IncomeStatement(year, 0, 0, 0, 0);
     }
     
     public static IncomeStatement createDefault(int year) {
-        return new IncomeStatement(year, 300, 70, 30);
+        return new IncomeStatement(year, 600, 300, 70, 30);
     }
     
     public int year() {

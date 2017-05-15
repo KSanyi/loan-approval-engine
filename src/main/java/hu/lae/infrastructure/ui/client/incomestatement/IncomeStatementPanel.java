@@ -24,7 +24,7 @@ public class IncomeStatementPanel extends Panel {
                     .map(incomeStatement -> new IncomeStatementForm(incomeStatement))
                     .collect(Collectors.toList());
         
-        VerticalLayout labels = new VerticalLayout(new Label(""), new Label("EBITDA"), new Label("Amortization"), new Label("Taxes"));
+        VerticalLayout labels = new VerticalLayout(new Label(""), new Label("Sales"), new Label("EBITDA"), new Label("Amortization"), new Label("Taxes"));
         labels.setMargin(false);
         
         HorizontalLayout layout = new HorizontalLayout();

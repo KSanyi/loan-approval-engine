@@ -1,5 +1,6 @@
 package hu.lae.infrastructure.ui.loancalculation;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.renderers.NumberRenderer;
 
 import hu.lae.Client;
 import hu.lae.infrastructure.ui.VaadinUtil;
@@ -42,13 +44,15 @@ class DecisionWindow extends Window {
         grid.addColumn(row -> row.ebitdaT2).setCaption(years.get(0) + "");
         grid.addColumn(row -> row.ebitdaT1).setCaption(years.get(1) + "");
         grid.addColumn(row -> row.ebitdaT).setCaption(years.get(2) + "");
-        grid.addColumn(row -> row.change).setCaption("%");    
+        grid.addColumn(row -> row.change, new NumberRenderer(new DecimalFormat("0.0%"))).setCaption("%");
+        
         
         List<Long> ebitdas = client.incomeStatementData.ebitdas();
+        List<Long> sales = client.incomeStatementData.sales();
         
         List<EbitdaTableRow> items = Arrays.asList(
-                new EbitdaTableRow("EBITDA", ebitdas.get(0), ebitdas.get(1), ebitdas.get(2), 0.09),
-                new EbitdaTableRow("Sales", 0, 0, 0, 0.09));
+                new EbitdaTableRow("EBITDA", ebitdas.get(0), ebitdas.get(1), ebitdas.get(2), client.incomeStatementData.ebitdaGrowt()),
+                new EbitdaTableRow("Sales", sales.get(0), sales.get(1), sales.get(2), client.incomeStatementData.salesGrowt()));
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);

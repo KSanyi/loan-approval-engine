@@ -8,9 +8,9 @@ import org.junit.Test;
 public class FreeCashFlowCalculatorTest {
 
     IncomeStatementData incomeStatementData = new IncomeStatementData(Arrays.asList(
-            new IncomeStatement(2014, 800, 80, 200), 
-            new IncomeStatement(2015, 900, 110, 180), 
-            new IncomeStatement(2016, 1000, 100, 200)));
+            new IncomeStatement(2014, 1600, 800, 80, 200), 
+            new IncomeStatement(2015, 1800, 900, 110, 180), 
+            new IncomeStatement(2016, 2000, 1000, 100, 200)));
     
     double amortizationRate = 0.1;
     
