@@ -15,14 +15,19 @@ import com.vaadin.ui.renderers.NumberRenderer;
 
 import hu.lae.Client;
 import hu.lae.infrastructure.ui.VaadinUtil;
+import hu.lae.loan.LoanRequest;
 
 @SuppressWarnings("serial")
 class DecisionWindow extends Window {
 
     private final Client client;
     
-    DecisionWindow(Client client) {
+    private final LoanRequest loanRequest;
+    
+    DecisionWindow(Client client, LoanRequest loanRequest) {
         this.client = client;
+        this.loanRequest = loanRequest;
+        
         setModal(true);
         setCaption("Decision");
         setContent(createLayout());
@@ -30,8 +35,8 @@ class DecisionWindow extends Window {
     }
     
     private Layout createLayout() {
-        VerticalLayout layout = new VerticalLayout(
-                new HorizontalLayout(createEbitdaTable(), createWarningsTable()));
+        HorizontalLayout firstRow = new HorizontalLayout(createEbitdaTable(), createWarningsTable());
+        VerticalLayout layout = new VerticalLayout(firstRow);
         return layout;
     }
     
@@ -45,7 +50,6 @@ class DecisionWindow extends Window {
         grid.addColumn(row -> row.ebitdaT1).setCaption(years.get(1) + "");
         grid.addColumn(row -> row.ebitdaT).setCaption(years.get(2) + "");
         grid.addColumn(row -> row.change, new NumberRenderer(new DecimalFormat("0.0%"))).setCaption("%");
-        
         
         List<Long> ebitdas = client.incomeStatementData.ebitdas();
         List<Long> sales = client.incomeStatementData.sales();
@@ -63,29 +67,30 @@ class DecisionWindow extends Window {
         return grid;
     }
     
-    private Grid<EbitdaTableRow> createWarningsTable() {
+    private Grid<WariningTableRow> createWarningsTable() {
         
         List<Integer> years = client.incomeStatementData.incomeStatements().map(statement -> statement.year).collect(Collectors.toList());
         
-        Grid<EbitdaTableRow> grid = new Grid<>();
+        Grid<WariningTableRow> grid = new Grid<>();
         grid.addColumn(row -> row.caption).setCaption("");
-        grid.addColumn(row -> row.ebitdaT2).setCaption(years.get(0) + "");
-        grid.addColumn(row -> row.ebitdaT1).setCaption(years.get(1) + "");
-        grid.addColumn(row -> row.ebitdaT).setCaption(years.get(2) + "");
-        grid.addColumn(row -> row.change).setCaption("%");    
+        grid.addColumn(row -> row.value, new NumberRenderer(new DecimalFormat("0.00"))).setCaption(years.get(2) + "");
         
-        List<EbitdaTableRow> items = Arrays.asList(
-                new EbitdaTableRow("Equity value", 0, 0, 0, 0),
-                new EbitdaTableRow("Equity Ratio", 0, 0, 0, 0),
-                new EbitdaTableRow("Liquidity ratio", 0, 0, 0, 0),
-                new EbitdaTableRow("Suppliers day", 0, 0, 0, 0),
-                new EbitdaTableRow("Buyers days", 0, 0, 0, 0),
-                new EbitdaTableRow("Stock days", 0, 0, 0, 0));
+        double shortTermLoan = client.existingLoans.shortTermLoans + loanRequest.shortTermLoan;
+        double liquidityRatio = client.balanceSheet.liquidityRatio(shortTermLoan);
+        
+        List<WariningTableRow> items = Arrays.asList(
+                new WariningTableRow("Equity value", 0.0),
+                new WariningTableRow("Equity Ratio", 0.0),
+                new WariningTableRow("Liquidity ratio", liquidityRatio),
+                new WariningTableRow("Suppliers day", 0.0),
+                new WariningTableRow("Buyers days", 0.0),
+                new WariningTableRow("Stock days", 0.0));
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);
         grid.setCaption("Warnings & KOs");
         grid.setHeightMode(HeightMode.ROW);
+        grid.setWidth("250px");
         grid.setHeightByRows(6);
         
         return grid;
@@ -105,6 +110,17 @@ class DecisionWindow extends Window {
             this.ebitdaT1 = ebitdaT1;
             this.ebitdaT = ebitdaT;
             this.change = change;
+        }
+    }
+    
+    private static class WariningTableRow {
+        
+        final String caption;
+        final double value;
+
+        public WariningTableRow(String caption, double value) {
+            this.caption = caption;
+            this.value = value;
         }
     }
     

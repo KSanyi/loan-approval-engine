@@ -40,6 +40,10 @@ public class BalanceSheet {
         return assetsJustifiableValue - liabilitiesValue;
     }
     
+    public double liquidityRatio(double shortTermLoan) {
+        return (assets.stock + assets.cash + assets.accountsReceivable + assets.other) / (liabilities.accountsPayable + shortTermLoan); 
+    }
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

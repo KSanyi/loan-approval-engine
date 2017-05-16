@@ -10,7 +10,7 @@ import hu.lae.riskparameters.Haircuts;
 public class BalanceSheetTest {
 
     @Test
-    public void test() {
+    public void justifiableShortTermLoan() {
         
         BalanceSheet balanceSheet = new BalanceSheet(
                 new Assets(100, 80, 60, 40),
@@ -22,5 +22,19 @@ public class BalanceSheetTest {
         
         Assert.assertEquals(72.0, justifiableShortTermLoan, 0.01);
     }
+    
+    @Test
+    public void liquidityRatio() {
+        
+        BalanceSheet balanceSheet = new BalanceSheet(
+                new Assets(400, 50, 20, 30),
+                new Liabilities(70, 0));
+        
+        double liquidityRatio = balanceSheet.liquidityRatio(303);
+        
+        Assert.assertEquals(1.34, liquidityRatio, 0.01);
+    }
+    
+    
     
 }

@@ -208,7 +208,7 @@ public class ProposalWindow extends Window {
         List<String> errorMessages = validate();
         if(errorMessages.isEmpty()) {
             super.close();
-            UI.getCurrent().addWindow(new DecisionWindow(client));
+            UI.getCurrent().addWindow(new DecisionWindow(client, new LoanRequest(shortTermLoanField.getAmount(), longTermLoanField.getAmount())));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
         }
