@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
@@ -30,6 +29,7 @@ import hu.lae.Client;
 import hu.lae.accounting.FreeCashFlowCalculator;
 import hu.lae.infrastructure.ui.LaeUI;
 import hu.lae.infrastructure.ui.component.AmountField;
+import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.loan.LoanApplicationResult;
 import hu.lae.loan.LoanCalculator;
 import hu.lae.loan.LoanRequest;

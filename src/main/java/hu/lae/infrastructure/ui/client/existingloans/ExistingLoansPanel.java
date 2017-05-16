@@ -14,10 +14,7 @@ public class ExistingLoansPanel extends Panel {
         setCaption("Existing loans");
         form = new ExistingLoansForm(existingLoans);
         
-        VerticalLayout layout = new VerticalLayout(form);
-        //layout.setComponentAlignment(updateButton, Alignment.BOTTOM_CENTER);
-        //addStyleName("colored");
-        setContent(layout);
+        setContent(new VerticalLayout(form));
     }
     
     public ExistingLoans getExistingLoans() {

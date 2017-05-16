@@ -1,5 +1,6 @@
 package hu.lae.infrastructure.ui.component;
 
+import java.lang.invoke.MethodHandles;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
@@ -11,12 +12,10 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.infrastructure.ui.LaeUI;
-
 @SuppressWarnings("serial")
 public class PercentField extends TextField {
     
-    private static final Logger logger = LoggerFactory.getLogger(LaeUI.class);
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final DecimalFormat FORMATTTER = new DecimalFormat("0.0%");
     

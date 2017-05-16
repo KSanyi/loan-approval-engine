@@ -1,5 +1,7 @@
 package hu.lae.infrastructure.ui.component;
 
+import java.lang.invoke.MethodHandles;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,12 +10,10 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.infrastructure.ui.LaeUI;
-
 @SuppressWarnings("serial")
 public class NumberField extends TextField {
 
-    private static final Logger logger = LoggerFactory.getLogger(LaeUI.class);
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     public NumberField(String caption) {
         super(caption);

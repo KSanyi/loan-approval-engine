@@ -1,6 +1,5 @@
 package hu.lae.infrastructure.ui.loancalculation;
 
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
@@ -65,14 +64,6 @@ public class LoanSelector extends CustomField<LoanRequest> {
     @Override
     protected void doSetValue(LoanRequest value) {
        throw new IllegalStateException();
-    }
-    
-    public void setPaybackYears(int paybackYears) {
-        this.paybackYears = paybackYears;
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, stLoanSlider.getValue(), freeCashFlowCalculator, refinanceExistingLongTermLoans);
-        stLoanSlider.setMaxLoanValue(loanApplicationResult.maxShortTermLoan);
-        stLoanSlider.setValue(loanApplicationResult.justifiableShortTermLoan);
-        stLoanSlider.setDescription("Justifiable short term loan:<br/><center>" + loanApplicationResult.justifiableShortTermLoan + " million Ft</center>", ContentMode.HTML);
     }
 
 }

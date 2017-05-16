@@ -24,6 +24,7 @@ class BalanceSheetForm extends HorizontalLayout {
     
     BalanceSheetForm(BalanceSheet balanceSheet) {
         addComponents(createAssetsLayout(balanceSheet.assets), createLiabilitiesLayout(balanceSheet.liabilities));
+        setMargin(true);
     }
     
     BalanceSheet getBalanceSheet() {
