@@ -27,11 +27,12 @@ public class LoanCalculator {
         this.currentDate = currentDate;
     }
     
-    public LoanRequest calculateIdealLoanRequest(Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator) {
-        LoanApplicationResult result = calculate(client, paybackYears, 0, freeCashFlowCalculator, true);
+    public LoanRequest calculateIdealLoanRequest(Client client, FreeCashFlowCalculator freeCashFlowCalculator) {
+        int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(client.industry);
+        LoanApplicationResult result = calculate(client, maxLoanDuration, 0, freeCashFlowCalculator, true);
         
         double idealShortTermLoan = client.balanceSheet.calculateJustifiableShortTermLoan(riskParameters.haircuts);
-        result = calculate(client, paybackYears, idealShortTermLoan, freeCashFlowCalculator, true);
+        result = calculate(client, maxLoanDuration, idealShortTermLoan, freeCashFlowCalculator, true);
         double idealLongTermLoan = result.maxLongTermLoan;
         
         return new LoanRequest(idealShortTermLoan, idealLongTermLoan);
@@ -74,8 +75,7 @@ public class LoanCalculator {
         if(shortTermLoanAmount >= justifiableShortTermloan) {
             double amountAboveJustifiableSTLoan = shortTermLoanAmount - justifiableShortTermloan;
             logger.info("Amount above justifiable ST loan: " + amountAboveJustifiableSTLoan);
-            int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(industry);
-            double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, maxLoanDuration, amountAboveJustifiableSTLoan);
+            double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, paybackYears, amountAboveJustifiableSTLoan);
             logger.info("CF needed for above: " + cfNeededForStDebtService);
             cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(justifiableShortTermloan) - cfNeededForStDebtService);
         } else {

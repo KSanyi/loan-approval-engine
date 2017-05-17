@@ -180,7 +180,7 @@ public class ProposalWindow extends Window {
     
     private Component createIdealStructurePanel() {
         
-        LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, maxLoanDuration, cashflowCalculatorCombo.getValue());
+        LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
         
         Label stlabel = new Label("Ideal short term loan");
         stlabel.setWidth("150px");
