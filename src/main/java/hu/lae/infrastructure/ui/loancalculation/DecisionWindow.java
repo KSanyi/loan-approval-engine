@@ -32,6 +32,8 @@ class DecisionWindow extends Window {
         setCaption("Decision");
         setContent(createLayout());
         setSizeUndefined();
+        
+        addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
     
     private Layout createLayout() {

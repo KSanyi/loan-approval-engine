@@ -9,6 +9,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.Client;
 import hu.lae.accounting.FreeCashFlowCalculator;
+import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.loan.LoanCalculator;
 import hu.lae.loan.LoanRequest;
@@ -36,6 +37,8 @@ public class LoanHelperWindow extends Window {
         layout.setComponentAlignment(button, Alignment.BOTTOM_CENTER);
         
         setContent(layout);
+        
+        addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
     
 }

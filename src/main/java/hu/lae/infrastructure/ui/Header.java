@@ -1,5 +1,7 @@
 package hu.lae.infrastructure.ui;
 
+import java.lang.invoke.MethodHandles;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,14 +15,16 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.infrastructure.ui.component.ErrorSubmissionWindow;
 import hu.lae.usermanagement.UserInfo;
 
+@SuppressWarnings("serial")
 public class Header extends HorizontalLayout {
 
-	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-	private static Logger logger = LoggerFactory.getLogger(Header.class);
-
+	private final Button errorButton = new Button("Error submission", click -> postError());
+	
 	private final Button logoutButton = new Button("Logout", click -> logout());
 
 	private final UserInfo userInfo;
@@ -32,13 +36,17 @@ public class Header extends HorizontalLayout {
 		setHeight("150px");
 		setStyleName("dark");
 
+		errorButton.addStyleName(ValoTheme.BUTTON_SMALL);
+		errorButton.addStyleName(ValoTheme.BUTTON_DANGER);
+		
 		Layout logoLayout = createLogoLayout();
 		Layout userInfoLayout = createUserInfoLayout();
-		addComponents(logoLayout, userInfoLayout);
+		addComponents(logoLayout, errorButton, userInfoLayout);
 		setComponentAlignment(userInfoLayout, Alignment.TOP_RIGHT);
+		setComponentAlignment(errorButton, Alignment.MIDDLE_CENTER);
 	}
 
-	private Layout createLogoLayout() {
+    private Layout createLogoLayout() {
 		Label logo = new Label("Loan Application Engine");
 		logo.setStyleName("mainLogo");
 		
@@ -67,5 +75,11 @@ public class Header extends HorizontalLayout {
 		UI.getCurrent().getPage().setLocation("/");
 		UI.getCurrent().getSession().close(); 
 	}
+	
+	private void postError() {
+        UI.getCurrent().addWindow(new ErrorSubmissionWindow());
+    }
+	
+	
 }
 

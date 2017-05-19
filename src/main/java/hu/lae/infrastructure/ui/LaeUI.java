@@ -47,6 +47,8 @@ public class LaeUI extends UI {
         if(userInfo == null) {
             showLogin();
         }
+        
+        addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
 	}
 	
 	private void showLogin() {

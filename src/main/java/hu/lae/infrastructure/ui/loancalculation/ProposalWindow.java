@@ -28,6 +28,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import hu.lae.Client;
 import hu.lae.accounting.FreeCashFlowCalculator;
 import hu.lae.infrastructure.ui.LaeUI;
+import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.loan.LoanApplicationResult;
@@ -72,6 +73,8 @@ public class ProposalWindow extends Window {
         
         double yearlyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
         setContent(createLayout(yearlyDebtServiceForExistingLoans));
+        
+        addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
     
     private Component createLayout(double yearlyDebtServiceForExistingLoans) {
