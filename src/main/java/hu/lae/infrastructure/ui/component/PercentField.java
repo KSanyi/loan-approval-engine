@@ -21,18 +21,29 @@ public class PercentField extends TextField {
     
     private double percentValue;
     
+    private final String name;
+    
     public PercentField(String caption) {
+        this(caption, caption);
+    }
+    
+    public PercentField(String caption, String name) {
         super(caption);
+        this.name = name;
         setWidth("60px");
         addStyleName(ValoTheme.TEXTFIELD_SMALL);
         addStyleName(ValoTheme.TEXTAREA_ALIGN_RIGHT);
-        addValueChangeListener(event -> valueChanged(event.getValue()));
+        addValueChangeListener(event -> valueChanged(event));
         setValueChangeMode(ValueChangeMode.BLUR);
     }
     
-    private void valueChanged(String value) {
+    private void valueChanged(ValueChangeEvent<String> event) {
+        String value = event.getValue();
+        
+        if(event.isUserOriginated()) {
+            logger.debug(name + " is set to " + value);
+        }
         try {
-            logger.debug(getCaption() + " is set to " + value + " %");
             percentValue = FORMATTTER.parse(value).doubleValue();
             setPercent(percentValue);
         } catch(ParseException ex) {
@@ -46,6 +57,7 @@ public class PercentField extends TextField {
     
     public void setPercent(Double percent) {
         this.percentValue = percent;
+        logger.debug(name + " is: " + percentValue);
         doSetValue(FORMATTTER.format(percent));
     }
     

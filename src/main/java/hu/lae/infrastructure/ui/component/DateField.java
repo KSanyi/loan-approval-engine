@@ -6,17 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
-public class Button extends com.vaadin.ui.Button {
+public class DateField extends com.vaadin.ui.DateField {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    public Button(String caption) {
+    public DateField(String caption) {
         super(caption);
-        addClickListener(click -> logger.debug("Button '" + caption + "' clicked"));
-    }
-    
-    public Button(String caption, ClickListener listener) {
-        super(caption, listener);
+        addValueChangeListener(e -> logger.debug(caption + " is set to " + e.getValue()));
     }
     
 }

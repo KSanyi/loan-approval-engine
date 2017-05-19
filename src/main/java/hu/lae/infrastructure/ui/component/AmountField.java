@@ -18,12 +18,12 @@ public class AmountField extends TextField {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private static final DecimalFormat FORMATTTER;
+    private static final DecimalFormat FORMATTER;
     
     static {
         DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
         decimalFormatSymbols.setGroupingSeparator((char) 160);
-        FORMATTTER = new DecimalFormat("###,###", decimalFormatSymbols);
+        FORMATTER = new DecimalFormat("###,###", decimalFormatSymbols);
     }
     
     private long amount;
@@ -31,7 +31,7 @@ public class AmountField extends TextField {
     private String name;
     
     public AmountField(String caption) {
-        this(caption, "noname");
+        this(caption, caption);
     }
     
     public AmountField(String caption, String name) {
@@ -42,21 +42,19 @@ public class AmountField extends TextField {
         addStyleName(ValoTheme.TEXTFIELD_SMALL);
         addStyleName(ValoTheme.TEXTAREA_ALIGN_RIGHT);
         setAmount(0l);
-        addValueChangeListener(event -> valueChanged(event.getValue()));
+        addValueChangeListener(event -> valueChanged(event));
         setValueChangeMode(ValueChangeMode.BLUR);
     }
     
-    @Override
-    public boolean setValue(String value, boolean userOriginated) {
-        if(userOriginated) {
+    private void valueChanged(ValueChangeEvent<String> event) {
+        String value = event.getValue();
+        
+        if(event.isUserOriginated()) {
             logger.debug(name + " is set to " + value);
         }
-        return super.setValue(value, userOriginated);
-    }
-    
-    private void valueChanged(String value) {
+        
         try {
-            long numberValue = FORMATTTER.parse(value).longValue();
+            long numberValue = FORMATTER.parse(value).longValue();
             setAmount(numberValue);
         } catch(ParseException ex) {
             setAmount(createNumber(value));
@@ -69,7 +67,8 @@ public class AmountField extends TextField {
     
     public void setAmount(Long amount) {
         this.amount = amount;
-        doSetValue(FORMATTTER.format(amount));
+        logger.debug(name + " is: " + amount);
+        doSetValue(FORMATTER.format(amount));
     }
     
     private static long createNumber(String value) {

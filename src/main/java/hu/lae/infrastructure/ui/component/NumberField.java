@@ -15,18 +15,31 @@ public class NumberField extends TextField {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
+    private double number;
+    
+    private final String name;
+    
     public NumberField(String caption) {
+        this(caption, caption);
+    }
+    
+    public NumberField(String caption, String name) {
         super(caption);
+        this.name = name;
         setWidth("60px");
         addStyleName(ValoTheme.TEXTFIELD_SMALL);
         addStyleName(ValoTheme.TEXTAREA_ALIGN_RIGHT);
-        addValueChangeListener(event -> valueChanged(event.getValue()));
+        addValueChangeListener(event -> valueChanged(event));
         setValueChangeMode(ValueChangeMode.BLUR);
     }
     
-    private void valueChanged(String value) {
+    private void valueChanged(ValueChangeEvent<String> event) {
+        String value = event.getValue();
+        
+        if(event.isUserOriginated()) {
+            logger.debug(name + " is set to " + value);
+        }
         try {
-            logger.debug(getCaption() + " is set to " + value);
             double doubleValue = Double.parseDouble(value);
             setNumber(doubleValue);
         } catch(NumberFormatException ex) {
@@ -34,11 +47,13 @@ public class NumberField extends TextField {
         }
     }
     
-    public Double getNumber() {
-        return Double.parseDouble(getValue());
+    public double getNumber() {
+        return number;
     }
     
     public void setNumber(Double number) {
+        this.number = number;
+        logger.debug(name + " is: " + number);
         doSetValue(String.valueOf(number));
     }
     

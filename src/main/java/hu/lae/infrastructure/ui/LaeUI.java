@@ -9,7 +9,6 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
@@ -21,6 +20,7 @@ import hu.lae.infrastructure.server.ApplicationService;
 import hu.lae.infrastructure.server.LaeServlet;
 import hu.lae.infrastructure.ui.client.ClientPanel;
 import hu.lae.infrastructure.ui.component.Button;
+import hu.lae.infrastructure.ui.component.DateField;
 import hu.lae.infrastructure.ui.loancalculation.ProposalWindow;
 import hu.lae.infrastructure.ui.riskparameters.RiskParametersPanel;
 import hu.lae.loan.LoanCalculator;
@@ -75,7 +75,6 @@ public class LaeUI extends UI {
 	    calculateButton.addStyleName(ValoTheme.BUTTON_LARGE);
 	    
 	    calculateButton.addClickListener(click -> {
-	        logger.info("Clicking on calculate");
 	        RiskParameters riskParameters = riskParametersPanel.getRiskParameters();
 	        LocalDate currentDate = Clock.date();
 	        

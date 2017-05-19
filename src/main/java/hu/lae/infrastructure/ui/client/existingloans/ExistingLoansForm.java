@@ -2,13 +2,13 @@ package hu.lae.infrastructure.ui.client.existingloans;
 
 import java.time.LocalDate;
 
-import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.infrastructure.ui.component.AmountField;
+import hu.lae.infrastructure.ui.component.DateField;
 import hu.lae.loan.ExistingLoans;
 import hu.lae.util.Clock;
 
