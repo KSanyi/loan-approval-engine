@@ -15,15 +15,17 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.infrastructure.ui.component.DateField;
 import hu.lae.infrastructure.ui.component.ErrorSubmissionWindow;
 import hu.lae.usermanagement.UserInfo;
+import hu.lae.util.Clock;
 
 @SuppressWarnings("serial")
 public class Header extends HorizontalLayout {
 
 	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-	private final Button errorButton = new Button("Error submission", click -> postError());
+	private final Button errorButton = new Button("Send error", click -> postError());
 	
 	private final Button logoutButton = new Button("Logout", click -> logout());
 
@@ -39,21 +41,33 @@ public class Header extends HorizontalLayout {
 		errorButton.addStyleName(ValoTheme.BUTTON_SMALL);
 		errorButton.addStyleName(ValoTheme.BUTTON_DANGER);
 		
+		DateField currentDateField = new DateField("Current date");
+        currentDateField.setValue(Clock.date());
+        currentDateField.addStyleName("colored");
+        currentDateField.addStyleName(ValoTheme.DATEFIELD_SMALL);
+        currentDateField.setWidth("120px");
+        currentDateField.addValueChangeListener(e -> Clock.setStaticDate(e.getValue()));
+        
 		Layout logoLayout = createLogoLayout();
 		Layout userInfoLayout = createUserInfoLayout();
-		addComponents(logoLayout, errorButton, userInfoLayout);
+		addComponents(logoLayout, currentDateField, userInfoLayout);
 		setComponentAlignment(userInfoLayout, Alignment.TOP_RIGHT);
-		setComponentAlignment(errorButton, Alignment.MIDDLE_CENTER);
+		setComponentAlignment(currentDateField, Alignment.MIDDLE_CENTER);
 	}
 
     private Layout createLogoLayout() {
 		Label logo = new Label("Loan Application Engine");
 		logo.setStyleName("mainLogo");
+		logo.setSizeUndefined();
 		
 		Label subLogo = new Label("by Kocso IT Solutions KFT");
 		subLogo.setStyleName("subLogo");
+		subLogo.setSizeUndefined();
 		
-		return new VerticalLayout(logo, subLogo);
+		VerticalLayout layout = new VerticalLayout(logo, subLogo);
+		layout.setSizeUndefined();
+		
+		return layout;
 	}
 
 	private Layout createUserInfoLayout() {
@@ -65,9 +79,11 @@ public class Header extends HorizontalLayout {
 		logoutButton.setIcon(VaadinIcons.USER);
 		
 		HorizontalLayout userInfoLayout = new HorizontalLayout(logoutButton, userLabel);
-		userInfoLayout.setMargin(true);
 
-		return userInfoLayout;
+		VerticalLayout layout = new VerticalLayout(userInfoLayout, errorButton);
+		layout.setSizeUndefined();
+		
+		return layout;
 	}
 
 	public void logout() {
@@ -79,7 +95,6 @@ public class Header extends HorizontalLayout {
 	private void postError() {
         UI.getCurrent().addWindow(new ErrorSubmissionWindow());
     }
-	
 	
 }
 

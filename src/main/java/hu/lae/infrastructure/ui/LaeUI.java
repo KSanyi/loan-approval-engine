@@ -20,7 +20,6 @@ import hu.lae.infrastructure.server.ApplicationService;
 import hu.lae.infrastructure.server.LaeServlet;
 import hu.lae.infrastructure.ui.client.ClientPanel;
 import hu.lae.infrastructure.ui.component.Button;
-import hu.lae.infrastructure.ui.component.DateField;
 import hu.lae.infrastructure.ui.loancalculation.ProposalWindow;
 import hu.lae.infrastructure.ui.riskparameters.RiskParametersPanel;
 import hu.lae.loan.LoanCalculator;
@@ -59,12 +58,6 @@ public class LaeUI extends UI {
 	private void buildUI(UserInfo userInfo) {
 	    logger.info(userInfo.loginName + " logged in");
 	    
-	    DateField currentDateField = new DateField("Current date");
-	    currentDateField.setValue(Clock.date());
-	    currentDateField.addStyleName(ValoTheme.DATEFIELD_SMALL);
-	    currentDateField.setWidth("120px");
-	    currentDateField.addValueChangeListener(e -> Clock.setStaticDate(e.getValue()));
-	    
 	    RiskParametersPanel riskParametersPanel = new RiskParametersPanel(applicationService.riskParameterRepository);
 	    
 	    ClientPanel clientPanel = new ClientPanel(Client.createDefault());
@@ -89,11 +82,11 @@ public class LaeUI extends UI {
 	        }
 	    });
 	    
-	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), currentDateField, mainLayout, calculateButton);
+	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), mainLayout, calculateButton);
 	    pageLayout.setMargin(false);
 	    pageLayout.setSpacing(false);
-	    pageLayout.setComponentAlignment(currentDateField, Alignment.MIDDLE_CENTER);
 	    pageLayout.setComponentAlignment(calculateButton, Alignment.MIDDLE_CENTER);
+	    
 		setContent(pageLayout);
 	}
 	
