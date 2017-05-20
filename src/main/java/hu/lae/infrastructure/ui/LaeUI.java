@@ -85,6 +85,7 @@ public class LaeUI extends UI {
 	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), mainLayout, calculateButton);
 	    pageLayout.setMargin(false);
 	    pageLayout.setSpacing(false);
+	    pageLayout.setSizeUndefined();
 	    pageLayout.setComponentAlignment(calculateButton, Alignment.MIDDLE_CENTER);
 	    
 		setContent(pageLayout);
