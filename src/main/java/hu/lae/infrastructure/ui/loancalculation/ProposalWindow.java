@@ -154,7 +154,7 @@ public class ProposalWindow extends Window {
     private Component createExistingLoansPanel(double yearlyDebtServiceForExistingLoans) {
         Label stlabel = new Label("Short term loan");
         stlabel.setWidth("115px");
-        AmountField stLoanField = new AmountField(null);
+        AmountField stLoanField = new AmountField(null, "Existing ST Loan");
         stLoanField.setAmount(client.existingLoans.shortTermLoans);
         stLoanField.setWidth("60px");
         stLoanField.setReadOnly(true);
@@ -162,7 +162,7 @@ public class ProposalWindow extends Window {
 
         Label ltlabel = new Label("Long term loan");
         ltlabel.setWidth("115px");
-        AmountField ltLoanField = new AmountField(null);
+        AmountField ltLoanField = new AmountField(null, "Existing LT Loan");
         ltLoanField.setAmount(client.existingLoans.longTermLoans);
         ltLoanField.setWidth("60px");
         ltLoanField.setReadOnly(true);
@@ -187,7 +187,7 @@ public class ProposalWindow extends Window {
         
         Label stlabel = new Label("Ideal short term loan");
         stlabel.setWidth("150px");
-        AmountField stLoanField = new AmountField(null);
+        AmountField stLoanField = new AmountField(null, "Ideal ST Loan");
         stLoanField.setAmount((long)idealLoanRequest.shortTermLoan);
         stLoanField.setWidth("60px");
         stLoanField.setReadOnly(true);
@@ -195,7 +195,7 @@ public class ProposalWindow extends Window {
 
         Label ltlabel = new Label("Ideal long term loan");
         ltlabel.setWidth("150px");
-        AmountField ltLoanField = new AmountField(null);
+        AmountField ltLoanField = new AmountField(null, "Ideal LT Loan");
         ltLoanField.setAmount((long)idealLoanRequest.longTermLoan);
         ltLoanField.setWidth("60px");
         ltLoanField.setReadOnly(true);

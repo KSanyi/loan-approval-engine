@@ -12,7 +12,7 @@ public class Button extends com.vaadin.ui.Button {
     
     public Button(String caption) {
         super(caption);
-        addClickListener(click -> logger.debug("Button '" + caption + "' clicked"));
+        addClickListener(click -> logger.debug("USERACTION: button '" + caption + "' clicked"));
     }
     
     public Button(String caption, ClickListener listener) {

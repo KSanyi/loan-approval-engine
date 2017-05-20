@@ -12,7 +12,11 @@ public class DateField extends com.vaadin.ui.DateField {
     
     public DateField(String caption) {
         super(caption);
-        addValueChangeListener(e -> logger.debug(caption + " is set to " + e.getValue()));
+        addValueChangeListener(e -> {
+          if(e.isUserOriginated()) {
+              logger.debug("USERACTION: " + caption + " is set to " + e.getValue());
+          }
+        });
     }
     
 }

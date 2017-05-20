@@ -1,5 +1,10 @@
 package hu.lae.infrastructure.ui.loancalculation;
 
+import java.lang.invoke.MethodHandles;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.shared.ui.slider.SliderOrientation;
@@ -16,6 +21,8 @@ import hu.lae.util.Formatters;
 @SuppressWarnings("serial")
 public class LoanSlider extends CustomField<Double> {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private final AmountField amountField = createAmountField();
     
     private final Slider slider = createSlider();
@@ -28,7 +35,17 @@ public class LoanSlider extends CustomField<Double> {
         setCaption(caption);
         slider.setValue(0d);
         amountField.setValue("0");
-        slider.addValueChangeListener(v -> setValue(v.getValue()));
+        slider.addValueChangeListener(this::valueChanged);
+    }
+    
+    private void valueChanged(ValueChangeEvent<Double> event) {
+        double value = event.getValue();
+        
+        if(event.isUserOriginated()) {
+            logger.debug("USERACTION: " + getCaption() + " is set to " + value);
+        }
+        
+        setValue(value);
     }
     
     private AmountField createAmountField() {

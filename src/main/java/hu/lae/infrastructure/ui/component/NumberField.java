@@ -37,7 +37,7 @@ public class NumberField extends TextField {
         String value = event.getValue();
         
         if(event.isUserOriginated()) {
-            logger.debug(name + " is set to " + value);
+            logger.debug("USERACTION: " + name + " is set to " + value);
         }
         try {
             double doubleValue = Double.parseDouble(value);
