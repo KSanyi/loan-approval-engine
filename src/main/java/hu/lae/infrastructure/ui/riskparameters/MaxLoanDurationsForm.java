@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.infrastructure.ui.component.ComboBox;
 import hu.lae.riskparameters.Industry;
 import hu.lae.riskparameters.MaxLoanDurations;
 
