@@ -20,6 +20,9 @@ import hu.lae.loan.LoanRequest;
 @SuppressWarnings("serial")
 class DecisionWindow extends Window {
 
+    private final static DecimalFormat DF = new DecimalFormat("0.00");
+    private final static DecimalFormat PF = new DecimalFormat("0.0%");
+    
     private final Client client;
     
     private final LoanRequest loanRequest;
@@ -75,18 +78,20 @@ class DecisionWindow extends Window {
         
         Grid<WariningTableRow> grid = new Grid<>();
         grid.addColumn(row -> row.caption).setCaption("");
-        grid.addColumn(row -> row.value, new NumberRenderer(new DecimalFormat("0.00"))).setCaption(years.get(2) + "");
+        grid.addColumn(row -> row.value).setCaption(years.get(2) + "");
         
         double shortTermLoan = client.existingLoans.shortTermLoans + loanRequest.shortTermLoan;
-        double liquidityRatio = client.balanceSheet.liquidityRatio(shortTermLoan);
+        String liquidityRatio = DF.format(client.balanceSheet.liquidityRatio(shortTermLoan));
+        
+        String equityRatio = PF.format(client.balanceSheet.liabilities.equityRatio());
         
         List<WariningTableRow> items = Arrays.asList(
-                new WariningTableRow("Equity value", 0.0),
-                new WariningTableRow("Equity Ratio", 0.0),
+                new WariningTableRow("Equity value", "0.0"),
+                new WariningTableRow("Equity ratio", equityRatio),
                 new WariningTableRow("Liquidity ratio", liquidityRatio),
-                new WariningTableRow("Suppliers day", 0.0),
-                new WariningTableRow("Buyers days", 0.0),
-                new WariningTableRow("Stock days", 0.0));
+                new WariningTableRow("Suppliers day", "0.0"),
+                new WariningTableRow("Buyers days", "0.0"),
+                new WariningTableRow("Stock days", "0.0"));
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);
@@ -118,9 +123,9 @@ class DecisionWindow extends Window {
     private static class WariningTableRow {
         
         final String caption;
-        final double value;
+        final String value;
 
-        public WariningTableRow(String caption, double value) {
+        public WariningTableRow(String caption, String value) {
             this.caption = caption;
             this.value = value;
         }

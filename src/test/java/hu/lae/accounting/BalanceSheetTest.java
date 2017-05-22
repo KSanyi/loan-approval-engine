@@ -14,7 +14,7 @@ public class BalanceSheetTest {
         
         BalanceSheet balanceSheet = new BalanceSheet(
                 new Assets(100, 80, 60, 40),
-                new Liabilities(80, 60));
+                new Liabilities(1000, 100, 80, 60, 2000));
         
         Haircuts haircuts = new Haircuts(0.8, 0.5, 1.0, 0.8);
         
@@ -28,7 +28,7 @@ public class BalanceSheetTest {
         
         BalanceSheet balanceSheet = new BalanceSheet(
                 new Assets(400, 50, 20, 30),
-                new Liabilities(70, 0));
+                new Liabilities(1000, 100, 70, 0, 2000));
         
         double liquidityRatio = balanceSheet.liquidityRatio(303);
         

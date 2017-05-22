@@ -16,11 +16,11 @@ public class BalanceSheet {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     public static BalanceSheet createEmpty() {
-        return new BalanceSheet(new Assets(0, 0, 0, 0), new Liabilities(0, 0));
+        return new BalanceSheet(new Assets(0, 0, 0, 0), new Liabilities(0, 0, 0, 0, 0));
     }
     
     public static BalanceSheet createDefault() {
-        return new BalanceSheet(new Assets(400, 50, 20, 30), new Liabilities(70, 0));
+        return new BalanceSheet(new Assets(400, 50, 20, 30), new Liabilities(1000, 100, 70, 0, 2000));
     }
     
     public final Assets assets;
@@ -35,7 +35,7 @@ public class BalanceSheet {
     public double calculateJustifiableShortTermLoan(Haircuts haircuts) {
         logger.debug("Calculating justifiable short term loan");
         double assetsJustifiableValue = assets.evaluate(haircuts);
-        double liabilitiesValue = liabilities.evaluate();
+        double liabilitiesValue = liabilities.shortTermLiabilities();
         logger.debug("Calculation: " + assetsJustifiableValue + " - " + liabilitiesValue);
         return assetsJustifiableValue - liabilitiesValue;
     }
@@ -80,19 +80,30 @@ public class BalanceSheet {
     
     public static class Liabilities {
         
+        public final long ownEquity;
+        public final long evaluationReserve;
         public final long accountsPayable;
         public final long otherLiabilities;
-
-        public Liabilities(long accountsPayable, long otherLiabilities) {
+        public final long total;
+        
+        public Liabilities(long ownEquity, long evaluationReserve, long accountsPayable, long otherLiabilities, long total) {
+            this.ownEquity = ownEquity;
+            this.evaluationReserve = evaluationReserve;
             this.accountsPayable = accountsPayable;
             this.otherLiabilities = otherLiabilities;
+            this.total = total;
         }
-        
-        public double evaluate() {
+
+        public double shortTermLiabilities() {
             logger.debug("Calculating liabilities value");
             double value = accountsPayable + otherLiabilities;
             logger.debug("Liabilities value: " + value);
             return value;
+        }
+        
+        public double equityRatio() {
+            if(total == 0) return 0;  
+            return ((double)ownEquity - evaluationReserve) / total;
         }
         
         @Override

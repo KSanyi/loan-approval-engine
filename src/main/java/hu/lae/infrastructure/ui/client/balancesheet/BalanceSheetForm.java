@@ -14,13 +14,16 @@ import hu.lae.infrastructure.ui.component.AmountField;
 @SuppressWarnings("serial")
 class BalanceSheetForm extends HorizontalLayout {
 
-    private final AmountField arField = new AmountField("Accounts R", "amortization");
-    private final AmountField stockField = new AmountField("Stock", "stock");
-    private final AmountField cashField = new AmountField("Cash", "cash");
-    private final AmountField otherAssetsField = new AmountField("Other", "other assets");
+    private final AmountField arField = new AmountField("Accounts R");
+    private final AmountField stockField = new AmountField("Stock");
+    private final AmountField cashField = new AmountField("Cash");
+    private final AmountField otherAssetsField = new AmountField("Other");
     
-    private final AmountField apField = new AmountField("Accounts P", "accounts payable");
-    private final AmountField otherLiabilitiesField = new AmountField("Other", "other liabilities");
+    private final AmountField ownEquityField = new AmountField("Own equity");
+    private final AmountField evReserveField = new AmountField("Evaluation reserve");
+    private final AmountField apField = new AmountField("Accounts P");
+    private final AmountField otherLiabilitiesField = new AmountField("Other");
+    private final AmountField totalField = new AmountField("Total");
     
     BalanceSheetForm(BalanceSheet balanceSheet) {
         addComponents(createAssetsLayout(balanceSheet.assets), createLiabilitiesLayout(balanceSheet.liabilities));
@@ -29,7 +32,7 @@ class BalanceSheetForm extends HorizontalLayout {
     
     BalanceSheet getBalanceSheet() {
         return new BalanceSheet(new Assets(arField.getAmount(), stockField.getAmount(), cashField.getAmount(), otherAssetsField.getAmount()), 
-                new Liabilities(apField.getAmount(), otherLiabilitiesField.getAmount()));
+                new Liabilities(ownEquityField.getAmount(), evReserveField.getAmount(), apField.getAmount(), otherLiabilitiesField.getAmount(), totalField.getAmount()));
     }
     
     private Layout createAssetsLayout(Assets assets) {
@@ -50,12 +53,15 @@ class BalanceSheetForm extends HorizontalLayout {
     
     private Layout createLiabilitiesLayout(Liabilities liabilities) {
         
+        ownEquityField.setAmount(liabilities.ownEquity);
+        evReserveField.setAmount(liabilities.evaluationReserve);
         apField.setAmount(liabilities.accountsPayable);
         otherLiabilitiesField.setAmount(liabilities.otherLiabilities);
+        totalField.setAmount(liabilities.total);
         
         Label header = new Label("Liabilities");
         header.addStyleName(ValoTheme.LABEL_H4);
-        FormLayout layout = new FormLayout(header, apField, otherLiabilitiesField, new Label(""), new Label(""));
+        FormLayout layout = new FormLayout(header, ownEquityField, evReserveField, apField, otherLiabilitiesField, totalField);
         layout.setMargin(false);
         layout.setSpacing(false);
         return layout;
