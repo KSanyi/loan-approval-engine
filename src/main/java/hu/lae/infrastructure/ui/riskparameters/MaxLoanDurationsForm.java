@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -16,7 +18,7 @@ import hu.lae.riskparameters.Industry;
 import hu.lae.riskparameters.MaxLoanDurations;
 
 @SuppressWarnings("serial")
-public class MaxLoanDurationsForm extends FormLayout {
+class MaxLoanDurationsForm extends CustomField<MaxLoanDurations> {
 
     private final Map<Industry, ComboBox<Integer>> combos = new LinkedHashMap<>();
     
@@ -24,22 +26,15 @@ public class MaxLoanDurationsForm extends FormLayout {
     
         setCaption("Max loan durations");
         
-        setSpacing(false);
-        setMargin(false);
-        
         for(Industry industry : Industry.values()) {
             ComboBox<Integer> combo = new ComboBox<>(industry.displayName, generateComboValues());
             combo.setValue(maxLoanDurations.maxLoanDuration(industry));
-            combo.addStyleName(ValoTheme.COMBOBOX_SMALL);
-            combo.setEmptySelectionAllowed(false);
-            combo.setWidth("60px");
             combos.put(industry, combo);
-            addComponent(combo);
-            setComponentAlignment(combo, Alignment.MIDDLE_LEFT);
         }
     }
     
-    public MaxLoanDurations getMaxLoanDurations() {
+    @Override
+    public MaxLoanDurations getValue() {
         Map<Industry, Integer> map = new HashMap<>();
         for(Industry industry : Industry.values()) {
             map.put(industry, combos.get(industry).getValue());
@@ -47,9 +42,33 @@ public class MaxLoanDurationsForm extends FormLayout {
         
         return new MaxLoanDurations(map);
     }
+
+    @Override
+    protected Component initContent() {
+        FormLayout formLayout = new FormLayout();
+        formLayout.setSpacing(false);
+        formLayout.setMargin(false);
+        
+        for(Industry industry : Industry.values()) {
+            ComboBox<Integer> combo = combos.get(industry);
+            combo.addStyleName(ValoTheme.COMBOBOX_SMALL);
+            combo.setEmptySelectionAllowed(false);
+            combo.setWidth("60px");
+            
+            formLayout.addComponent(combo);
+            formLayout.setComponentAlignment(combo, Alignment.MIDDLE_LEFT);
+        }
+        
+        return formLayout;
+    }
     
     private static List<Integer> generateComboValues() {
         return IntStream.range(1, 31).mapToObj(i -> i).collect(Collectors.toList());
+    }
+
+    @Override
+    protected void doSetValue(MaxLoanDurations value) {
+        throw new IllegalStateException();
     }
     
 }

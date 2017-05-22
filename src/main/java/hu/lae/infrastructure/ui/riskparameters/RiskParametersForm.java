@@ -1,6 +1,7 @@
 package hu.lae.infrastructure.ui.riskparameters;
 
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import hu.lae.infrastructure.ui.component.NumberField;
@@ -10,7 +11,7 @@ import hu.lae.riskparameters.InterestRate;
 import hu.lae.riskparameters.RiskParameters;
 
 @SuppressWarnings("serial")
-public class RiskParametersForm extends VerticalLayout {
+class RiskParametersForm extends VerticalLayout {
 
     private final RiskParameters riskParameters;
     
@@ -23,18 +24,21 @@ public class RiskParametersForm extends VerticalLayout {
     private final PercentField shortTermInterestRateField = new PercentField("Short term interest rate");
     private final MaxLoanDurationsForm maxLoanDurationsForm;
     private final PercentField longTermInterestRateField = new PercentField("Long term interest rate");
+    private final ThresholdsForm thresholdsForm;
 
-    public RiskParametersForm(RiskParameters riskParameters) {
+    RiskParametersForm(RiskParameters riskParameters) {
         this.riskParameters = riskParameters;
 
         maxLoanDurationsForm = new MaxLoanDurationsForm(riskParameters.maxLoanDurations);
+        
+        thresholdsForm = new ThresholdsForm(riskParameters.thresholds);
         
         setSpacing(false);
         setMargin(false);
         FormLayout layout = new FormLayout(amortizationRateField, arField, stockField, cashField, otherField, dscrThresholdField, shortTermInterestRateField, longTermInterestRateField);
         layout.setSpacing(false);
         layout.setMargin(false);
-        addComponents(layout, maxLoanDurationsForm);
+        addComponents(layout, new Label(""), maxLoanDurationsForm, new Label(""), thresholdsForm);
         
         amortizationRateField.setPercent(riskParameters.amortizationRate);
         dscrThresholdField.setNumber(riskParameters.dscrThreshold);
@@ -48,14 +52,15 @@ public class RiskParametersForm extends VerticalLayout {
         
     }
     
-    public RiskParameters getRiskParameters() {
+    RiskParameters getRiskParameters() {
         return new RiskParameters(riskParameters.id, riskParameters.name, 
                 amortizationRateField.getPercent(), 
                 new Haircuts(arField.getPercent(), stockField.getPercent(), cashField.getPercent(),  otherField.getPercent()),
                 new InterestRate(shortTermInterestRateField.getPercent()),
-                maxLoanDurationsForm.getMaxLoanDurations(),
+                maxLoanDurationsForm.getValue(),
                 new InterestRate(longTermInterestRateField.getPercent()),
-                dscrThresholdField.getNumber());
+                dscrThresholdField.getNumber(),
+                thresholdsForm.getValue());
     }
     
 }

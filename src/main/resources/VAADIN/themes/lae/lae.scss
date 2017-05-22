@@ -40,4 +40,12 @@ $v-font-family: 'Lora', sans-serif, 'Source Sans Pro';
         font-size: 14px;
     }
     
+    .v-grid-cell.ok {
+    	background: green;
+	}
+	
+	.v-grid-cell.warning {
+    	background: orange;
+	}
+    
 }

@@ -16,6 +16,7 @@ import com.vaadin.ui.renderers.NumberRenderer;
 import hu.lae.Client;
 import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.loan.LoanRequest;
+import hu.lae.riskparameters.RiskParameters;
 
 @SuppressWarnings("serial")
 class DecisionWindow extends Window {
@@ -23,11 +24,14 @@ class DecisionWindow extends Window {
     private final static DecimalFormat DF = new DecimalFormat("0.00");
     private final static DecimalFormat PF = new DecimalFormat("0.0%");
     
+    private final RiskParameters riskParameters;
+    
     private final Client client;
     
     private final LoanRequest loanRequest;
     
-    DecisionWindow(Client client, LoanRequest loanRequest) {
+    DecisionWindow(RiskParameters riskParameters, Client client, LoanRequest loanRequest) {
+        this.riskParameters= riskParameters;
         this.client = client;
         this.loanRequest = loanRequest;
         
@@ -79,19 +83,24 @@ class DecisionWindow extends Window {
         Grid<WariningTableRow> grid = new Grid<>();
         grid.addColumn(row -> row.caption).setCaption("");
         grid.addColumn(row -> row.value).setCaption(years.get(2) + "");
+        grid.addColumn(row -> "").setCaption("").setStyleGenerator(row -> row.isOk ? "ok" : "warning");
         
+        double equityRatio = client.balanceSheet.liabilities.equityRatio();
+        String equityRatioString = PF.format(equityRatio);
+        boolean equityRatioOk = equityRatio >= riskParameters.thresholds.equityRatio;
+
         double shortTermLoan = client.existingLoans.shortTermLoans + loanRequest.shortTermLoan;
-        String liquidityRatio = DF.format(client.balanceSheet.liquidityRatio(shortTermLoan));
-        
-        String equityRatio = PF.format(client.balanceSheet.liabilities.equityRatio());
+        double liquidityRatio = client.balanceSheet.liquidityRatio(shortTermLoan);
+        String liquidityRatioString = DF.format(liquidityRatio);
+        boolean liquidityRatioOk = liquidityRatio >= riskParameters.thresholds.liquidityRatio;
         
         List<WariningTableRow> items = Arrays.asList(
-                new WariningTableRow("Equity value", "0.0"),
-                new WariningTableRow("Equity ratio", equityRatio),
-                new WariningTableRow("Liquidity ratio", liquidityRatio),
-                new WariningTableRow("Suppliers day", "0.0"),
-                new WariningTableRow("Buyers days", "0.0"),
-                new WariningTableRow("Stock days", "0.0"));
+                new WariningTableRow("Equity value", "0.0", true),
+                new WariningTableRow("Equity ratio", equityRatioString, equityRatioOk),
+                new WariningTableRow("Liquidity ratio", liquidityRatioString, liquidityRatioOk),
+                new WariningTableRow("Suppliers day", "0.0", true),
+                new WariningTableRow("Buyers days", "0.0", true),
+                new WariningTableRow("Stock days", "0.0", true));
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);
@@ -124,10 +133,12 @@ class DecisionWindow extends Window {
         
         final String caption;
         final String value;
+        final boolean isOk;
 
-        public WariningTableRow(String caption, String value) {
+        public WariningTableRow(String caption, String value, boolean isOk) {
             this.caption = caption;
             this.value = value;
+            this.isOk = isOk;
         }
     }
     

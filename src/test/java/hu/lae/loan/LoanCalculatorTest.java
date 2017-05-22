@@ -19,6 +19,7 @@ import hu.lae.riskparameters.Industry;
 import hu.lae.riskparameters.InterestRate;
 import hu.lae.riskparameters.MaxLoanDurations;
 import hu.lae.riskparameters.RiskParameters;
+import hu.lae.riskparameters.Thresholds;
 import hu.lae.util.MapFactory;
 
 public class LoanCalculatorTest {
@@ -41,7 +42,7 @@ public class LoanCalculatorTest {
         Haircuts haircuts = new Haircuts(0.8, 0.5, 0.8, 0.4);
         RiskParameters riskParameters = new RiskParameters("id1", "default", 0.4, haircuts, new InterestRate(0.03), 
                 new MaxLoanDurations(MapFactory.of(Industry.CONSTRUCTION, 2, Industry.AUTOMOTIVE, 5)),
-                new InterestRate(0.05), 1.2);
+                new InterestRate(0.05), 1.2, new Thresholds(0.2, 1.2));
         loanCalculator = new LoanCalculator(riskParameters, LocalDate.of(2017,4,1));
     }
     

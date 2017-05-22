@@ -12,7 +12,8 @@ public class InMemoryRiskParametersRepository implements RiskParameterRepository
                 new InterestRate(0.03),
                 new MaxLoanDurations(MapFactory.of(Industry.CONSTRUCTION, 2, Industry.AUTOMOTIVE, 5)),
                 new InterestRate(0.05),
-                1.2);
+                1.2,
+                new Thresholds(0.2, 1.2));
     }
     
     @Override
