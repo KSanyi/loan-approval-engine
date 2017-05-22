@@ -27,7 +27,7 @@ public class LoanCalculatorTest {
     
     private BalanceSheet balanceSheet = new BalanceSheet(
             new Assets(400, 50, 20, 30),
-            new Liabilities(70, 0));
+            new Liabilities(1000, 100, 70, 0, 2000));
     
     private IncomeStatementData incomeStatementData = new IncomeStatementData(Arrays.asList(
             new IncomeStatement(2014, 600, 300, 70, 30),
@@ -72,6 +72,13 @@ public class LoanCalculatorTest {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 370, FreeCashFlowCalculator.lastYear, false);
         
         Assert.assertEquals(766.75, loanApplicationResult.maxLongTermLoan, 0.1);
+    }
+    
+    @Test
+    public void maxLongTermLoanWithHigherThenJustifiableShortTermLoanAndFewerPaybackYears() {
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 3, 370, FreeCashFlowCalculator.lastYear, false);
+        
+        Assert.assertEquals(482.29, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
