@@ -40,8 +40,16 @@ public class BalanceSheet {
         return assetsJustifiableValue - liabilitiesValue;
     }
     
-    public double liquidityRatio(double shortTermLoan) {
-        return (assets.stock + assets.cash + assets.accountsReceivable + assets.other) / (liabilities.accountsPayable + shortTermLoan); 
+    public double liquidityRatio1(double shortTermLoan) {
+        return (double)(assets.stock + assets.cash + assets.accountsReceivable + assets.other) / (liabilities.accountsPayable + shortTermLoan); 
+    }
+    
+    public double liquidityRatio2() {
+        return (double)(assets.stock + assets.cash + assets.accountsReceivable + assets.other) / (liabilities.accountsPayable); 
+    }
+    
+    public double liquidityRatio3() {
+        return (double)(assets.stock + assets.accountsReceivable + assets.other) / (liabilities.accountsPayable); 
     }
     
     @Override

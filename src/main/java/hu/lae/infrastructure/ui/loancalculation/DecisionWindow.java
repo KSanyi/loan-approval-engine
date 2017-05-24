@@ -17,6 +17,8 @@ import hu.lae.domain.Client;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.infrastructure.ui.VaadinUtil;
+import hu.lae.infrastructure.ui.client.validation.LiquidityValidator;
+import hu.lae.infrastructure.ui.client.validation.ValidationResult;
 
 @SuppressWarnings("serial")
 class DecisionWindow extends Window {
@@ -83,27 +85,31 @@ class DecisionWindow extends Window {
         Grid<WariningTableRow> grid = new Grid<>();
         grid.addColumn(row -> row.caption).setCaption("");
         grid.addColumn(row -> row.value).setCaption(years.get(2) + "");
-        grid.addColumn(row -> "").setCaption("").setStyleGenerator(row -> row.isOk ? "ok" : "warning");
+        grid.addColumn(row -> "").setCaption("").setStyleGenerator(row -> row.validationResult.type.name());
+        
+        grid.setDescriptionGenerator(g -> g.validationResult.toString());
         
         double equityRatio = client.balanceSheet.liabilities.equityRatio();
         String equityRatioString = PF.format(equityRatio);
         boolean equityRatioOk = equityRatio >= riskParameters.thresholds.equityRatio;
+        ValidationResult equityValidationResult = equityRatioOk ? ValidationResult.Ok() : ValidationResult.Ko("");
 
+        ValidationResult liquidityRatioValidation = new LiquidityValidator(riskParameters.thresholds.liquidityRatio).validate(client, loanRequest);
+        
         double shortTermLoan = client.existingLoans.shortTermLoans + loanRequest.shortTermLoan;
-        double liquidityRatio = client.balanceSheet.liquidityRatio(shortTermLoan);
+        double liquidityRatio = client.balanceSheet.liquidityRatio1(shortTermLoan);
         String liquidityRatioString = DF.format(liquidityRatio);
-        boolean liquidityRatioOk = liquidityRatio >= riskParameters.thresholds.liquidityRatio;
         
         double supplierDays = client.supplierDays();
         String supplierDaysString = DF.format(supplierDays);
         
         List<WariningTableRow> items = Arrays.asList(
-                new WariningTableRow("Equity value", "0.0", true),
-                new WariningTableRow("Equity ratio", equityRatioString, equityRatioOk),
-                new WariningTableRow("Liquidity ratio", liquidityRatioString, liquidityRatioOk),
-                new WariningTableRow("Suppliers day", supplierDaysString, true),
-                new WariningTableRow("Buyers days", "0.0", true),
-                new WariningTableRow("Stock days", "0.0", true));
+                new WariningTableRow("Equity value", "0.0", ValidationResult.Ok()),
+                new WariningTableRow("Equity ratio", equityRatioString, equityValidationResult),
+                new WariningTableRow("Liquidity ratio", liquidityRatioString, liquidityRatioValidation),
+                new WariningTableRow("Suppliers day", supplierDaysString, ValidationResult.Ok()),
+                new WariningTableRow("Buyers days", "0.0", ValidationResult.Ok()),
+                new WariningTableRow("Stock days", "0.0", ValidationResult.Ok()));
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);
@@ -136,12 +142,12 @@ class DecisionWindow extends Window {
         
         final String caption;
         final String value;
-        final boolean isOk;
+        final ValidationResult validationResult;
 
-        public WariningTableRow(String caption, String value, boolean isOk) {
+        public WariningTableRow(String caption, String value, ValidationResult validationResult) {
             this.caption = caption;
             this.value = value;
-            this.isOk = isOk;
+            this.validationResult = validationResult;
         }
     }
     
