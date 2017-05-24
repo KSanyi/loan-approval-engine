@@ -15,15 +15,15 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.Client;
+import hu.lae.domain.Client;
+import hu.lae.domain.loan.LoanCalculator;
+import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.infrastructure.server.ApplicationService;
 import hu.lae.infrastructure.server.LaeServlet;
 import hu.lae.infrastructure.ui.client.ClientPanel;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.infrastructure.ui.loancalculation.ProposalWindow;
 import hu.lae.infrastructure.ui.riskparameters.RiskParametersPanel;
-import hu.lae.loan.LoanCalculator;
-import hu.lae.riskparameters.RiskParameters;
 import hu.lae.usermanagement.UserInfo;
 import hu.lae.util.Clock;
 

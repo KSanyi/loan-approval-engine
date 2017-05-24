@@ -7,12 +7,12 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.Client;
-import hu.lae.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.Client;
+import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.loan.LoanCalculator;
+import hu.lae.domain.loan.LoanRequest;
 import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.Button;
-import hu.lae.loan.LoanCalculator;
-import hu.lae.loan.LoanRequest;
 
 @SuppressWarnings("serial")
 public class LoanHelperWindow extends Window {

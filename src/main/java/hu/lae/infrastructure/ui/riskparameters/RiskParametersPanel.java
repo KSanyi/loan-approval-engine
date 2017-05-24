@@ -5,8 +5,8 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.riskparameters.RiskParameterRepository;
-import hu.lae.riskparameters.RiskParameters;
+import hu.lae.domain.riskparameters.RiskParameterRepository;
+import hu.lae.domain.riskparameters.RiskParameters;
 
 @SuppressWarnings("serial")
 public class RiskParametersPanel extends Panel {

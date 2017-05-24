@@ -1,4 +1,4 @@
-package hu.lae.accounting;
+package hu.lae.domain.accounting;
 
 import java.util.Arrays;
 import java.util.Collections;

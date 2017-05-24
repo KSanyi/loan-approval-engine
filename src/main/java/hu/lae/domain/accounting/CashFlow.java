@@ -1,9 +1,9 @@
-package hu.lae.accounting;
+package hu.lae.domain.accounting;
 
 import java.util.Collections;
 import java.util.List;
 
-import hu.lae.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.InterestRate;
 
 public class CashFlow {
 

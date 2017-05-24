@@ -6,11 +6,11 @@ import com.vaadin.ui.CustomField;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
-import hu.lae.Client;
-import hu.lae.accounting.FreeCashFlowCalculator;
-import hu.lae.loan.LoanApplicationResult;
-import hu.lae.loan.LoanCalculator;
-import hu.lae.loan.LoanRequest;
+import hu.lae.domain.Client;
+import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.loan.LoanApplicationResult;
+import hu.lae.domain.loan.LoanCalculator;
+import hu.lae.domain.loan.LoanRequest;
 
 @SuppressWarnings("serial")
 public class LoanSelector extends CustomField<LoanRequest> {

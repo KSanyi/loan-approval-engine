@@ -4,7 +4,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.accounting.IncomeStatement;
+import hu.lae.domain.accounting.IncomeStatement;
 import hu.lae.infrastructure.ui.component.AmountField;
 
 @SuppressWarnings("serial")
@@ -16,6 +16,7 @@ public class IncomeStatementForm extends FormLayout {
     private final AmountField salesField = new AmountField(null, "sales");
     private final AmountField amortizationField = new AmountField(null, "amortization");
     private final AmountField taxField = new AmountField(null, "tax");
+    private final AmountField materialExpendituresField = new AmountField(null, "materialExpenditures");
     
     IncomeStatementForm(IncomeStatement incomeStatement) {
         
@@ -23,6 +24,7 @@ public class IncomeStatementForm extends FormLayout {
         ebitdaField.setAmount(incomeStatement.ebitda);
         amortizationField.setAmount(incomeStatement.amortization);
         taxField.setAmount(incomeStatement.taxes);
+        materialExpendituresField.setAmount(incomeStatement.materialExpenditures);
         
         this.year = incomeStatement.year;
         setSpacing(false);
@@ -33,7 +35,7 @@ public class IncomeStatementForm extends FormLayout {
     }
 
     public IncomeStatement getIncomeStatement() {
-        return new IncomeStatement(year, salesField.getAmount(), ebitdaField.getAmount(), amortizationField.getAmount(), taxField.getAmount());
+        return new IncomeStatement(year, salesField.getAmount(), ebitdaField.getAmount(), amortizationField.getAmount(), taxField.getAmount(), materialExpendituresField.getAmount());
     }
     
 }

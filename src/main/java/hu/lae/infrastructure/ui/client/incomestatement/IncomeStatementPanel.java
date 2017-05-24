@@ -10,7 +10,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
-import hu.lae.accounting.IncomeStatementData;
+import hu.lae.domain.accounting.IncomeStatementData;
 
 @SuppressWarnings("serial")
 public class IncomeStatementPanel extends Panel {
@@ -24,7 +24,7 @@ public class IncomeStatementPanel extends Panel {
                     .map(incomeStatement -> new IncomeStatementForm(incomeStatement))
                     .collect(Collectors.toList());
         
-        VerticalLayout labels = new VerticalLayout(new Label(""), new Label("Sales"), new Label("EBITDA"), new Label("Amortization"), new Label("Taxes"));
+        VerticalLayout labels = new VerticalLayout(new Label(""), new Label("Sales"), new Label("EBITDA"), new Label("Amortization"), new Label("Taxes"), new Label("Material type expenditures"));
         labels.setMargin(false);
         
         HorizontalLayout layout = new HorizontalLayout();

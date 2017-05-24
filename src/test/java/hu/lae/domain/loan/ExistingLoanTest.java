@@ -1,11 +1,12 @@
-package hu.lae.loan;
+package hu.lae.domain.loan;
 
 import java.time.LocalDate;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import hu.lae.riskparameters.InterestRate;
+import hu.lae.domain.loan.ExistingLoans;
+import hu.lae.domain.riskparameters.InterestRate;
 
 public class ExistingLoanTest {
     

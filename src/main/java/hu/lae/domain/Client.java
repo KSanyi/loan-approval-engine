@@ -1,12 +1,12 @@
-package hu.lae;
+package hu.lae.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import hu.lae.accounting.BalanceSheet;
-import hu.lae.accounting.IncomeStatementData;
-import hu.lae.loan.ExistingLoans;
-import hu.lae.riskparameters.Industry;
+import hu.lae.domain.accounting.BalanceSheet;
+import hu.lae.domain.accounting.IncomeStatementData;
+import hu.lae.domain.loan.ExistingLoans;
+import hu.lae.domain.riskparameters.Industry;
 
 public class Client {
 
@@ -35,6 +35,13 @@ public class Client {
 
     public static Client createDefault() {
         return new Client("", Industry.AUTOMOTIVE, BalanceSheet.createDefault(), IncomeStatementData.createDefault(2016), ExistingLoans.createEmpty());
+    }
+    
+    public double supplierDays() {
+        if(incomeStatementData.lastIncomeStatement().materialExpenditures == 0) {
+            return 0;
+        }
+        return (double)balanceSheet.liabilities.accountsPayable / incomeStatementData.lastIncomeStatement().materialExpenditures * 365;
     }
     
 }

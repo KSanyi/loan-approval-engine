@@ -6,8 +6,8 @@ import com.vaadin.ui.CustomField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.domain.riskparameters.Thresholds;
 import hu.lae.infrastructure.ui.component.NumberField;
-import hu.lae.riskparameters.Thresholds;
 
 @SuppressWarnings("serial")
 class ThresholdsForm extends CustomField<Thresholds> {

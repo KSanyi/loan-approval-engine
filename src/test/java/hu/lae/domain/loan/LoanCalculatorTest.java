@@ -1,4 +1,4 @@
-package hu.lae.loan;
+package hu.lae.domain.loan;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -7,19 +7,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import hu.lae.Client;
-import hu.lae.accounting.BalanceSheet;
-import hu.lae.accounting.FreeCashFlowCalculator;
-import hu.lae.accounting.BalanceSheet.Assets;
-import hu.lae.accounting.BalanceSheet.Liabilities;
-import hu.lae.accounting.IncomeStatement;
-import hu.lae.accounting.IncomeStatementData;
-import hu.lae.riskparameters.Haircuts;
-import hu.lae.riskparameters.Industry;
-import hu.lae.riskparameters.InterestRate;
-import hu.lae.riskparameters.MaxLoanDurations;
-import hu.lae.riskparameters.RiskParameters;
-import hu.lae.riskparameters.Thresholds;
+import hu.lae.domain.Client;
+import hu.lae.domain.accounting.BalanceSheet;
+import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.accounting.IncomeStatement;
+import hu.lae.domain.accounting.IncomeStatementData;
+import hu.lae.domain.accounting.BalanceSheet.Assets;
+import hu.lae.domain.accounting.BalanceSheet.Liabilities;
+import hu.lae.domain.loan.ExistingLoans;
+import hu.lae.domain.loan.LoanApplicationResult;
+import hu.lae.domain.loan.LoanCalculator;
+import hu.lae.domain.loan.LoanRequest;
+import hu.lae.domain.riskparameters.Haircuts;
+import hu.lae.domain.riskparameters.Industry;
+import hu.lae.domain.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.MaxLoanDurations;
+import hu.lae.domain.riskparameters.RiskParameters;
+import hu.lae.domain.riskparameters.Thresholds;
 import hu.lae.util.MapFactory;
 
 public class LoanCalculatorTest {
@@ -31,9 +35,9 @@ public class LoanCalculatorTest {
             new Liabilities(1000, 100, 70, 0, 2000));
     
     private IncomeStatementData incomeStatementData = new IncomeStatementData(Arrays.asList(
-            new IncomeStatement(2014, 600, 300, 70, 30),
-            new IncomeStatement(2015, 600, 300, 70, 30),
-            new IncomeStatement(2016, 600, 300, 70, 30)));
+            new IncomeStatement(2014, 600, 300, 70, 30, 300),
+            new IncomeStatement(2015, 600, 300, 70, 30, 300),
+            new IncomeStatement(2016, 600, 300, 70, 30, 300)));
     
     private Client client = new Client("Test client", Industry.AUTOMOTIVE, balanceSheet, incomeStatementData, ExistingLoans.createEmpty());
     

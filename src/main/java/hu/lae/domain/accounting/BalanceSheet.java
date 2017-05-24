@@ -1,4 +1,4 @@
-package hu.lae.accounting;
+package hu.lae.domain.accounting;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hu.lae.riskparameters.Haircuts;
+import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.util.MathUtil;
 
 public class BalanceSheet {

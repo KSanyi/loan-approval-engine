@@ -4,11 +4,11 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+import hu.lae.domain.riskparameters.Haircuts;
+import hu.lae.domain.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.infrastructure.ui.component.NumberField;
 import hu.lae.infrastructure.ui.component.PercentField;
-import hu.lae.riskparameters.Haircuts;
-import hu.lae.riskparameters.InterestRate;
-import hu.lae.riskparameters.RiskParameters;
 
 @SuppressWarnings("serial")
 class RiskParametersForm extends VerticalLayout {

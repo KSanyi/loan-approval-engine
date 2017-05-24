@@ -1,4 +1,4 @@
-package hu.lae.riskparameters;
+package hu.lae.domain.riskparameters;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

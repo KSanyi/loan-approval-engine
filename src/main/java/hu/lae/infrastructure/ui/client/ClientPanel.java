@@ -10,11 +10,11 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.Client;
+import hu.lae.domain.Client;
+import hu.lae.domain.riskparameters.Industry;
 import hu.lae.infrastructure.ui.client.balancesheet.BalanceSheetPanel;
 import hu.lae.infrastructure.ui.client.existingloans.ExistingLoansPanel;
 import hu.lae.infrastructure.ui.client.incomestatement.IncomeStatementPanel;
-import hu.lae.riskparameters.Industry;
 
 @SuppressWarnings("serial")
 public class ClientPanel extends Panel {

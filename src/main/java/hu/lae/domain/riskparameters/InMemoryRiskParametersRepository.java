@@ -1,4 +1,4 @@
-package hu.lae.riskparameters;
+package hu.lae.domain.riskparameters;
 
 import hu.lae.util.MapFactory;
 

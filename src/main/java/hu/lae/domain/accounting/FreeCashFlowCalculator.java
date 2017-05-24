@@ -1,4 +1,4 @@
-package hu.lae.accounting;
+package hu.lae.domain.accounting;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;

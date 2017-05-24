@@ -1,4 +1,4 @@
-package hu.lae.loan;
+package hu.lae.domain.loan;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
@@ -6,12 +6,12 @@ import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hu.lae.Client;
-import hu.lae.accounting.CashFlow;
-import hu.lae.accounting.FreeCashFlowCalculator;
-import hu.lae.riskparameters.Industry;
-import hu.lae.riskparameters.InterestRate;
-import hu.lae.riskparameters.RiskParameters;
+import hu.lae.domain.Client;
+import hu.lae.domain.accounting.CashFlow;
+import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.riskparameters.Industry;
+import hu.lae.domain.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.util.ExcelFunctions;
 
 public class LoanCalculator {
@@ -72,11 +72,13 @@ public class LoanCalculator {
         
         double cashFlowForNewLongTermLoans;
         
+        int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(industry);
+        
         if(shortTermLoanAmount >= justifiableShortTermloan) {
             double amountAboveJustifiableSTLoan = shortTermLoanAmount - justifiableShortTermloan;
             logger.info("Amount above justifiable ST loan: " + amountAboveJustifiableSTLoan);
-            int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(industry);
-            double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, maxLoanDuration, amountAboveJustifiableSTLoan);
+            
+            double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, paybackYears, amountAboveJustifiableSTLoan);
             logger.info("CF needed for above: " + cfNeededForStDebtService);
             cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(justifiableShortTermloan) - cfNeededForStDebtService);
         } else {
@@ -90,7 +92,7 @@ public class LoanCalculator {
             cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yealyDebtServiceForExistingLoans);
         }
         
-        return new CashFlow(paybackYears, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate); 
+        return new CashFlow(maxLoanDuration, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate); 
     }
     
 }

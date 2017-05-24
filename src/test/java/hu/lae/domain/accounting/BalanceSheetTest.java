@@ -1,11 +1,12 @@
-package hu.lae.accounting;
+package hu.lae.domain.accounting;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import hu.lae.accounting.BalanceSheet.Assets;
-import hu.lae.accounting.BalanceSheet.Liabilities;
-import hu.lae.riskparameters.Haircuts;
+import hu.lae.domain.accounting.BalanceSheet;
+import hu.lae.domain.accounting.BalanceSheet.Assets;
+import hu.lae.domain.accounting.BalanceSheet.Liabilities;
+import hu.lae.domain.riskparameters.Haircuts;
 
 public class BalanceSheetTest {
 

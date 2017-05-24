@@ -1,11 +1,12 @@
-package hu.lae.accounting;
+package hu.lae.domain.accounting;
 
 import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import hu.lae.riskparameters.InterestRate;
+import hu.lae.domain.accounting.CashFlow;
+import hu.lae.domain.riskparameters.InterestRate;
 
 public class CashFlowTest {
 

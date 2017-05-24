@@ -7,9 +7,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.domain.loan.ExistingLoans;
 import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.infrastructure.ui.component.DateField;
-import hu.lae.loan.ExistingLoans;
 import hu.lae.util.Clock;
 
 @SuppressWarnings("serial")

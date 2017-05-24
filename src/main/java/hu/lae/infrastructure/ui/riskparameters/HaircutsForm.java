@@ -2,8 +2,8 @@ package hu.lae.infrastructure.ui.riskparameters;
 
 import com.vaadin.ui.FormLayout;
 
+import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.infrastructure.ui.component.PercentField;
-import hu.lae.riskparameters.Haircuts;
 
 @SuppressWarnings("serial")
 public class HaircutsForm extends FormLayout {

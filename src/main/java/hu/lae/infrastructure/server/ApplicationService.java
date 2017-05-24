@@ -1,6 +1,6 @@
 package hu.lae.infrastructure.server;
 
-import hu.lae.riskparameters.RiskParameterRepository;
+import hu.lae.domain.riskparameters.RiskParameterRepository;
 import hu.lae.usermanagement.Authenticator;
 
 public class ApplicationService {

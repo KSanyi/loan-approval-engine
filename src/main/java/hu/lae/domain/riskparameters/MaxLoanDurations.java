@@ -1,4 +1,4 @@
-package hu.lae.riskparameters;
+package hu.lae.domain.riskparameters;
 
 import java.util.Collections;
 import java.util.Map;

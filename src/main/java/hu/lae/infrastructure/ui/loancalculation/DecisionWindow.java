@@ -13,10 +13,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.NumberRenderer;
 
-import hu.lae.Client;
+import hu.lae.domain.Client;
+import hu.lae.domain.loan.LoanRequest;
+import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.infrastructure.ui.VaadinUtil;
-import hu.lae.loan.LoanRequest;
-import hu.lae.riskparameters.RiskParameters;
 
 @SuppressWarnings("serial")
 class DecisionWindow extends Window {
@@ -94,11 +94,14 @@ class DecisionWindow extends Window {
         String liquidityRatioString = DF.format(liquidityRatio);
         boolean liquidityRatioOk = liquidityRatio >= riskParameters.thresholds.liquidityRatio;
         
+        double supplierDays = client.supplierDays();
+        String supplierDaysString = DF.format(supplierDays);
+        
         List<WariningTableRow> items = Arrays.asList(
                 new WariningTableRow("Equity value", "0.0", true),
                 new WariningTableRow("Equity ratio", equityRatioString, equityRatioOk),
                 new WariningTableRow("Liquidity ratio", liquidityRatioString, liquidityRatioOk),
-                new WariningTableRow("Suppliers day", "0.0", true),
+                new WariningTableRow("Suppliers day", supplierDaysString, true),
                 new WariningTableRow("Buyers days", "0.0", true),
                 new WariningTableRow("Stock days", "0.0", true));
         grid.setItems(items);

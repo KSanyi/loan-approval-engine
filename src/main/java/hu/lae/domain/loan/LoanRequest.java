@@ -1,4 +1,4 @@
-package hu.lae.loan;
+package hu.lae.domain.loan;
 
 public class LoanRequest {
 

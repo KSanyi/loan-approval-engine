@@ -1,4 +1,4 @@
-package hu.lae.riskparameters;
+package hu.lae.domain.riskparameters;
 
 import com.ibm.icu.text.NumberFormat;
 

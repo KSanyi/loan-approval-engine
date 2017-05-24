@@ -13,9 +13,9 @@ import com.vaadin.ui.CustomField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.domain.riskparameters.Industry;
+import hu.lae.domain.riskparameters.MaxLoanDurations;
 import hu.lae.infrastructure.ui.component.ComboBox;
-import hu.lae.riskparameters.Industry;
-import hu.lae.riskparameters.MaxLoanDurations;
 
 @SuppressWarnings("serial")
 class MaxLoanDurationsForm extends CustomField<MaxLoanDurations> {

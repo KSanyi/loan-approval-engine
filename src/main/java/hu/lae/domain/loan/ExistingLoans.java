@@ -1,4 +1,4 @@
-package hu.lae.loan;
+package hu.lae.domain.loan;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -6,7 +6,7 @@ import java.time.temporal.ChronoUnit;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import hu.lae.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.InterestRate;
 import hu.lae.util.Clock;
 import hu.lae.util.ExcelFunctions;
 
