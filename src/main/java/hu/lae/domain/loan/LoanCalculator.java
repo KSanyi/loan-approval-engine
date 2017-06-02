@@ -42,7 +42,7 @@ public class LoanCalculator {
         
         logger.debug("------------------------- Calculation starts -------------------------");
         logger.debug(client.toString());
-        logger.debug("Payback years: " + paybackYears + ", short term loan: " + shortTermLoan);
+        logger.debug("Payback years: " + paybackYears + ", short term loan: " + shortTermLoan + ", FreeCashFlowCalculator: " + freeCashFlowCalculator + ", refinanceExistingLongTermLoans: " + refinanceExistingLongTermLoans);
         
         double justifiableShortTermLoan = client.balanceSheet.calculateJustifiableShortTermLoan(riskParameters.haircuts);
         logger.debug("Justifiable short term loan: " + justifiableShortTermLoan);
@@ -53,9 +53,8 @@ public class LoanCalculator {
         InterestRate shortTermInterestRate = riskParameters.shortTermInterestRate;
         
         double effectiveJustifiableSTLoan = Math.min(justifiableShortTermLoan, freeCashFlow / shortTermInterestRate.multiply(riskParameters.dscrThreshold));
-        
         logger.debug("Justifiable short term loan: " + effectiveJustifiableSTLoan + " = Min(" + justifiableShortTermLoan + ", " + freeCashFlow + " / (" + riskParameters.dscrThreshold + " * " + shortTermInterestRate + "))");
-        
+
         double maxShortTermLoan = effectiveJustifiableSTLoan + calculateMaxLongTermLoan(paybackYears, effectiveJustifiableSTLoan, effectiveJustifiableSTLoan, freeCashFlow, client.existingLoans, client.industry, refinanceExistingLongTermLoans); 
         logger.debug("Max short term loan: " + maxShortTermLoan + " = " + effectiveJustifiableSTLoan + " + maxLongTermLoan(" + paybackYears + ", " + effectiveJustifiableSTLoan + ")");
         
