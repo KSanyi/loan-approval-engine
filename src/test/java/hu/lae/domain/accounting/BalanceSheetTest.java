@@ -10,7 +10,7 @@ import hu.lae.domain.riskparameters.Haircuts;
 
 public class BalanceSheetTest {
 
-    private BalanceSheet balanceSheet = new BalanceSheet(
+    private BalanceSheet balanceSheet = new BalanceSheet(2016,
             new Assets(400, 50, 20, 30),
             new Liabilities(1000, 100, 70, 0, 2000));
     
@@ -27,7 +27,7 @@ public class BalanceSheetTest {
     @Test
     public void justifiableShortTermLoanWithTamasData() {
         
-        BalanceSheet balanceSheet = new BalanceSheet(
+        BalanceSheet balanceSheet = new BalanceSheet(2016,
                 new Assets(100, 80, 60, 40),
                 new Liabilities(1000, 100, 80, 60, 2000));
         

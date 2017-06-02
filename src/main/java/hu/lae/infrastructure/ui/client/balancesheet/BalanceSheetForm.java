@@ -1,5 +1,8 @@
 package hu.lae.infrastructure.ui.client.balancesheet;
 
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -12,7 +15,7 @@ import hu.lae.domain.accounting.BalanceSheet.Liabilities;
 import hu.lae.infrastructure.ui.component.AmountField;
 
 @SuppressWarnings("serial")
-class BalanceSheetForm extends HorizontalLayout {
+class BalanceSheetForm extends CustomField<BalanceSheet> {
 
     private final AmountField arField = new AmountField("Accounts R");
     private final AmountField stockField = new AmountField("Stock");
@@ -25,23 +28,13 @@ class BalanceSheetForm extends HorizontalLayout {
     private final AmountField otherLiabilitiesField = new AmountField("Other");
     private final AmountField totalField = new AmountField("Total");
     
+    private final BalanceSheet balanceSheet;
+    
     BalanceSheetForm(BalanceSheet balanceSheet) {
-        addComponents(createAssetsLayout(balanceSheet.assets), createLiabilitiesLayout(balanceSheet.liabilities));
-        setMargin(true);
+        this.balanceSheet = balanceSheet;
     }
     
-    BalanceSheet getBalanceSheet() {
-        return new BalanceSheet(new Assets(arField.getAmount(), stockField.getAmount(), cashField.getAmount(), otherAssetsField.getAmount()), 
-                new Liabilities(ownEquityField.getAmount(), evReserveField.getAmount(), apField.getAmount(), otherLiabilitiesField.getAmount(), totalField.getAmount()));
-    }
-    
-    private Layout createAssetsLayout(Assets assets) {
-        
-        arField.setAmount(assets.accountsReceivable);
-        stockField.setAmount(assets.stock);
-        cashField.setAmount(assets.cash);
-        otherAssetsField.setAmount(assets.other);
-        
+    private Layout createAssetsLayout() {
         Label header = new Label("Assets");
         header.addStyleName(ValoTheme.LABEL_H4);
         FormLayout layout = new FormLayout(header, arField, stockField, cashField, otherAssetsField);
@@ -51,20 +44,43 @@ class BalanceSheetForm extends HorizontalLayout {
         return layout;
     }
     
-    private Layout createLiabilitiesLayout(Liabilities liabilities) {
-        
-        ownEquityField.setAmount(liabilities.ownEquity);
-        evReserveField.setAmount(liabilities.evaluationReserve);
-        apField.setAmount(liabilities.accountsPayable);
-        otherLiabilitiesField.setAmount(liabilities.otherLiabilities);
-        totalField.setAmount(liabilities.total);
-        
+    private Layout createLiabilitiesLayout() {
         Label header = new Label("Liabilities");
         header.addStyleName(ValoTheme.LABEL_H4);
         FormLayout layout = new FormLayout(header, ownEquityField, evReserveField, apField, otherLiabilitiesField, totalField);
         layout.setMargin(false);
         layout.setSpacing(false);
         return layout;
+    }
+
+    @Override
+    public BalanceSheet getValue() {
+        return new BalanceSheet(balanceSheet.year, new Assets(arField.getAmount(), stockField.getAmount(), cashField.getAmount(), otherAssetsField.getAmount()), 
+                new Liabilities(ownEquityField.getAmount(), evReserveField.getAmount(), apField.getAmount(), otherLiabilitiesField.getAmount(), totalField.getAmount()));
+    }
+
+    @Override
+    protected Component initContent() {
+        HorizontalLayout layout = new HorizontalLayout(createAssetsLayout(), createLiabilitiesLayout());
+        layout.setMargin(new MarginInfo(false, true, true, true));
+        
+        doSetValue(balanceSheet);
+        
+        return layout;
+    }
+
+    @Override
+    protected void doSetValue(BalanceSheet balanceSheet) {
+        arField.setAmount(balanceSheet.assets.accountsReceivable);
+        stockField.setAmount(balanceSheet.assets.stock);
+        cashField.setAmount(balanceSheet.assets.cash);
+        otherAssetsField.setAmount(balanceSheet.assets.other);
+     
+        ownEquityField.setAmount(balanceSheet.liabilities.ownEquity);
+        evReserveField.setAmount(balanceSheet.liabilities.evaluationReserve);
+        apField.setAmount(balanceSheet.liabilities.accountsPayable);
+        otherLiabilitiesField.setAmount(balanceSheet.liabilities.otherLiabilities);
+        totalField.setAmount(balanceSheet.liabilities.total);
     }
     
 }

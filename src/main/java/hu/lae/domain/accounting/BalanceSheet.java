@@ -16,18 +16,21 @@ public class BalanceSheet {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     public static BalanceSheet createEmpty() {
-        return new BalanceSheet(new Assets(0, 0, 0, 0), new Liabilities(0, 0, 0, 0, 0));
+        return new BalanceSheet(2016, new Assets(0, 0, 0, 0), new Liabilities(0, 0, 0, 0, 0));
     }
     
     public static BalanceSheet createDefault() {
-        return new BalanceSheet(new Assets(400, 50, 20, 30), new Liabilities(1000, 100, 70, 0, 2000));
+        return new BalanceSheet(2016, new Assets(400, 50, 20, 30), new Liabilities(1000, 100, 70, 0, 2000));
     }
+    
+    public final int year;
     
     public final Assets assets;
     
     public final Liabilities liabilities;
     
-    public BalanceSheet(Assets assets, Liabilities liabilities) {
+    public BalanceSheet(int year, Assets assets, Liabilities liabilities) {
+        this.year = year;
         this.assets = assets;
         this.liabilities = liabilities;
     }
