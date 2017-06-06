@@ -104,8 +104,8 @@ class DecisionWindow extends Window {
         
         Map<Integer, Pair<String, ValidationResult>> liquidityRatios = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
-                double equityRatio = f.balanceSheet.liabilities.equityRatio();
-                return new Pair<>(PF.format(equityRatio), liquidityRatioValidator.validate(f, loanRequest));   
+                double liquidityRatio = f.balanceSheet.liquidityRatio1(loanRequest.shortTermLoan);
+                return new Pair<>(PF.format(liquidityRatio), liquidityRatioValidator.validate(f, loanRequest));   
             }));
         
         Map<Integer, Pair<String, ValidationResult>> supplierDaysValues = client.financialHistory.financialStatements.stream()

@@ -32,6 +32,20 @@ class BalanceSheetForm extends CustomField<BalanceSheet> {
     
     BalanceSheetForm(BalanceSheet balanceSheet) {
         this.balanceSheet = balanceSheet;
+        bindValues();
+    }
+    
+    private void bindValues() {
+        arField.setAmount(balanceSheet.assets.accountsReceivable);
+        stockField.setAmount(balanceSheet.assets.stock);
+        cashField.setAmount(balanceSheet.assets.cash);
+        otherAssetsField.setAmount(balanceSheet.assets.other);
+     
+        ownEquityField.setAmount(balanceSheet.liabilities.ownEquity);
+        evReserveField.setAmount(balanceSheet.liabilities.evaluationReserve);
+        apField.setAmount(balanceSheet.liabilities.accountsPayable);
+        otherLiabilitiesField.setAmount(balanceSheet.liabilities.otherLiabilities);
+        totalField.setAmount(balanceSheet.liabilities.total);
     }
     
     private Layout createAssetsLayout() {
@@ -63,17 +77,6 @@ class BalanceSheetForm extends CustomField<BalanceSheet> {
     protected Component initContent() {
         HorizontalLayout layout = new HorizontalLayout(createAssetsLayout(), createLiabilitiesLayout());
         layout.setMargin(new MarginInfo(false, true, true, true));
-        
-        arField.setAmount(balanceSheet.assets.accountsReceivable);
-        stockField.setAmount(balanceSheet.assets.stock);
-        cashField.setAmount(balanceSheet.assets.cash);
-        otherAssetsField.setAmount(balanceSheet.assets.other);
-     
-        ownEquityField.setAmount(balanceSheet.liabilities.ownEquity);
-        evReserveField.setAmount(balanceSheet.liabilities.evaluationReserve);
-        apField.setAmount(balanceSheet.liabilities.accountsPayable);
-        otherLiabilitiesField.setAmount(balanceSheet.liabilities.otherLiabilities);
-        totalField.setAmount(balanceSheet.liabilities.total);
         
         return layout;
     }
