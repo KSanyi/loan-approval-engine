@@ -9,15 +9,12 @@ import org.junit.Test;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.accounting.BalanceSheet;
-import hu.lae.domain.accounting.FreeCashFlowCalculator;
-import hu.lae.domain.accounting.IncomeStatement;
-import hu.lae.domain.accounting.IncomeStatementData;
 import hu.lae.domain.accounting.BalanceSheet.Assets;
 import hu.lae.domain.accounting.BalanceSheet.Liabilities;
-import hu.lae.domain.loan.ExistingLoans;
-import hu.lae.domain.loan.LoanApplicationResult;
-import hu.lae.domain.loan.LoanCalculator;
-import hu.lae.domain.loan.LoanRequest;
+import hu.lae.domain.accounting.FinancialHistory;
+import hu.lae.domain.accounting.FinancialStatementData;
+import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.accounting.IncomeStatement;
 import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.domain.riskparameters.Industry;
 import hu.lae.domain.riskparameters.InterestRate;
@@ -30,17 +27,31 @@ public class LoanCalculatorTest {
 
     private LoanCalculator loanCalculator;
     
-    private BalanceSheet balanceSheet = new BalanceSheet(2016,
-            new Assets(400, 50, 20, 30),
-            new Liabilities(1000, 100, 70, 0, 2000));
+    FinancialStatementData financialStatementData2016 = new FinancialStatementData(
+            2016,
+            new BalanceSheet(
+                    new Assets(400, 50, 20, 30),
+                    new Liabilities(1000, 100, 70, 0, 2000)),
+            new IncomeStatement(600, 300, 70, 30, 300));
     
-    private IncomeStatementData incomeStatementData = new IncomeStatementData(Arrays.asList(
-            new IncomeStatement(2014, 600, 300, 70, 30, 300),
-            new IncomeStatement(2015, 600, 300, 70, 30, 300),
-            new IncomeStatement(2016, 600, 300, 70, 30, 300)));
+    FinancialStatementData financialStatementData2015 = new FinancialStatementData(
+            2015,
+            new BalanceSheet(
+                    new Assets(400, 50, 20, 30),
+                    new Liabilities(1000, 100, 70, 0, 2000)),
+            new IncomeStatement(600, 300, 70, 30, 300));
     
-    private Client client = new Client("Test client", Industry.AUTOMOTIVE, balanceSheet, incomeStatementData, ExistingLoans.createEmpty());
+    FinancialStatementData financialStatementData2014 = new FinancialStatementData(
+            2014,
+            new BalanceSheet(
+                    new Assets(400, 50, 20, 30),
+                    new Liabilities(1000, 100, 70, 0, 2000)),
+            new IncomeStatement(600, 300, 70, 30, 300));
     
+    FinancialHistory financialHistory = new FinancialHistory(Arrays.asList(financialStatementData2014, financialStatementData2015, financialStatementData2016));
+    
+    private Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, ExistingLoans.createEmpty());
+
     @Before
     public void init() {
         Haircuts haircuts = new Haircuts(0.8, 0.5, 0.8, 0.4);
@@ -117,7 +128,7 @@ public class LoanCalculatorTest {
     @Test
     public void maxLongTermLoanWithExistingLoans() {
         ExistingLoans existingLoans = new ExistingLoans(0, 100, LocalDate.of(2019, 1, 1), 0);
-        Client client = new Client("Test client", Industry.AUTOMOTIVE, balanceSheet, incomeStatementData, existingLoans);
+        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans);
         
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, false);
         
@@ -127,7 +138,7 @@ public class LoanCalculatorTest {
     @Test
     public void maxLongTermLoanWithExistingRefinansableLoans() {
         ExistingLoans existingLoans = new ExistingLoans(0, 100, LocalDate.of(2019, 1, 1), 0);
-        Client client = new Client("Test client", Industry.AUTOMOTIVE, balanceSheet, incomeStatementData, existingLoans);
+        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans);
         
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, true);
         
@@ -137,7 +148,7 @@ public class LoanCalculatorTest {
     @Test
     public void idealStructure() {
         ExistingLoans existingLoans = new ExistingLoans(10, 100, LocalDate.of(2019, 1, 1), 0);
-        Client client = new Client("Test client", Industry.AUTOMOTIVE, balanceSheet, incomeStatementData, existingLoans);
+        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans);
         
         LoanRequest loanRequest = loanCalculator.calculateIdealLoanRequest(client, FreeCashFlowCalculator.lastYear);
         

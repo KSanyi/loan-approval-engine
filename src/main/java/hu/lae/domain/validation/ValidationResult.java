@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.client.validation;
+package hu.lae.domain.validation;
 
 public class ValidationResult {
 

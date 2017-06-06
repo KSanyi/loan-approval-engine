@@ -3,10 +3,12 @@ package hu.lae.infrastructure.ui.loancalculation;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
@@ -16,9 +18,11 @@ import com.vaadin.ui.renderers.NumberRenderer;
 import hu.lae.domain.Client;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.riskparameters.RiskParameters;
+import hu.lae.domain.validation.EquityRatioValidator;
+import hu.lae.domain.validation.LiquidityValidator;
+import hu.lae.domain.validation.ValidationResult;
 import hu.lae.infrastructure.ui.VaadinUtil;
-import hu.lae.infrastructure.ui.client.validation.LiquidityValidator;
-import hu.lae.infrastructure.ui.client.validation.ValidationResult;
+import hu.lae.util.Pair;
 
 @SuppressWarnings("serial")
 class DecisionWindow extends Window {
@@ -53,21 +57,19 @@ class DecisionWindow extends Window {
     
     private Grid<EbitdaTableRow> createEbitdaTable() {
         
-        List<Integer> years = client.incomeStatementData.incomeStatements().map(statement -> statement.year).collect(Collectors.toList());
+        List<Integer> years = client.financialHistory.years();
         
         Grid<EbitdaTableRow> grid = new Grid<>();
         grid.addColumn(row -> row.caption).setCaption("");
-        grid.addColumn(row -> row.ebitdaT2).setCaption(years.get(0) + "");
-        grid.addColumn(row -> row.ebitdaT1).setCaption(years.get(1) + "");
-        grid.addColumn(row -> row.ebitdaT).setCaption(years.get(2) + "");
-        grid.addColumn(row -> row.change, new NumberRenderer(new DecimalFormat("0.0%"))).setCaption("%");
+        years.stream().forEach(year -> grid.addColumn(row -> row.ebitdas.get(year)).setCaption(year + ""));
+        grid.addColumn(row -> row.lastChange, new NumberRenderer(new DecimalFormat("0.0%"))).setCaption("Last growth");
         
-        List<Long> ebitdas = client.incomeStatementData.ebitdas();
-        List<Long> sales = client.incomeStatementData.sales();
+        Map<Integer, Long> ebitdas = client.financialHistory.incomeStatementHistory().ebitdas();
+        Map<Integer, Long> sales = client.financialHistory.incomeStatementHistory().sales();
         
         List<EbitdaTableRow> items = Arrays.asList(
-                new EbitdaTableRow("EBITDA", ebitdas.get(0), ebitdas.get(1), ebitdas.get(2), client.incomeStatementData.ebitdaGrowt()),
-                new EbitdaTableRow("Sales", sales.get(0), sales.get(1), sales.get(2), client.incomeStatementData.salesGrowt()));
+                new EbitdaTableRow("EBITDA",ebitdas, client.financialHistory.incomeStatementHistory().ebitdaGrowt()),
+                new EbitdaTableRow("Sales", sales, client.financialHistory.incomeStatementHistory().salesGrowt()));
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);
@@ -80,43 +82,67 @@ class DecisionWindow extends Window {
     
     private Grid<WariningTableRow> createWarningsTable() {
         
-        List<Integer> years = client.incomeStatementData.incomeStatements().map(statement -> statement.year).collect(Collectors.toList());
+        List<Integer> years = client.financialHistory.years();
         
         Grid<WariningTableRow> grid = new Grid<>();
         grid.addColumn(row -> row.caption).setCaption("");
-        grid.addColumn(row -> row.value).setCaption(years.get(2) + "");
-        grid.addColumn(row -> "").setCaption("").setStyleGenerator(row -> row.validationResult.type.name());
+        years.stream().forEach(year -> grid.addColumn(row -> row.values.get(year).v1)
+                .setCaption(year + "")
+                .setStyleGenerator(row -> row.values.get(year).v2.type.name()));
         
-        grid.setDescriptionGenerator(g -> g.validationResult.toString());
+        //grid.setDescriptionGenerator(g -> g.validationResult.toString());
         
-        double equityRatio = client.balanceSheet.liabilities.equityRatio();
-        String equityRatioString = PF.format(equityRatio);
-        boolean equityRatioOk = equityRatio >= riskParameters.thresholds.equityRatio;
-        ValidationResult equityValidationResult = equityRatioOk ? ValidationResult.Ok() : ValidationResult.Ko("");
-
-        ValidationResult liquidityRatioValidation = new LiquidityValidator(riskParameters.thresholds.liquidityRatio).validate(client, loanRequest);
+        EquityRatioValidator equityRatioValidator = new EquityRatioValidator(riskParameters.thresholds.equityRatio);
         
-        double shortTermLoan = client.existingLoans.shortTermLoans + loanRequest.shortTermLoan;
-        double liquidityRatio = client.balanceSheet.liquidityRatio1(shortTermLoan);
-        String liquidityRatioString = DF.format(liquidityRatio);
+        Map<Integer, Pair<String, ValidationResult>> equityRatios = client.financialHistory.financialStatements.stream()
+            .collect(Collectors.toMap(f -> f.year, f -> {
+            double equityRatio = f.balanceSheet.liabilities.equityRatio();
+            return new Pair<>(PF.format(equityRatio), equityRatioValidator.validate(f));   
+        }));
         
-        double supplierDays = client.supplierDays();
-        String supplierDaysString = DF.format(supplierDays);
+        LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoans, riskParameters.thresholds.liquidityRatio);
+        
+        Map<Integer, Pair<String, ValidationResult>> liquidityRatios = client.financialHistory.financialStatements.stream()
+                .collect(Collectors.toMap(f -> f.year, f -> {
+                double equityRatio = f.balanceSheet.liabilities.equityRatio();
+                return new Pair<>(PF.format(equityRatio), liquidityRatioValidator.validate(f, loanRequest));   
+            }));
+        
+        Map<Integer, Pair<String, ValidationResult>> supplierDaysValues = client.financialHistory.financialStatements.stream()
+                .collect(Collectors.toMap(f -> f.year, f -> {
+                return new Pair<>(DF.format(f.supplierDays()), ValidationResult.Ok());   
+        }));
+        
+        Map<Integer, Pair<String, ValidationResult>> buyersDays = client.financialHistory.financialStatements.stream()
+                .collect(Collectors.toMap(f -> f.year, f -> {
+                return new Pair<>("0.0", ValidationResult.Ok());   
+        }));
+        
+        Map<Integer, Pair<String, ValidationResult>> stockDays = client.financialHistory.financialStatements.stream()
+                .collect(Collectors.toMap(f -> f.year, f -> {
+                return new Pair<>("0.0", ValidationResult.Ok());   
+        }));
+        
+        Map<Integer, Pair<String, ValidationResult>> equityValues = client.financialHistory.financialStatements.stream()
+                .collect(Collectors.toMap(f -> f.year, f -> {
+                return new Pair<>("0.0", ValidationResult.Ok());   
+        }));
         
         List<WariningTableRow> items = Arrays.asList(
-                new WariningTableRow("Equity value", "0.0", ValidationResult.Ok()),
-                new WariningTableRow("Equity ratio", equityRatioString, equityValidationResult),
-                new WariningTableRow("Liquidity ratio", liquidityRatioString, liquidityRatioValidation),
-                new WariningTableRow("Suppliers day", supplierDaysString, ValidationResult.Ok()),
-                new WariningTableRow("Buyers days", "0.0", ValidationResult.Ok()),
-                new WariningTableRow("Stock days", "0.0", ValidationResult.Ok()));
+                new WariningTableRow("Equity value", equityValues),
+                new WariningTableRow("Equity ratio", equityRatios),
+                new WariningTableRow("Liquidity ratio", liquidityRatios),
+                new WariningTableRow("Suppliers day", supplierDaysValues),
+                new WariningTableRow("Buyers days", buyersDays),
+                new WariningTableRow("Stock days", stockDays));
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);
         grid.setCaption("Warnings & KOs");
         grid.setHeightMode(HeightMode.ROW);
-        grid.setWidth("250px");
+        //grid.setWidth("250px");
         grid.setHeightByRows(6);
+        grid.setSelectionMode(SelectionMode.NONE);
         
         return grid;
     }
@@ -124,31 +150,24 @@ class DecisionWindow extends Window {
     private static class EbitdaTableRow {
         
         final String caption;
-        final long ebitdaT2;
-        final long ebitdaT1;
-        final long ebitdaT;
-        final double change;
+        final Map<Integer, Long> ebitdas;
+        final double lastChange;
 
-        public EbitdaTableRow(String caption, long ebitdaT2, long ebitdaT1, long ebitdaT, double change) {
+        public EbitdaTableRow(String caption, Map<Integer, Long> ebitdas, double lastChange) {
             this.caption = caption;
-            this.ebitdaT2 = ebitdaT2;
-            this.ebitdaT1 = ebitdaT1;
-            this.ebitdaT = ebitdaT;
-            this.change = change;
+            this.ebitdas = ebitdas;
+            this.lastChange = lastChange;
         }
     }
     
     private static class WariningTableRow {
         
         final String caption;
-        final String value;
-        final ValidationResult validationResult;
+        final Map<Integer, Pair<String, ValidationResult>> values;
 
-        public WariningTableRow(String caption, String value, ValidationResult validationResult) {
+        public WariningTableRow(String caption, Map<Integer, Pair<String, ValidationResult>> values) {
             this.caption = caption;
-            this.value = value;
-            this.validationResult = validationResult;
+            this.values = values;
         }
     }
-    
 }

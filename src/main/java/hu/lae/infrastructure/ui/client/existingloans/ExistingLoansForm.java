@@ -32,7 +32,7 @@ class ExistingLoansForm extends HorizontalLayout {
         expiryField.setValue(existingLoans.expiry);
         
         expiryField.addStyleName(ValoTheme.DATEFIELD_SMALL);
-        expiryField.setWidth("120px");
+        expiryField.setWidth("110px");
         expiryField.setRangeStart(Clock.date().plusYears(1));
         expiryField.addValueChangeListener(e -> {
             LocalDate firstValidDate = Clock.date().plusYears(1);

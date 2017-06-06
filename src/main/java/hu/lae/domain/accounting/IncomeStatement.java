@@ -5,8 +5,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class IncomeStatement {
 
-    public int year;
-    
     public final long sales;
     
     public final long ebitda;
@@ -17,8 +15,7 @@ public class IncomeStatement {
     
     public final long materialExpenditures;
 
-    public IncomeStatement(int year, long sales, long ebitda, long amortization, long taxes, long materialExpenditures) {
-        this.year = year;
+    public IncomeStatement(long sales, long ebitda, long amortization, long taxes, long materialExpenditures) {
         this.sales = sales;
         this.ebitda = ebitda;
         this.amortization = amortization;
@@ -31,16 +28,8 @@ public class IncomeStatement {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
-    public static IncomeStatement createEmpty(int year) {
-        return new IncomeStatement(year, 0, 0, 0, 0, 0);
-    }
-    
-    public static IncomeStatement createDefault(int year) {
-        return new IncomeStatement(year, 600, 300, 70, 30, 300);
-    }
-    
-    public int year() {
-        return year;
+    public static IncomeStatement createEmpty() {
+        return new IncomeStatement(0, 0, 0, 0, 0);
     }
     
 }

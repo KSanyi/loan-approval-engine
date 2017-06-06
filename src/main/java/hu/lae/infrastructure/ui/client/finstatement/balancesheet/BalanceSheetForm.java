@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.client.balancesheet;
+package hu.lae.infrastructure.ui.client.finstatement.balancesheet;
 
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
@@ -22,8 +22,8 @@ class BalanceSheetForm extends CustomField<BalanceSheet> {
     private final AmountField cashField = new AmountField("Cash");
     private final AmountField otherAssetsField = new AmountField("Other");
     
-    private final AmountField ownEquityField = new AmountField("Own equity");
-    private final AmountField evReserveField = new AmountField("Evaluation reserve");
+    private final AmountField ownEquityField = new AmountField("Own Equity");
+    private final AmountField evReserveField = new AmountField("Evaluation Res");
     private final AmountField apField = new AmountField("Accounts P");
     private final AmountField otherLiabilitiesField = new AmountField("Other");
     private final AmountField totalField = new AmountField("Total");
@@ -55,7 +55,7 @@ class BalanceSheetForm extends CustomField<BalanceSheet> {
 
     @Override
     public BalanceSheet getValue() {
-        return new BalanceSheet(balanceSheet.year, new Assets(arField.getAmount(), stockField.getAmount(), cashField.getAmount(), otherAssetsField.getAmount()), 
+        return new BalanceSheet(new Assets(arField.getAmount(), stockField.getAmount(), cashField.getAmount(), otherAssetsField.getAmount()), 
                 new Liabilities(ownEquityField.getAmount(), evReserveField.getAmount(), apField.getAmount(), otherLiabilitiesField.getAmount(), totalField.getAmount()));
     }
 
@@ -64,13 +64,6 @@ class BalanceSheetForm extends CustomField<BalanceSheet> {
         HorizontalLayout layout = new HorizontalLayout(createAssetsLayout(), createLiabilitiesLayout());
         layout.setMargin(new MarginInfo(false, true, true, true));
         
-        doSetValue(balanceSheet);
-        
-        return layout;
-    }
-
-    @Override
-    protected void doSetValue(BalanceSheet balanceSheet) {
         arField.setAmount(balanceSheet.assets.accountsReceivable);
         stockField.setAmount(balanceSheet.assets.stock);
         cashField.setAmount(balanceSheet.assets.cash);
@@ -81,6 +74,13 @@ class BalanceSheetForm extends CustomField<BalanceSheet> {
         apField.setAmount(balanceSheet.liabilities.accountsPayable);
         otherLiabilitiesField.setAmount(balanceSheet.liabilities.otherLiabilities);
         totalField.setAmount(balanceSheet.liabilities.total);
+        
+        return layout;
+    }
+
+    @Override
+    protected void doSetValue(BalanceSheet balanceSheet) {
+        throw new IllegalStateException();
     }
     
 }

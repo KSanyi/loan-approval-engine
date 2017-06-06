@@ -1,20 +1,16 @@
 package hu.lae.domain.accounting;
 
-import java.util.Arrays;
-
 import org.junit.Assert;
 import org.junit.Test;
 
-import hu.lae.domain.accounting.FreeCashFlowCalculator;
-import hu.lae.domain.accounting.IncomeStatement;
-import hu.lae.domain.accounting.IncomeStatementData;
+import hu.lae.util.MapFactory;
 
 public class FreeCashFlowCalculatorTest {
 
-    IncomeStatementData incomeStatementData = new IncomeStatementData(Arrays.asList(
-            new IncomeStatement(2014, 1600, 800, 80, 200, 300), 
-            new IncomeStatement(2015, 1800, 900, 110, 180, 300), 
-            new IncomeStatement(2016, 2000, 1000, 100, 200, 300)));
+    IncomeStatementHistory incomeStatementData = new IncomeStatementHistory(MapFactory.of(
+            2014, new IncomeStatement(1600, 800, 80, 200, 300),
+            2015, new IncomeStatement(1800, 900, 110, 180, 300),
+            2016, new IncomeStatement(2000, 1000, 100, 200, 300)));
     
     double amortizationRate = 0.1;
     

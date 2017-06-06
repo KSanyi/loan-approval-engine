@@ -31,7 +31,7 @@ public class LoanCalculator {
         int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(client.industry);
         LoanApplicationResult result = calculate(client, maxLoanDuration, 0, freeCashFlowCalculator, true);
         
-        double idealShortTermLoan = client.balanceSheet.calculateJustifiableShortTermLoan(riskParameters.haircuts);
+        double idealShortTermLoan = client.calculateJustifiableShortTermLoan(riskParameters.haircuts);
         result = calculate(client, maxLoanDuration, idealShortTermLoan, freeCashFlowCalculator, true);
         double idealLongTermLoan = result.maxLongTermLoan;
         
@@ -44,10 +44,10 @@ public class LoanCalculator {
         logger.debug(client.toString());
         logger.debug("Payback years: " + paybackYears + ", short term loan: " + shortTermLoan + ", FreeCashFlowCalculator: " + freeCashFlowCalculator + ", refinanceExistingLongTermLoans: " + refinanceExistingLongTermLoans);
         
-        double justifiableShortTermLoan = client.balanceSheet.calculateJustifiableShortTermLoan(riskParameters.haircuts);
+        double justifiableShortTermLoan = client.calculateJustifiableShortTermLoan(riskParameters.haircuts);
         logger.debug("Justifiable short term loan: " + justifiableShortTermLoan);
 
-        double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementData, riskParameters.amortizationRate);
+        double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
         logger.debug("Normalized free cash flow: " + freeCashFlow);
         
         InterestRate shortTermInterestRate = riskParameters.shortTermInterestRate;
