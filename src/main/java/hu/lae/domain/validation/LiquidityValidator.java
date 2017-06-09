@@ -40,4 +40,32 @@ public class LiquidityValidator {
         return ValidationResult.Ok();
     }
     
+    public ValidationResult validateRatio1(FinancialStatementData financialStatement, LoanRequest loanRequest) {
+        double shortTermLoans = existingShortTermLoan + loanRequest.shortTermLoan;
+        double liquidityRatio1 = financialStatement.balanceSheet.liquidityRatio1(shortTermLoans);
+        if(liquidityRatio1 <  threshold) {
+            return ValidationResult.Warning("");
+        } else {
+            return ValidationResult.Ok();
+        }
+    }
+    
+    public ValidationResult validateRatio2(FinancialStatementData financialStatement) {
+        double liquidityRatio2 = financialStatement.balanceSheet.liquidityRatio2();
+        if(liquidityRatio2 <  threshold) {
+            return ValidationResult.Warning("");
+        } else {
+            return ValidationResult.Ok();
+        }
+    }
+    
+    public ValidationResult validateRatio3(FinancialStatementData financialStatement) {
+        double liquidityRatio3 = financialStatement.balanceSheet.liquidityRatio3();
+        if(liquidityRatio3 <  threshold) {
+            return ValidationResult.Warning("");
+        } else {
+            return ValidationResult.Ok();
+        }
+    }
+    
 }

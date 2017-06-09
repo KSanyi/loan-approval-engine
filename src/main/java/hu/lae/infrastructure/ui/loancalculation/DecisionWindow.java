@@ -1,6 +1,7 @@
 package hu.lae.infrastructure.ui.loancalculation;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,13 @@ class DecisionWindow extends Window {
 
     private final static DecimalFormat DF = new DecimalFormat("0.00");
     private final static DecimalFormat PF = new DecimalFormat("0.0%");
+    private final static DecimalFormat AF;
+    
+    static {
+        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+        decimalFormatSymbols.setGroupingSeparator((char) 160);
+        AF = new DecimalFormat("###,###", decimalFormatSymbols);
+    }
     
     private final RiskParameters riskParameters;
     
@@ -50,8 +58,15 @@ class DecisionWindow extends Window {
     }
     
     private Layout createLayout() {
-        HorizontalLayout firstRow = new HorizontalLayout(createEbitdaTable(), createWarningsTable());
-        VerticalLayout layout = new VerticalLayout(firstRow);
+        
+        VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable());
+        column1.setMargin(false);
+        
+        VerticalLayout column2 = new VerticalLayout(createWarningsTable());
+        column2.setMargin(false);
+        
+        HorizontalLayout layout = new HorizontalLayout(column1, column2);
+        layout.setMargin(true);
         return layout;
     }
     
@@ -68,8 +83,8 @@ class DecisionWindow extends Window {
         Map<Integer, Long> sales = client.financialHistory.incomeStatementHistory().sales();
         
         List<EbitdaTableRow> items = Arrays.asList(
-                new EbitdaTableRow("EBITDA",ebitdas, client.financialHistory.incomeStatementHistory().ebitdaGrowt()),
-                new EbitdaTableRow("Sales", sales, client.financialHistory.incomeStatementHistory().salesGrowt()));
+                new EbitdaTableRow("EBITDA",ebitdas, client.financialHistory.incomeStatementHistory().ebitdaGrowth()),
+                new EbitdaTableRow("Sales", sales, client.financialHistory.incomeStatementHistory().salesGrowth()));
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);
@@ -77,6 +92,24 @@ class DecisionWindow extends Window {
         grid.setHeightMode(HeightMode.ROW);
         grid.setHeightByRows(2);
         
+        return grid;
+    }
+    
+    private Grid<FreeCFTableRow> createFreeCFTable() {
+        Grid<FreeCFTableRow> grid = new Grid<>();
+        grid.addColumn(row -> row.caption).setCaption("");
+        grid.addColumn(row -> row.value).setCaption("Free CF");
+        
+        List<FreeCFTableRow> items = Arrays.asList(
+                new FreeCFTableRow("W Last year", 0),
+                new FreeCFTableRow("W Corrected", 0));
+        grid.setItems(items);
+        
+        grid.addStyleName(VaadinUtil.GRID_SMALL);
+        //grid.setCaption("EBITDA & Sales & Free CF");
+        grid.setHeightMode(HeightMode.ROW);
+        grid.setHeightByRows(2);
+        grid.setWidth("250px");
         return grid;
     }
     
@@ -92,6 +125,12 @@ class DecisionWindow extends Window {
         
         //grid.setDescriptionGenerator(g -> g.validationResult.toString());
         
+        Map<Integer, Pair<String, ValidationResult>> ownEquityValues = client.financialHistory.financialStatements.stream()
+                .collect(Collectors.toMap(f -> f.year, f -> {
+                double ownEquity = f.balanceSheet.liabilities.ownEquity;
+                return new Pair<>(AF.format(ownEquity), ValidationResult.Ok());   
+            }));
+        
         EquityRatioValidator equityRatioValidator = new EquityRatioValidator(riskParameters.thresholds.equityRatio);
         
         Map<Integer, Pair<String, ValidationResult>> equityRatios = client.financialHistory.financialStatements.stream()
@@ -102,10 +141,26 @@ class DecisionWindow extends Window {
         
         LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoans, riskParameters.thresholds.liquidityRatio);
         
-        Map<Integer, Pair<String, ValidationResult>> liquidityRatios = client.financialHistory.financialStatements.stream()
+        Map<Integer, Pair<String, ValidationResult>> liquidityRatios1 = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
-                double liquidityRatio = f.balanceSheet.liquidityRatio1(loanRequest.shortTermLoan);
-                return new Pair<>(PF.format(liquidityRatio), liquidityRatioValidator.validate(f, loanRequest));   
+                double liquidityRatio = f.balanceSheet.liquidityRatio1(client.existingLoans.shortTermLoans + loanRequest.shortTermLoan);
+                
+                return client.financialHistory.lastFinancialStatementData().year == f.year ? 
+                        new Pair<>(DF.format(liquidityRatio), liquidityRatioValidator.validateRatio1(f, loanRequest)) : new Pair<>("NA", ValidationResult.Ok());
+            }));
+        
+        Map<Integer, Pair<String, ValidationResult>> liquidityRatios2 = client.financialHistory.financialStatements.stream()
+                .collect(Collectors.toMap(f -> f.year, f -> {
+                double liquidityRatio = f.balanceSheet.liquidityRatio2();
+                return client.financialHistory.lastFinancialStatementData().year == f.year ? 
+                        new Pair<>(DF.format(liquidityRatio), liquidityRatioValidator.validateRatio2(f)) : new Pair<>("NA", ValidationResult.Ok());
+            }));
+        
+        Map<Integer, Pair<String, ValidationResult>> liquidityRatios3 = client.financialHistory.financialStatements.stream()
+                .collect(Collectors.toMap(f -> f.year, f -> {
+                double liquidityRatio = f.balanceSheet.liquidityRatio3();
+                return client.financialHistory.lastFinancialStatementData().year == f.year ? 
+                        new Pair<>(DF.format(liquidityRatio), liquidityRatioValidator.validateRatio3(f)) : new Pair<>("NA", ValidationResult.Ok());
             }));
         
         Map<Integer, Pair<String, ValidationResult>> supplierDaysValues = client.financialHistory.financialStatements.stream()
@@ -115,23 +170,20 @@ class DecisionWindow extends Window {
         
         Map<Integer, Pair<String, ValidationResult>> buyersDays = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
-                return new Pair<>("0.0", ValidationResult.Ok());   
+                return new Pair<>(DF.format(f.buyersDays()), ValidationResult.Ok());   
         }));
         
         Map<Integer, Pair<String, ValidationResult>> stockDays = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
-                return new Pair<>("0.0", ValidationResult.Ok());   
-        }));
-        
-        Map<Integer, Pair<String, ValidationResult>> equityValues = client.financialHistory.financialStatements.stream()
-                .collect(Collectors.toMap(f -> f.year, f -> {
-                return new Pair<>("0.0", ValidationResult.Ok());   
+                return new Pair<>(DF.format(f.stockDays()), ValidationResult.Ok());   
         }));
         
         List<WariningTableRow> items = Arrays.asList(
-                new WariningTableRow("Equity value", equityValues),
+                new WariningTableRow("Equity value", ownEquityValues),
                 new WariningTableRow("Equity ratio", equityRatios),
-                new WariningTableRow("Liquidity ratio", liquidityRatios),
+                new WariningTableRow("Liquidity ratio 1", liquidityRatios1),
+                new WariningTableRow("Liquid. ratio 2 wo credit", liquidityRatios2),
+                new WariningTableRow("Liquid. ratio 3 wo cred&cash", liquidityRatios3),
                 new WariningTableRow("Suppliers day", supplierDaysValues),
                 new WariningTableRow("Buyers days", buyersDays),
                 new WariningTableRow("Stock days", stockDays));
@@ -140,8 +192,7 @@ class DecisionWindow extends Window {
         grid.addStyleName(VaadinUtil.GRID_SMALL);
         grid.setCaption("Warnings & KOs");
         grid.setHeightMode(HeightMode.ROW);
-        //grid.setWidth("250px");
-        grid.setHeightByRows(6);
+        grid.setHeightByRows(8);
         grid.setSelectionMode(SelectionMode.NONE);
         
         return grid;
@@ -168,6 +219,17 @@ class DecisionWindow extends Window {
         public WariningTableRow(String caption, Map<Integer, Pair<String, ValidationResult>> values) {
             this.caption = caption;
             this.values = values;
+        }
+    }
+    
+    private static class FreeCFTableRow {
+        
+        final String caption;
+        final Integer value;
+
+        public FreeCFTableRow(String caption, Integer value) {
+            this.caption = caption;
+            this.value = value;
         }
     }
 }

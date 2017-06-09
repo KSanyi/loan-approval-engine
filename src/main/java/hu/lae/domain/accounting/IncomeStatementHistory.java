@@ -41,11 +41,11 @@ public class IncomeStatementHistory {
         return incomeStatements.keySet().stream().collect(Collectors.toMap(year -> year, year -> function.apply(incomeStatements.get(year)))); 
     }
     
-    public double ebitdaGrowt() {
+    public double ebitdaGrowth() {
         return (double)incomeStatements.get(lastYear).ebitda / incomeStatements.get(lastYear - 1).ebitda - 1; 
     }
     
-    public double salesGrowt() {
+    public double salesGrowth() {
         return (double)incomeStatements.get(lastYear).sales / incomeStatements.get(lastYear - 1).sales - 1; 
     }
     
