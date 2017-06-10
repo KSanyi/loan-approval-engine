@@ -48,27 +48,12 @@ public class AmountField extends TextField {
     
     private void valueChanged(ValueChangeEvent<String> event) {
         String value = event.getValue();
-        
-        if(event.isUserOriginated()) {
-            logger.debug("USERACTION: " + name + " is set to " + value);
-        }
-        
         try {
             long numberValue = FORMATTER.parse(value).longValue();
-            setAmount(numberValue);
+            setAmount(numberValue, event.isUserOriginated());
         } catch(ParseException ex) {
-            setAmount(createNumber(value));
+            setAmount(createNumber(value), event.isUserOriginated());
         }
-    }
-    
-    public long getAmount() {
-        return amount;
-    }
-    
-    public void setAmount(Long amount) {
-        this.amount = amount;
-        logger.debug(name + " is: " + amount);
-        doSetValue(FORMATTER.format(amount));
     }
     
     private static long createNumber(String value) {
@@ -80,6 +65,22 @@ public class AmountField extends TextField {
             clearedValue = "0";
         }
         return (long)Double.parseDouble(clearedValue);
+    }
+    
+    public long getAmount() {
+        return amount;
+    }
+    
+    private void setAmount(Long amount, boolean userOriginated) {
+        if(userOriginated) {
+            logger.debug("USERACTION: " + name + " is set to " + amount);
+        }
+        this.amount = amount;
+        doSetValue(FORMATTER.format(amount));
+    }
+    
+    public void setAmount(Long amount) {
+        setAmount(amount, false);
     }
     
 }

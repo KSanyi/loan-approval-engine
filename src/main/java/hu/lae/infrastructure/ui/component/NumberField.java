@@ -35,25 +35,19 @@ public class NumberField extends TextField {
     
     private void valueChanged(ValueChangeEvent<String> event) {
         String value = event.getValue();
-        
-        if(event.isUserOriginated()) {
-            logger.debug("USERACTION: " + name + " is set to " + value);
-        }
         try {
             double doubleValue = Double.parseDouble(value);
-            setNumber(doubleValue);
+            setNumber(doubleValue, event.isUserOriginated());
         } catch(NumberFormatException ex) {
-            setNumber(createNumber(value));
+            setNumber(createNumber(value), event.isUserOriginated());
         }
     }
     
-    public double getNumber() {
-        return number;
-    }
-    
-    public void setNumber(Double number) {
+    private void setNumber(Double number, boolean userOriginated) {
+        if(userOriginated) {
+            logger.debug("USERACTION: " + name + " is set to " + number);
+        }
         this.number = number;
-        logger.debug(name + " is: " + number);
         doSetValue(String.valueOf(number));
     }
     
@@ -66,6 +60,14 @@ public class NumberField extends TextField {
             clearedValue = "0";
         }
         return Double.parseDouble(clearedValue);
+    }
+    
+    public double getNumber() {
+        return number;
+    }
+    
+    public void setNumber(Double number) {
+        setNumber(number, false);
     }
     
 }

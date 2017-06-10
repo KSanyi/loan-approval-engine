@@ -1,20 +1,15 @@
 package hu.lae.domain.accounting;
 
-import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.util.MathUtil;
 
 public class BalanceSheet {
 
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    
     public static BalanceSheet createEmpty() {
         return new BalanceSheet(new Assets(0, 0, 0, 0), new Liabilities(0, 0, 0, 0, 0));
     }
@@ -29,10 +24,8 @@ public class BalanceSheet {
     }
     
     public double calculateJustifiableShortTermLoan(Haircuts haircuts) {
-        logger.debug("Calculating justifiable short term loan");
         double assetsJustifiableValue = assets.evaluate(haircuts);
         double liabilitiesValue = liabilities.shortTermLiabilities();
-        logger.debug("Calculation: " + assetsJustifiableValue + " - " + liabilitiesValue);
         return assetsJustifiableValue - liabilitiesValue;
     }
     
@@ -68,11 +61,9 @@ public class BalanceSheet {
         }
         
         public double evaluate(Haircuts haircuts) {
-            logger.debug("Calculating justifiable assets value");
             double justifiableValue = MathUtil.directProduct(
                     Arrays.asList((double)accountsReceivable, (double)stock, (double)cash, (double)other),
                     Arrays.asList(haircuts.accountsReceivable, haircuts.stock, haircuts.cash, haircuts.other));
-            logger.debug("Justifiable assets value: " + justifiableValue);
             return justifiableValue;
         }
         
@@ -99,9 +90,7 @@ public class BalanceSheet {
         }
 
         public double shortTermLiabilities() {
-            logger.debug("Calculating liabilities value");
             double value = accountsPayable + otherLiabilities;
-            logger.debug("Liabilities value: " + value);
             return value;
         }
         

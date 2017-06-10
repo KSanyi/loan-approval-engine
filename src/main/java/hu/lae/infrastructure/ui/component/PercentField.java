@@ -40,24 +40,19 @@ public class PercentField extends TextField {
     private void valueChanged(ValueChangeEvent<String> event) {
         String value = event.getValue();
         
-        if(event.isUserOriginated()) {
-            logger.debug("USERACTION: " + name + " is set to " + value);
-        }
         try {
             percentValue = FORMATTTER.parse(value).doubleValue();
-            setPercent(percentValue);
+            setPercent(percentValue, event.isUserOriginated());
         } catch(ParseException ex) {
-            setPercent(createNumber(value));
+            setPercent(createNumber(value), event.isUserOriginated());
         }
     }
     
-    public Double getPercent() {
-        return percentValue;
-    }
-    
-    public void setPercent(Double percent) {
+    private void setPercent(Double percent, boolean userOriginated) {
+        if(userOriginated) {
+            logger.debug("USERACTION: " + name + " is set to " + percent);
+        }
         this.percentValue = percent;
-        logger.debug(name + " is: " + percentValue);
         doSetValue(FORMATTTER.format(percent));
     }
     
@@ -70,6 +65,14 @@ public class PercentField extends TextField {
             clearedValue = "0";
         }
         return Double.parseDouble(clearedValue) / 100;
+    }
+    
+    public Double getPercent() {
+        return percentValue;
+    }
+    
+    public void setPercent(Double percent) {
+        setPercent(percent, false);
     }
     
 }

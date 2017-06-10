@@ -16,7 +16,8 @@ public class Button extends com.vaadin.ui.Button {
     }
     
     public Button(String caption, ClickListener listener) {
-        super(caption, listener);
+        this(caption);
+        addClickListener(listener);
     }
     
 }
