@@ -111,4 +111,32 @@ public class LoanCalculator {
         return new CashFlow(maxLoanDuration, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate); 
     }
     
+    public double calculateMinPaybackyears(Client client, LoanRequest loanRequest, FreeCashFlowCalculator freeCashFlowCalculator, boolean refinanceExistingLongTermLoans) {
+        
+        double idealShortTermLoan = client.calculateJustifiableShortTermLoan(riskParameters.haircuts);
+        
+        double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
+        
+        double cashFlowForNewLongTermLoans;
+        
+        if(loanRequest.shortTermLoan >= idealShortTermLoan) {
+            double amountAboveJustifiableSTLoan = loanRequest.shortTermLoan - idealShortTermLoan;
+            // logger.info("Amount above justifiable ST loan: " + amountAboveJustifiableSTLoan);
+            int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(client.industry);
+            double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, maxLoanDuration, amountAboveJustifiableSTLoan);
+            // logger.info("CF needed for above: " + cfNeededForStDebtService);
+            cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(idealShortTermLoan) - cfNeededForStDebtService);
+        } else {
+            cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(loanRequest.shortTermLoan));
+        }
+        
+        if(!refinanceExistingLongTermLoans) {
+            double yealyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(riskParameters.longTermInterestRate, currentDate);
+            cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yealyDebtServiceForExistingLoans);
+        }
+        
+        return -ExcelFunctions.nper(riskParameters.longTermInterestRate.value, cashFlowForNewLongTermLoans, loanRequest.longTermLoan, 0, false);
+        
+    }
+    
 }

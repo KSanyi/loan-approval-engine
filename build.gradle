@@ -23,6 +23,8 @@ dependencies {
 	
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 	
+	compile group: 'org.apache.poi', name: 'poi', version: '3.9'
+	
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.26'
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.12'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.12'

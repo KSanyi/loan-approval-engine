@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
@@ -34,12 +35,13 @@ import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.infrastructure.ui.component.ComboBox;
+import hu.lae.util.Formatters;
 
 @SuppressWarnings("serial")
 public class ProposalWindow extends Window {
     
     private static final Logger logger = LoggerFactory.getLogger(LaeUI.class);
-
+    
     private final CheckBox stLoanRefinanceCheck = new CheckBox("Refinance");
     private final CheckBox ltLoanRefinanceCheck = new CheckBox("Refinance");
     
@@ -53,6 +55,8 @@ public class ProposalWindow extends Window {
     private final AmountField shortTermLoanField = new AmountField("Short term loan");
     
     private final AmountField longTermLoanField = new AmountField("Long term loan");
+    
+    private final Label minPaybackYearsLabel = new Label();
     
     private final int maxLoanDuration; 
     
@@ -71,12 +75,25 @@ public class ProposalWindow extends Window {
         cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.lastYear);
         cashflowCalculatorCombo.addValueChangeListener(value -> cashFlowCalculationStrategyChanged(value.getValue()));
         
+        ltLoanRefinanceCheck.addValueChangeListener(v -> showMinPaybackYears());
+        shortTermLoanField.addValueChangeListener(v -> showMinPaybackYears());
+        longTermLoanField.addValueChangeListener(v -> showMinPaybackYears());
+        
         double yearlyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
         setContent(createLayout(yearlyDebtServiceForExistingLoans));
         
         addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
     
+    private void showMinPaybackYears() {
+        double minPaybackYears = loanCalculator.calculateMinPaybackyears(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
+        if(minPaybackYears > 0) {
+            minPaybackYearsLabel.setValue("Minimum payback duration: " + Formatters.formatYears(minPaybackYears));            
+        } else {
+            minPaybackYearsLabel.setValue("");
+        }
+    }
+
     private Component createLayout(double yearlyDebtServiceForExistingLoans) {
         setResizable(false);
         
@@ -116,7 +133,7 @@ public class ProposalWindow extends Window {
         
         FormLayout layout = new FormLayout(paybackYearsCombo, cashflowCalculatorCombo, shortTermLoanField, longTermLoanField);
         layout.setSizeUndefined();
-        layout.setMargin(true);
+        layout.setMargin(new MarginInfo(false, false, true, false));
         
         Button helpButton = new Button("Help", click -> UI.getCurrent().addWindow(
                 new LoanHelperWindow(loanCalculator, client, paybackYearsCombo.getValue(), cashflowCalculatorCombo.getValue(),
@@ -129,9 +146,9 @@ public class ProposalWindow extends Window {
         helpButton.setIcon(VaadinIcons.SLIDER);
         helpButton.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         
-        HorizontalLayout panelLayout = new HorizontalLayout(layout, helpButton);
+        VerticalLayout panelLayout = new VerticalLayout(helpButton, layout, minPaybackYearsLabel);
         panelLayout.setComponentAlignment(helpButton, Alignment.TOP_RIGHT);
-        panelLayout.setMargin(true);
+        panelLayout.setSpacing(false);
         panelLayout.setSizeFull();
         
         return new Panel(panelLayout);
@@ -211,10 +228,14 @@ public class ProposalWindow extends Window {
         List<String> errorMessages = validate();
         if(errorMessages.isEmpty()) {
             super.close();
-            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, new LoanRequest(shortTermLoanField.getAmount(), longTermLoanField.getAmount())));
+            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, createLoanRequest()));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
         }
+    }
+    
+    private LoanRequest createLoanRequest() {
+        return new LoanRequest(shortTermLoanField.getAmount(), longTermLoanField.getAmount());
     }
     
     private List<String> validate() {

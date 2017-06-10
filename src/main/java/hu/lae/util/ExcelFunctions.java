@@ -1,23 +1,9 @@
 package hu.lae.util;
 
+import org.apache.poi.ss.formula.functions.FinanceLib;
+
 public final class ExcelFunctions {
 
-	/**
-	 * Emulates Excel/Calc's PMT(interest_rate, number_payments, PV, FV, Type) function, which calculates the payments for a loan or the future value of an investment
-	 *
-	 * @param r
-	 *            - periodic interest rate represented as a decimal.
-	 * @param nper
-	 *            - number of total payments / periods.
-	 * @param pv
-	 *            - present value -- borrowed or invested principal.
-	 * @param fv
-	 *            - future value of loan or annuity.
-	 * @param type
-	 *            - when payment is made: beginning of period is 1; end, 0.
-	 * @return <code>double</code> representing periodic payment amount.
-	 */
-	// http://arachnoid.com/lutusp/finance.html
 	public static double pmt(double r, double nper, double pv, double fv, int type) {
 
 		double pmt = -r * (pv * Math.pow(1 + r, nper) + fv) / ((1 + r * type) * (Math.pow(1 + r, nper) - 1));
@@ -244,5 +230,9 @@ public final class ExcelFunctions {
 
 		double fv = -(pv * Math.pow(1 + r, nper) + pmt * (1 + r * type) * (Math.pow(1 + r, nper) - 1) / r);
 		return fv;
+	}
+	
+	public static double nper(double r, double y, double p, double f, boolean t) {
+	    return FinanceLib.nper(r, y, p, f, t);
 	}
 }
