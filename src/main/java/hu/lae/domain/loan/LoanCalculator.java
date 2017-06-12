@@ -111,7 +111,7 @@ public class LoanCalculator {
         return new CashFlow(maxLoanDuration, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate); 
     }
     
-    public double calculateMinPaybackyears(Client client, LoanRequest loanRequest, FreeCashFlowCalculator freeCashFlowCalculator, boolean refinanceExistingLongTermLoans) {
+    public double calculateMinPaybackYears(Client client, LoanRequest loanRequest, FreeCashFlowCalculator freeCashFlowCalculator, boolean refinanceExistingLongTermLoans) {
         
         double idealShortTermLoan = client.calculateJustifiableShortTermLoan(riskParameters.haircuts);
         

@@ -86,7 +86,7 @@ public class ProposalWindow extends Window {
     }
     
     private void showMinPaybackYears() {
-        double minPaybackYears = loanCalculator.calculateMinPaybackyears(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
+        double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
         if(minPaybackYears > 0) {
             minPaybackYearsLabel.setValue("Minimum payback duration: " + Formatters.formatYears(minPaybackYears));            
         } else {

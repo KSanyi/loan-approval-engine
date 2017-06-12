@@ -155,4 +155,49 @@ public class LoanCalculatorTest {
         Assert.assertEquals(833.75, loanRequest.longTermLoan, 0.1);
     }
     
+    @Test
+    public void minPaybackYears() {
+        LoanRequest loanRequest = new LoanRequest(111, 400);
+        
+        double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false);
+        
+        Assert.assertEquals(1.96, minPaybackYears, 0.1);
+    }
+    
+    @Test
+    public void minPaybackYearsWithJustifiableShortTermloan() {
+        LoanRequest loanRequest = new LoanRequest(200, 400);
+        
+        double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false);
+        
+        Assert.assertEquals(1.96, minPaybackYears, 0.1);
+    }
+    
+    @Test
+    public void minPaybackYearsWithLowerThanJustifiableShortTermloan() {
+        LoanRequest loanRequest = new LoanRequest(111, 400);
+        
+        double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false);
+        
+        Assert.assertEquals(1.96, minPaybackYears, 0.1);
+    }
+    
+    @Test
+    public void minPaybackYearsWithHigherThanJustifiableShortTermloan() {
+        LoanRequest loanRequest = new LoanRequest(400, 400);
+        
+        double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false);
+        
+        Assert.assertEquals(2.28, minPaybackYears, 0.1);
+    }
+    
+    @Test
+    public void minPaybackYearsWithExtraHighLongTermloan() {
+        LoanRequest loanRequest = new LoanRequest(400, 2000);
+        
+        double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false);
+        
+        Assert.assertEquals(9.47, minPaybackYears, 0.1);
+    }
+    
 }
