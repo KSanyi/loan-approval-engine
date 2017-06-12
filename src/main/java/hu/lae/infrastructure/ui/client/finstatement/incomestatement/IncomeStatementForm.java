@@ -12,7 +12,7 @@ public class IncomeStatementForm extends FormLayout {
     private final AmountField ebitdaField = new AmountField("Ebitda", "ebitda");
     private final AmountField amortizationField = new AmountField("Amortization", "amortization");
     private final AmountField taxField = new AmountField("Tax", "tax");
-    private final AmountField materialExpendituresField = new AmountField("Material type expenditures", "materialExpenditures");
+    private final AmountField materialExpendituresField = new AmountField("Material exp", "materialExpenditures");
     
     IncomeStatementForm(IncomeStatement incomeStatement) {
         
@@ -24,7 +24,7 @@ public class IncomeStatementForm extends FormLayout {
         
         setSpacing(false);
         setMargin(false);
-        addComponents(salesField, ebitdaField, amortizationField, taxField);
+        addComponents(salesField, ebitdaField, materialExpendituresField, amortizationField, taxField);
     }
 
     public IncomeStatement getIncomeStatement() {
