@@ -3,6 +3,7 @@ package hu.lae.infrastructure.ui.loancalculation;
 import java.util.function.Consumer;
 
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -39,6 +40,10 @@ public class LoanHelperWindow extends Window {
         setContent(layout);
         
         addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
+    }
+    
+    public void open() {
+        UI.getCurrent().addWindow(this);
     }
     
 }

@@ -44,4 +44,8 @@ public class ExistingLoans {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
+
+    public double sum() {
+        return shortTermLoans + longTermLoans;
+    }
 }

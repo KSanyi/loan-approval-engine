@@ -58,7 +58,9 @@ public class ProposalWindow extends Window {
     
     private final Label minPaybackYearsLabel = new Label();
     
-    private final int maxLoanDuration; 
+    private final Button helpButton = new Button("Help", click -> openLoanHelperWindow());
+    
+    private final int maxLoanDuration;
     
     private final Button submitButton = new Button("Submit for proposal", click -> submit());
     
@@ -69,11 +71,9 @@ public class ProposalWindow extends Window {
         maxLoanDuration = loanCalculator.riskParameters.maxLoanDurations.maxLoanDuration(client.industry); 
 
         paybackYearsCombo = new ComboBox<>("Select l/t number of years", generateComboValues(maxLoanDuration));
-        paybackYearsCombo.addValueChangeListener(value -> paybackYearsChanged(value.getValue()));
         paybackYearsCombo.setValue(maxLoanDuration);
         
         cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.lastYear);
-        cashflowCalculatorCombo.addValueChangeListener(value -> cashFlowCalculationStrategyChanged(value.getValue()));
         
         ltLoanRefinanceCheck.addValueChangeListener(v -> showMinPaybackYears());
         shortTermLoanField.addValueChangeListener(v -> showMinPaybackYears());
@@ -85,6 +85,23 @@ public class ProposalWindow extends Window {
         addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
     
+    private void openLoanHelperWindow() {
+        
+        LoanRequest loanRequest = createLoanRequest();
+        int paybackYears = paybackYearsCombo.getValue();
+        FreeCashFlowCalculator cashFlowCalculator = cashflowCalculatorCombo.getValue();
+        boolean refinanceExistingLtLoan = ltLoanRefinanceCheck.getValue();
+        
+        LoanHelperWindow loanHelperWindow = new LoanHelperWindow(loanCalculator, client, paybackYears, cashFlowCalculator, loanRequest, refinanceExistingLtLoan, 
+            selectedLoanRequest -> {
+                shortTermLoanField.setAmount((long)selectedLoanRequest.shortTermLoan);
+                longTermLoanField.setAmount((long)selectedLoanRequest.longTermLoan);
+                showMinPaybackYears();
+        });
+                
+        loanHelperWindow.open();
+    }
+
     private void showMinPaybackYears() {
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
         if(minPaybackYears > 0) {
@@ -135,14 +152,6 @@ public class ProposalWindow extends Window {
         layout.setSizeUndefined();
         layout.setMargin(new MarginInfo(false, false, true, false));
         
-        Button helpButton = new Button("Help", click -> UI.getCurrent().addWindow(
-                new LoanHelperWindow(loanCalculator, client, paybackYearsCombo.getValue(), cashflowCalculatorCombo.getValue(),
-                        new LoanRequest(shortTermLoanField.getAmount(), longTermLoanField.getAmount()),
-                        ltLoanRefinanceCheck.getValue(),
-                        loanRequest -> {
-                            shortTermLoanField.setAmount((long)loanRequest.shortTermLoan);
-                            longTermLoanField.setAmount((long)loanRequest.longTermLoan);
-                        })));
         helpButton.setIcon(VaadinIcons.SLIDER);
         helpButton.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         
@@ -152,16 +161,6 @@ public class ProposalWindow extends Window {
         panelLayout.setSizeFull();
         
         return new Panel(panelLayout);
-    }
-    
-    private void paybackYearsChanged(int paybackYears) {
-        logger.debug("Payback years combo is set to " + paybackYears);
-        //loanSelector1.setPaybackYears(paybackYears);
-    }
-    
-    private void cashFlowCalculationStrategyChanged(FreeCashFlowCalculator calculator) {
-        logger.debug("Cash flow calculator strategy changed to " + calculator);
-        //loanSelector1.setPaybackYears(paybackYears);
     }
     
     private static List<Integer> generateComboValues(int maxValue) {
@@ -204,7 +203,7 @@ public class ProposalWindow extends Window {
         
         Label stlabel = new Label("Ideal short term loan");
         stlabel.setWidth("150px");
-        AmountField stLoanField = new AmountField(null, "Ideal ST Loan");
+        AmountField stLoanField = new AmountField(null);
         stLoanField.setAmount((long)idealLoanRequest.shortTermLoan);
         stLoanField.setWidth("60px");
         stLoanField.setReadOnly(true);
@@ -212,12 +211,21 @@ public class ProposalWindow extends Window {
 
         Label ltlabel = new Label("Ideal long term loan");
         ltlabel.setWidth("150px");
-        AmountField ltLoanField = new AmountField(null, "Ideal LT Loan");
+        AmountField ltLoanField = new AmountField(null);
         ltLoanField.setAmount((long)idealLoanRequest.longTermLoan);
         ltLoanField.setWidth("60px");
         ltLoanField.setReadOnly(true);
-        HorizontalLayout ltLayout = new HorizontalLayout(ltlabel, ltLoanField);        
-        VerticalLayout layout = new VerticalLayout(stLayout, ltLayout);
+        HorizontalLayout ltLayout = new HorizontalLayout(ltlabel, ltLoanField);
+        
+        Label sumLabel = new Label("Max debt capacity");
+        sumLabel.setWidth("150px");
+        AmountField sumLoanField = new AmountField(null);
+        sumLoanField.setAmount((long)idealLoanRequest.sum());
+        sumLoanField.setWidth("60px");
+        sumLoanField.setReadOnly(true);
+        HorizontalLayout sumLayout = new HorizontalLayout(sumLabel, sumLoanField);
+                
+        VerticalLayout layout = new VerticalLayout(stLayout, ltLayout, sumLayout);
         Panel panel = new Panel("Ideal structure for " + maxLoanDuration + " years", layout);
         panel.setSizeUndefined();
         

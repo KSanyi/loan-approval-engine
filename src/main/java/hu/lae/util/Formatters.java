@@ -30,7 +30,7 @@ public class Formatters {
         } else if(months < 12) {
             sb.append(formatUnit(months, "month"));
         } else {
-            sb.append(formatUnit(months / 12, "year" + " " + formatUnit(months % 12, "month")));
+            sb.append(formatUnit(months / 12, "year") + " " + formatUnit(months % 12, "month"));
         }
         sb.append(")");
         

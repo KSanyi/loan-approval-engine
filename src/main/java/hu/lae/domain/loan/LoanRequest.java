@@ -14,6 +14,10 @@ public class LoanRequest {
         this.longTermLoan = longTermLoan;
     }
     
+    public double sum() {
+        return shortTermLoan + longTermLoan;
+    }
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

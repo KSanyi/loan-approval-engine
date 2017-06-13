@@ -39,14 +39,14 @@ public class LoanCalculatorTest {
             new BalanceSheet(
                     new Assets(400, 50, 20, 30),
                     new Liabilities(1000, 100, 70, 0, 2000)),
-            new IncomeStatement(600, 300, 70, 30, 300));
+            new IncomeStatement(500, 200, 70, 30, 300));
     
     FinancialStatementData financialStatementData2014 = new FinancialStatementData(
             2014,
             new BalanceSheet(
                     new Assets(400, 50, 20, 30),
                     new Liabilities(1000, 100, 70, 0, 2000)),
-            new IncomeStatement(600, 300, 70, 30, 300));
+            new IncomeStatement(400, 150, 70, 30, 300));
     
     FinancialHistory financialHistory = new FinancialHistory(Arrays.asList(financialStatementData2014, financialStatementData2015, financialStatementData2016));
     
@@ -153,6 +153,17 @@ public class LoanCalculatorTest {
         
         Assert.assertEquals(303, loanRequest.shortTermLoan, 0.1);
         Assert.assertEquals(833.75, loanRequest.longTermLoan, 0.1);
+    }
+    
+    @Test
+    public void idealStructureWithAverageCFCalc() {
+        ExistingLoans existingLoans = new ExistingLoans(10, 100, LocalDate.of(2019, 1, 1), 0);
+        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans);
+        
+        LoanRequest loanRequest = loanCalculator.calculateIdealLoanRequest(client, FreeCashFlowCalculator.average);
+        
+        Assert.assertEquals(303, loanRequest.shortTermLoan, 0.1);
+        Assert.assertEquals(533.09, loanRequest.longTermLoan, 0.1);
     }
     
     @Test
