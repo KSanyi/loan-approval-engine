@@ -45,6 +45,8 @@ public class ProposalWindow extends Window {
     private final CheckBox stLoanRefinanceCheck = new CheckBox("Refinance");
     private final CheckBox ltLoanRefinanceCheck = new CheckBox("Refinance");
     
+    private final IdealStructurePanel idealStructurePanel;
+    
     private final LoanCalculator loanCalculator;
     private final Client client;
     
@@ -75,16 +77,24 @@ public class ProposalWindow extends Window {
         
         cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.lastYear);
         
-        ltLoanRefinanceCheck.addValueChangeListener(v -> showMinPaybackYears());
-        shortTermLoanField.addValueChangeListener(v -> showMinPaybackYears());
-        longTermLoanField.addValueChangeListener(v -> showMinPaybackYears());
+        cashflowCalculatorCombo.addValueChangeListener(v -> updateIdealStructurePanel());
+        cashflowCalculatorCombo.addValueChangeListener(v -> updateMinPaybackYearsLabel());
+        ltLoanRefinanceCheck.addValueChangeListener(v -> updateMinPaybackYearsLabel());
+        shortTermLoanField.addValueChangeListener(v -> updateMinPaybackYearsLabel());
+        longTermLoanField.addValueChangeListener(v -> updateMinPaybackYearsLabel());
         
         double yearlyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
+        idealStructurePanel = new IdealStructurePanel(loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue()), maxLoanDuration);
         setContent(createLayout(yearlyDebtServiceForExistingLoans));
         
         addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
     
+    private void updateIdealStructurePanel() {
+        LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
+        idealStructurePanel.update(idealLoanRequest);
+    }
+
     private void openLoanHelperWindow() {
         
         LoanRequest loanRequest = createLoanRequest();
@@ -96,13 +106,13 @@ public class ProposalWindow extends Window {
             selectedLoanRequest -> {
                 shortTermLoanField.setAmount((long)selectedLoanRequest.shortTermLoan);
                 longTermLoanField.setAmount((long)selectedLoanRequest.longTermLoan);
-                showMinPaybackYears();
+                updateMinPaybackYearsLabel();
         });
                 
         loanHelperWindow.open();
     }
 
-    private void showMinPaybackYears() {
+    private void updateMinPaybackYearsLabel() {
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
         if(minPaybackYears > 0) {
             minPaybackYearsLabel.setValue("Minimum payback duration: " + Formatters.formatYears(minPaybackYears));            
@@ -115,8 +125,6 @@ public class ProposalWindow extends Window {
         setResizable(false);
         
         Component existingLoanPanel = createExistingLoansPanel(yearlyDebtServiceForExistingLoans);
-        
-        Component idealStructurePanel = createIdealStructurePanel();
         
         HorizontalLayout topPanel = new HorizontalLayout(existingLoanPanel, idealStructurePanel);
         
@@ -194,41 +202,6 @@ public class ProposalWindow extends Window {
         layout.setComponentAlignment(debtServiceLayout, Alignment.BOTTOM_CENTER);
         Panel panel = new Panel("Existing loans", layout);
         panel.setSizeUndefined();
-        return panel;
-    }
-    
-    private Component createIdealStructurePanel() {
-        
-        LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
-        
-        Label stlabel = new Label("Ideal short term loan");
-        stlabel.setWidth("150px");
-        AmountField stLoanField = new AmountField(null);
-        stLoanField.setAmount((long)idealLoanRequest.shortTermLoan);
-        stLoanField.setWidth("60px");
-        stLoanField.setReadOnly(true);
-        HorizontalLayout stLayout = new HorizontalLayout(stlabel, stLoanField);
-
-        Label ltlabel = new Label("Ideal long term loan");
-        ltlabel.setWidth("150px");
-        AmountField ltLoanField = new AmountField(null);
-        ltLoanField.setAmount((long)idealLoanRequest.longTermLoan);
-        ltLoanField.setWidth("60px");
-        ltLoanField.setReadOnly(true);
-        HorizontalLayout ltLayout = new HorizontalLayout(ltlabel, ltLoanField);
-        
-        Label sumLabel = new Label("Max debt capacity");
-        sumLabel.setWidth("150px");
-        AmountField sumLoanField = new AmountField(null);
-        sumLoanField.setAmount((long)idealLoanRequest.sum());
-        sumLoanField.setWidth("60px");
-        sumLoanField.setReadOnly(true);
-        HorizontalLayout sumLayout = new HorizontalLayout(sumLabel, sumLoanField);
-                
-        VerticalLayout layout = new VerticalLayout(stLayout, ltLayout, sumLayout);
-        Panel panel = new Panel("Ideal structure for " + maxLoanDuration + " years", layout);
-        panel.setSizeUndefined();
-        
         return panel;
     }
     
