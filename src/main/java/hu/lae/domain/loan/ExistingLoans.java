@@ -31,9 +31,13 @@ public class ExistingLoans {
         this.bullet = bullet;
     }
     
-    public double yealyDebtService(InterestRate longTermInterestRate, LocalDate currentDate) {
+    public double calculateYearlyDebtServiceForLongTermLoans(InterestRate longTermInterestRate, LocalDate currentDate) {
         double quartersUntilMaturity = ChronoUnit.DAYS.between(currentDate, expiry) / 90.0;
         return -ExcelFunctions.pmt(longTermInterestRate.value, quartersUntilMaturity, longTermLoans, bullet, 0) * 4;
+    }
+    
+    public double calculateYearlyDebtServiceForShortTermLoans(InterestRate shortTermInterestRate) {
+        return shortTermInterestRate.multiply(shortTermLoans);
     }
     
     public boolean isValid(LocalDate date) {

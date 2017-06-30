@@ -84,10 +84,11 @@ public class ProposalWindow extends Window {
         ltLoanRefinanceCheck.addValueChangeListener(v -> updateMinPaybackYearsLabel());
         shortTermLoanField.addValueChangeListener(v -> updateMinPaybackYearsLabel());
         longTermLoanField.addValueChangeListener(v -> updateMinPaybackYearsLabel());
-        
-        double yearlyDebtServiceForExistingLoans = client.existingLoans.yealyDebtService(loanCalculator.riskParameters.longTermInterestRate, currentDate);
+
+        double yearlyDebtServiceForExistingLShortTermLoans = client.existingLoans.calculateYearlyDebtServiceForShortTermLoans(loanCalculator.riskParameters.shortTermInterestRate);
+        double yearlyDebtServiceForExistingLongTermLoans = client.existingLoans.calculateYearlyDebtServiceForLongTermLoans(loanCalculator.riskParameters.longTermInterestRate, currentDate);
         idealStructurePanel = new IdealStructurePanel(loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue()), maxLoanDuration);
-        setContent(createLayout(yearlyDebtServiceForExistingLoans));
+        setContent(createLayout(yearlyDebtServiceForExistingLShortTermLoans + yearlyDebtServiceForExistingLongTermLoans));
         
         addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
@@ -103,8 +104,9 @@ public class ProposalWindow extends Window {
         int paybackYears = paybackYearsCombo.getValue();
         FreeCashFlowCalculator cashFlowCalculator = cashflowCalculatorCombo.getValue();
         boolean refinanceExistingLtLoan = ltLoanRefinanceCheck.getValue();
+        boolean refinanceExistingStLoan = stLoanRefinanceCheck.getValue();
         
-        LoanHelperWindow loanHelperWindow = new LoanHelperWindow(loanCalculator, client, paybackYears, cashFlowCalculator, loanRequest, refinanceExistingLtLoan, 
+        LoanHelperWindow loanHelperWindow = new LoanHelperWindow(loanCalculator, client, paybackYears, cashFlowCalculator, loanRequest, refinanceExistingStLoan, refinanceExistingLtLoan, 
             selectedLoanRequest -> {
                 shortTermLoanField.setAmount((long)selectedLoanRequest.shortTermLoan);
                 longTermLoanField.setAmount((long)selectedLoanRequest.longTermLoan);
@@ -115,7 +117,7 @@ public class ProposalWindow extends Window {
     }
 
     private void updateMinPaybackYearsLabel() {
-        double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
+        double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), stLoanRefinanceCheck.getValue(), ltLoanRefinanceCheck.getValue());
         if(minPaybackYears > 0) {
             minPaybackYearsLabel.setValue("Minimum payback duration: " + Formatters.formatYears(minPaybackYears));            
         } else {
@@ -223,7 +225,7 @@ public class ProposalWindow extends Window {
     
     private List<String> validate() {
         
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), 0, cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), 0, cashflowCalculatorCombo.getValue(), stLoanRefinanceCheck.getValue(), ltLoanRefinanceCheck.getValue());
         long maxShortTermLoan = (long)loanApplicationResult.maxShortTermLoan;
         
         List<String> errorMessages = new ArrayList<>();
@@ -236,7 +238,7 @@ public class ProposalWindow extends Window {
         if(loanRequest.shortTermLoan > maxShortTermLoan) {
             errorMessages.add("Short term loan must not exceed " + maxShortTermLoan);
         }
-        loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), loanRequest.shortTermLoan, cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
+        loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), loanRequest.shortTermLoan, cashflowCalculatorCombo.getValue(), stLoanRefinanceCheck.getValue(), ltLoanRefinanceCheck.getValue());
         if(loanRequest.longTermLoan > loanApplicationResult.maxLongTermLoan) {
             errorMessages.add("Long term loan must not exceed " + (long)loanApplicationResult.maxLongTermLoan);
         }
