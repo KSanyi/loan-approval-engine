@@ -7,7 +7,7 @@ public class IncomeStatement {
 
     public final long sales;
     
-    public final long ebitda;
+    public final long operatingResult;
     
     public final long amortization;
     
@@ -15,9 +15,13 @@ public class IncomeStatement {
     
     public final long materialExpenditures;
 
-    public IncomeStatement(long sales, long ebitda, long amortization, long taxes, long materialExpenditures) {
+    public long ebitda() {
+        return operatingResult + amortization;
+    }
+    
+    public IncomeStatement(long sales, long operatingResult, long amortization, long taxes, long materialExpenditures) {
         this.sales = sales;
-        this.ebitda = ebitda;
+        this.operatingResult = operatingResult;
         this.amortization = amortization;
         this.taxes = taxes;
         this.materialExpenditures = materialExpenditures;

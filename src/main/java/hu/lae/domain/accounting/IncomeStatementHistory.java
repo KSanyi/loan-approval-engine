@@ -30,7 +30,7 @@ public class IncomeStatementHistory {
     }
     
     public Map<Integer, Long> ebitdas() {
-        return toMap(i -> i.ebitda);
+        return toMap(i -> i.ebitda());
     }
     
     public Map<Integer, Long> sales() {
@@ -42,7 +42,7 @@ public class IncomeStatementHistory {
     }
     
     public double ebitdaGrowth() {
-        return (double)incomeStatements.get(lastYear).ebitda / incomeStatements.get(lastYear - 1).ebitda - 1; 
+        return (double)incomeStatements.get(lastYear).ebitda() / incomeStatements.get(lastYear - 1).ebitda() - 1; 
     }
     
     public double salesGrowth() {

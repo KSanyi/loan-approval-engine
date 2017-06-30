@@ -66,7 +66,7 @@ public class LoanCalculatorTest {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 0, FreeCashFlowCalculator.lastYear, false, false);
         
         Assert.assertEquals(303, loanApplicationResult.justifiableShortTermLoan, 0.1);
-        Assert.assertEquals(1136.7, loanApplicationResult.maxShortTermLoan, 0.1);
+        Assert.assertEquals(1389.3, loanApplicationResult.maxShortTermLoan, 0.1);
         
         LoanApplicationResult resultForMaxShortTermLoan = loanCalculator.calculate(client, 5, loanApplicationResult.maxShortTermLoan, FreeCashFlowCalculator.lastYear, false, false);
         Assert.assertEquals(0, resultForMaxShortTermLoan.maxLongTermLoan, 0.1);
@@ -80,7 +80,7 @@ public class LoanCalculatorTest {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 3, 0, FreeCashFlowCalculator.lastYear, false, false);
         
         Assert.assertEquals(303, loanApplicationResult.justifiableShortTermLoan, 0.1);
-        Assert.assertEquals(1136.75, loanApplicationResult.maxShortTermLoan, 0.1);
+        Assert.assertEquals(1389.3, loanApplicationResult.maxShortTermLoan, 0.1);
         
         LoanApplicationResult resultForMaxShortTermLoan = loanCalculator.calculate(client, 3, loanApplicationResult.maxShortTermLoan, FreeCashFlowCalculator.lastYear, false, false);
         Assert.assertEquals(0, resultForMaxShortTermLoan.maxLongTermLoan, 0.1);
@@ -93,35 +93,35 @@ public class LoanCalculatorTest {
     public void maxLongTermLoanWithJustifiableShortTermLoan() {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(833.75, loanApplicationResult.maxLongTermLoan, 0.1);
+        Assert.assertEquals(1086.30, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
     public void maxLongTermLoanWithFewerPaybackYears() {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 3, 303, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(524.43, loanApplicationResult.maxLongTermLoan, 0.1);
+        Assert.assertEquals(683.29, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
     public void maxLongTermLoanWithHigherThenJustifiableShortTermLoan() {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 370, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(766.75, loanApplicationResult.maxLongTermLoan, 0.1);
+        Assert.assertEquals(1019.30, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
     public void maxLongTermLoanWithHigherThenJustifiableShortTermLoanAndFewerPaybackYears() {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 3, 370, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(482.29, loanApplicationResult.maxLongTermLoan, 0.1);
+        Assert.assertEquals(641.14, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
     public void maxLongTermLoanWithLowerThenJustifiableShortTermLoan() {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 150, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(853.63, loanApplicationResult.maxLongTermLoan, 0.1);
+        Assert.assertEquals(1106.18, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
@@ -131,7 +131,7 @@ public class LoanCalculatorTest {
         
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(538.39, loanApplicationResult.maxLongTermLoan, 0.1);
+        Assert.assertEquals(790.94, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
@@ -141,7 +141,7 @@ public class LoanCalculatorTest {
         
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, false, true);
         
-        Assert.assertEquals(833.75, loanApplicationResult.maxLongTermLoan, 0.1);
+        Assert.assertEquals(1086.30, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
@@ -152,7 +152,7 @@ public class LoanCalculatorTest {
         LoanRequest loanRequest = loanCalculator.calculateIdealLoanRequest(client, FreeCashFlowCalculator.lastYear);
         
         Assert.assertEquals(303, loanRequest.shortTermLoan, 0.1);
-        Assert.assertEquals(833.75, loanRequest.longTermLoan, 0.1);
+        Assert.assertEquals(1086.30, loanRequest.longTermLoan, 0.1);
     }
     
     @Test
@@ -163,7 +163,7 @@ public class LoanCalculatorTest {
         LoanRequest loanRequest = loanCalculator.calculateIdealLoanRequest(client, FreeCashFlowCalculator.average);
         
         Assert.assertEquals(303, loanRequest.shortTermLoan, 0.1);
-        Assert.assertEquals(533.09, loanRequest.longTermLoan, 0.1);
+        Assert.assertEquals(785.65, loanRequest.longTermLoan, 0.1);
     }
     
     @Test
@@ -172,7 +172,7 @@ public class LoanCalculatorTest {
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(2.20, minPaybackYears, 0.1);
+        Assert.assertEquals(1.69, minPaybackYears, 0.1);
     }
     
     @Test
@@ -181,7 +181,7 @@ public class LoanCalculatorTest {
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(2.17, minPaybackYears, 0.1);
+        Assert.assertEquals(1.66, minPaybackYears, 0.1);
     }
     
     @Test
@@ -190,7 +190,7 @@ public class LoanCalculatorTest {
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(2.56, minPaybackYears, 0.1);
+        Assert.assertEquals(1.87, minPaybackYears, 0.1);
     }
     
     @Test
@@ -199,7 +199,7 @@ public class LoanCalculatorTest {
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false, false);
         
-        Assert.assertEquals(7.13, minPaybackYears, 0.1);
+        Assert.assertEquals(5.06, minPaybackYears, 0.1);
     }
     
 }
