@@ -30,6 +30,8 @@ import hu.lae.domain.accounting.FreeCashFlowCalculator;
 import hu.lae.domain.loan.LoanApplicationResult;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
+import hu.lae.domain.validation.LiquidityValidator;
+import hu.lae.domain.validation.ValidationResult;
 import hu.lae.infrastructure.ui.LaeUI;
 import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.AmountField;
@@ -225,19 +227,24 @@ public class ProposalWindow extends Window {
         long maxShortTermLoan = (long)loanApplicationResult.maxShortTermLoan;
         
         List<String> errorMessages = new ArrayList<>();
-        long shortTermLoan = shortTermLoanField.getAmount();
-        long longTermLoan = longTermLoanField.getAmount();
+        LoanRequest loanRequest = createLoanRequest();
         if(ltLoanRefinanceCheck.getValue()) {
-            if(longTermLoan < client.existingLoans.longTermLoans) {
+            if(loanRequest.longTermLoan < client.existingLoans.longTermLoans) {
                 errorMessages.add("Long term loan request must be enough to cover the existing long term loans");
             }
         }
-        if(shortTermLoan > maxShortTermLoan) {
+        if(loanRequest.shortTermLoan > maxShortTermLoan) {
             errorMessages.add("Short term loan must not exceed " + maxShortTermLoan);
         }
-        loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), shortTermLoan, cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
-        if(longTermLoan > loanApplicationResult.maxLongTermLoan) {
+        loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), loanRequest.shortTermLoan, cashflowCalculatorCombo.getValue(), ltLoanRefinanceCheck.getValue());
+        if(loanRequest.longTermLoan > loanApplicationResult.maxLongTermLoan) {
             errorMessages.add("Long term loan must not exceed " + (long)loanApplicationResult.maxLongTermLoan);
+        }
+        
+        LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoans, loanCalculator.riskParameters.thresholds.liquidityRatio);
+        ValidationResult validationResult = liquidityRatioValidator.validateRatio1(client.financialStatementData(), loanRequest);
+        if(!validationResult.isOk()) {
+            errorMessages.add(validationResult.toString());
         }
         
         return errorMessages;

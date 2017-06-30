@@ -27,6 +27,10 @@ public class ValidationResult {
         OK, WARNING, KO;
     }
     
+    public boolean isOk() {
+        return type == Type.OK;
+    }
+    
     @Override
     public String toString() {
         return type.name() + " " + (message == null ? "" : ": " + message);

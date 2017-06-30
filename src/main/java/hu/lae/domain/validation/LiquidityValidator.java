@@ -44,7 +44,7 @@ public class LiquidityValidator {
         double shortTermLoans = existingShortTermLoan + loanRequest.shortTermLoan;
         double liquidityRatio1 = financialStatement.balanceSheet.liquidityRatio1(shortTermLoans);
         if(liquidityRatio1 <  threshold) {
-            return ValidationResult.Warning("");
+            return ValidationResult.Warning("Liquidity ratio 1 is too low: " + DF.format(liquidityRatio1) + " < " + threshold);
         } else {
             return ValidationResult.Ok();
         }
@@ -53,7 +53,7 @@ public class LiquidityValidator {
     public ValidationResult validateRatio2(FinancialStatementData financialStatement) {
         double liquidityRatio2 = financialStatement.balanceSheet.liquidityRatio2();
         if(liquidityRatio2 <  threshold) {
-            return ValidationResult.Warning("");
+            return ValidationResult.Warning("Liquidity ratio 2 is too low: " + DF.format(liquidityRatio2) + " < " + threshold);
         } else {
             return ValidationResult.Ok();
         }
@@ -62,7 +62,7 @@ public class LiquidityValidator {
     public ValidationResult validateRatio3(FinancialStatementData financialStatement) {
         double liquidityRatio3 = financialStatement.balanceSheet.liquidityRatio3();
         if(liquidityRatio3 <  threshold) {
-            return ValidationResult.Warning("");
+            return ValidationResult.Warning("Liquidity ratio 3 is too low: " + DF.format(liquidityRatio3) + " < " + threshold);
         } else {
             return ValidationResult.Ok();
         }
