@@ -49,7 +49,8 @@ public class ExistingLoans {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
-    public double sum() {
-        return shortTermLoans + longTermLoans;
+    public double sum(boolean refinanceLShortTermLoans, boolean refinanceLongTermLoans) {
+        return (refinanceLShortTermLoans ? 0: shortTermLoans) + (refinanceLongTermLoans ? 0 : longTermLoans);
     }
+    
 }

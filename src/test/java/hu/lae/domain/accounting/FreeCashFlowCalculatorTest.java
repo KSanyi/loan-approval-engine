@@ -18,14 +18,14 @@ public class FreeCashFlowCalculatorTest {
     public void lastYearBasedCalculation() {
         Double normalizedFreeCashFlow = FreeCashFlowCalculator.lastYear.calculate(incomeStatementData, amortizationRate);
         
-        Assert.assertEquals(790, normalizedFreeCashFlow.intValue());
+        Assert.assertEquals(890, normalizedFreeCashFlow.intValue());
     }
     
     @Test
     public void averageBasedCalculation() {
         Double normalizedFreeCashFlow = FreeCashFlowCalculator.average.calculate(incomeStatementData, amortizationRate);
         
-        Assert.assertEquals(696, normalizedFreeCashFlow.intValue());
+        Assert.assertEquals(793, normalizedFreeCashFlow.intValue());
     }
     
 }
