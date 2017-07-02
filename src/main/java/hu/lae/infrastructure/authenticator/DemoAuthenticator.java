@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.demo;
+package hu.lae.infrastructure.authenticator;
 
 import java.util.Collections;
 import java.util.HashMap;

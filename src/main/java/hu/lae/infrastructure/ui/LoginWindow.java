@@ -2,6 +2,7 @@ package hu.lae.infrastructure.ui;
 
 import java.util.function.Consumer;
 
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
@@ -37,10 +38,13 @@ class LoginWindow extends Window {
         setResizable(false);
         setDraggable(false);
         setWidth("300px");
+        
         userNameField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
         passwordField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
         button.addStyleName(ValoTheme.BUTTON_SMALL);
         button.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        button.setClickShortcut(KeyCode.ENTER);
+        
         FormLayout layout = new FormLayout(userNameField, passwordField);
         layout.setMargin(true);
         setContent(layout);
@@ -57,7 +61,7 @@ class LoginWindow extends Window {
         } catch (WrongPasswordException ex) {
             Notification.show("Login failed", "Wrong user name or password", Notification.Type.ERROR_MESSAGE);
         } catch (AuthenticationException ex) {
-            Notification.show("Login failed", "Error durong authentication", Notification.Type.ERROR_MESSAGE);
+            Notification.show("Login failed", "Error during authentication", Notification.Type.ERROR_MESSAGE);
         }
     }
     
