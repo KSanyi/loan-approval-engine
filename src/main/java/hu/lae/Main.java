@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.lae.domain.riskparameters.InMemoryRiskParametersRepository;
-import hu.lae.infrastructure.authenticator.UserServiceAuthenitcator;
+import hu.lae.infrastructure.authenticator.UserServiceAuthenticator;
 import hu.lae.infrastructure.server.ApplicationService;
 import hu.lae.infrastructure.server.LaeServer;
 import hu.lae.util.Clock;
@@ -22,7 +22,7 @@ public class Main {
         
         String userServiceUrl = getUserServiceUrl();
 
-        ApplicationService applicationService = new ApplicationService(new UserServiceAuthenitcator(userServiceUrl), new InMemoryRiskParametersRepository());
+        ApplicationService applicationService = new ApplicationService(new UserServiceAuthenticator(userServiceUrl), new InMemoryRiskParametersRepository());
 
         Clock.setStaticDate(LocalDate.of(2017, 4, 1));
         
