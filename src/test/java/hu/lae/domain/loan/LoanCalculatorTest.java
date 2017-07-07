@@ -168,7 +168,7 @@ public class LoanCalculatorTest {
     
     @Test
     public void minPaybackYearsWithJustifiableShortTermloan() {
-        LoanRequest loanRequest = new LoanRequest(200, 400);
+        LoanRequest loanRequest = new LoanRequest(200, 400, 5);
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false, false);
         
@@ -177,7 +177,7 @@ public class LoanCalculatorTest {
     
     @Test
     public void minPaybackYearsWithLowerThanJustifiableShortTermloan() {
-        LoanRequest loanRequest = new LoanRequest(111, 400);
+        LoanRequest loanRequest = new LoanRequest(111, 400, 5);
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false, false);
         
@@ -186,7 +186,7 @@ public class LoanCalculatorTest {
     
     @Test
     public void minPaybackYearsWithHigherThanJustifiableShortTermloan() {
-        LoanRequest loanRequest = new LoanRequest(400, 400);
+        LoanRequest loanRequest = new LoanRequest(400, 400, 5);
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false, false);
         
@@ -195,7 +195,7 @@ public class LoanCalculatorTest {
     
     @Test
     public void minPaybackYearsWithExtraHighLongTermloan() {
-        LoanRequest loanRequest = new LoanRequest(400, 1000);
+        LoanRequest loanRequest = new LoanRequest(400, 1000, 5);
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, false, false);
         

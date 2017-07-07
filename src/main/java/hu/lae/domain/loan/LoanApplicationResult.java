@@ -10,7 +10,7 @@ public class LoanApplicationResult {
     public final double maxShortTermLoan;
     
     public final double maxLongTermLoan;
-
+    
     public LoanApplicationResult(double justifiableShortTermLoan, double maxShortTermLoan, double maxLongTermLoan) {
         this.justifiableShortTermLoan = justifiableShortTermLoan;
         this.maxLongTermLoan = maxLongTermLoan;
