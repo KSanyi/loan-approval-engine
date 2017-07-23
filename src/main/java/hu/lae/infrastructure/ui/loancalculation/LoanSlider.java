@@ -50,7 +50,7 @@ public class LoanSlider extends CustomField<Double> {
     
     private AmountField createAmountField() {
         AmountField amountField = new AmountField(null, "loan amount");
-        amountField.setWidth("50");
+        amountField.setWidth("55");
         amountField.setValueChangeMode(ValueChangeMode.LAZY);
         amountField.removeStyleName(ValoTheme.TEXTFIELD_SMALL);
         amountField.addValueChangeListener(v -> {

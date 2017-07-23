@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CheckBox;
@@ -83,6 +84,7 @@ public class ProposalWindow extends Window {
         cashflowCalculatorCombo.addValueChangeListener(v -> updateMinPaybackYearsLabel());
         ltLoanRefinanceCheck.addValueChangeListener(v -> updateMinPaybackYearsLabel());
         shortTermLoanField.addValueChangeListener(v -> updateMinPaybackYearsLabel());
+        shortTermLoanField.addValueChangeListener(v -> checkLiquidityRatio());
         longTermLoanField.addValueChangeListener(v -> updateMinPaybackYearsLabel());
 
         double yearlyDebtServiceForExistingLShortTermLoans = client.existingLoans.calculateYearlyDebtServiceForShortTermLoans(loanCalculator.riskParameters.shortTermInterestRate);
@@ -110,6 +112,7 @@ public class ProposalWindow extends Window {
             selectedLoanRequest -> {
                 shortTermLoanField.setAmount((long)selectedLoanRequest.shortTermLoan);
                 longTermLoanField.setAmount((long)selectedLoanRequest.longTermLoan);
+                checkLiquidityRatio();
                 updateMinPaybackYearsLabel();
         });
                 
@@ -123,6 +126,16 @@ public class ProposalWindow extends Window {
         } else {
             minPaybackYearsLabel.setValue("");
         }
+    }
+    
+    private void checkLiquidityRatio() {
+    	 LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoans, loanCalculator.riskParameters.thresholds.liquidityRatio);
+         ValidationResult validationResult = liquidityRatioValidator.validateRatio1(client.financialStatementData(), createLoanRequest());
+         if(validationResult.isOk()) {
+        	 shortTermLoanField.setComponentError(null);
+         } else {
+        	 shortTermLoanField.setComponentError(new UserError(validationResult.toString()));
+         }
     }
 
     private Component createLayout(double yearlyDebtServiceForExistingLoans) {
@@ -241,12 +254,6 @@ public class ProposalWindow extends Window {
         loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), loanRequest.shortTermLoan, cashflowCalculatorCombo.getValue(), stLoanRefinanceCheck.getValue(), ltLoanRefinanceCheck.getValue());
         if(loanRequest.longTermLoan > loanApplicationResult.maxLongTermLoan) {
             errorMessages.add("Long term loan must not exceed " + (long)loanApplicationResult.maxLongTermLoan);
-        }
-        
-        LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoans, loanCalculator.riskParameters.thresholds.liquidityRatio);
-        ValidationResult validationResult = liquidityRatioValidator.validateRatio1(client.financialStatementData(), loanRequest);
-        if(!validationResult.isOk()) {
-            errorMessages.add(validationResult.toString());
         }
         
         return errorMessages;

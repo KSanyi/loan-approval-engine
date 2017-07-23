@@ -2,6 +2,7 @@ package hu.lae.infrastructure.ui.loancalculation;
 
 import java.text.DecimalFormat;
 
+import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
@@ -15,6 +16,8 @@ import hu.lae.domain.accounting.FreeCashFlowCalculator;
 import hu.lae.domain.loan.LoanApplicationResult;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
+import hu.lae.domain.validation.LiquidityValidator;
+import hu.lae.domain.validation.ValidationResult;
 
 @SuppressWarnings("serial")
 public class LoanSelector extends CustomField<LoanRequest> {
@@ -60,7 +63,18 @@ public class LoanSelector extends CustomField<LoanRequest> {
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, shortTermLoan, freeCashFlowCalculator, refinanceExistingShortTermLoans, refinanceExistingLongTermLoans);
         ltLoanSlider.setMaxLoanValue(loanApplicationResult.maxLongTermLoan);
         updateDebtCapacityUsageLabel();
+        checkLiquidityRatio();
     }
+    
+    private void checkLiquidityRatio() {
+   	 LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoans, loanCalculator.riskParameters.thresholds.liquidityRatio);
+        ValidationResult validationResult = liquidityRatioValidator.validateRatio1(client.financialStatementData(), createLoanRequest());
+        if(validationResult.isOk()) {
+        	stLoanSlider.setComponentError(null);
+        } else {
+        	stLoanSlider.setComponentError(new UserError(validationResult.toString()));
+        }
+   }
     
     private void longTermLoanChanged(double longTermLoan) {
         updateDebtCapacityUsageLabel();
@@ -72,9 +86,13 @@ public class LoanSelector extends CustomField<LoanRequest> {
         debtCapacityUsageLabel.setValue("Debt capacity usage: " + PERCENT_FORMATTER.format(debtCapacityUsage));
     }
 
+    private LoanRequest createLoanRequest() {
+        return new LoanRequest(stLoanSlider.getValue(), ltLoanSlider.getValue());
+    }
+    
     @Override
     public LoanRequest getValue() {
-        return new LoanRequest(stLoanSlider.getValue(), ltLoanSlider.getValue());
+        return createLoanRequest();
     }
 
     @Override
