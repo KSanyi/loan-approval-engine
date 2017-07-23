@@ -87,7 +87,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
     }
 
     private LoanRequest createLoanRequest() {
-        return new LoanRequest(stLoanSlider.getValue(), ltLoanSlider.getValue());
+        return new LoanRequest(stLoanSlider.getValue(), ltLoanSlider.getValue(), paybackYears);
     }
     
     @Override

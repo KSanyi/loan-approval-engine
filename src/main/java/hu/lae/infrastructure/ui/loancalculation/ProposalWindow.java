@@ -223,26 +223,29 @@ public class ProposalWindow extends Window {
     }
     
     private void submit() {
-        List<String> errorMessages = validate();
+        LoanRequest loanRequest = createLoanRequest();
+        List<String> errorMessages = validate(loanRequest);
+        
+        double dscr = loanCalculator.calculateDSCR(loanRequest, client, cashflowCalculatorCombo.getValue());
+        
         if(errorMessages.isEmpty()) {
             super.close();
-            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, createLoanRequest()));
+            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, loanRequest, dscr));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
         }
     }
     
     private LoanRequest createLoanRequest() {
-        return new LoanRequest(shortTermLoanField.getAmount(), longTermLoanField.getAmount());
+        return new LoanRequest(shortTermLoanField.getAmount(), longTermLoanField.getAmount(), paybackYearsCombo.getValue());
     }
     
-    private List<String> validate() {
+    private List<String> validate(LoanRequest loanRequest) {
         
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), 0, cashflowCalculatorCombo.getValue(), stLoanRefinanceCheck.getValue(), ltLoanRefinanceCheck.getValue());
         long maxShortTermLoan = (long)loanApplicationResult.maxShortTermLoan;
         
         List<String> errorMessages = new ArrayList<>();
-        LoanRequest loanRequest = createLoanRequest();
         if(ltLoanRefinanceCheck.getValue()) {
             if(loanRequest.longTermLoan < client.existingLoans.longTermLoans) {
                 errorMessages.add("Long term loan request must be enough to cover the existing long term loans");

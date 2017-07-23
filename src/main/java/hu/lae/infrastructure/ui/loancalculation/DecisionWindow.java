@@ -12,9 +12,11 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.NumberRenderer;
+import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.loan.LoanRequest;
@@ -44,10 +46,13 @@ class DecisionWindow extends Window {
     
     private final LoanRequest loanRequest;
     
-    DecisionWindow(RiskParameters riskParameters, Client client, LoanRequest loanRequest) {
+    private final double dscr;
+    
+    DecisionWindow(RiskParameters riskParameters, Client client, LoanRequest loanRequest, double dscr) {
         this.riskParameters= riskParameters;
         this.client = client;
         this.loanRequest = loanRequest;
+        this.dscr = dscr;
         
         setModal(true);
         setCaption("Decision");
@@ -59,7 +64,12 @@ class DecisionWindow extends Window {
     
     private Layout createLayout() {
         
-        VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable());
+        TextField dscrField = new TextField("DSCR", PF.format(dscr/100));
+        dscrField.setWidth("100px");
+        dscrField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
+        dscrField.setReadOnly(true);
+        
+        VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), dscrField);
         column1.setMargin(false);
         
         VerticalLayout column2 = new VerticalLayout(createWarningsTable());

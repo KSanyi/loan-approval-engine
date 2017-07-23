@@ -35,7 +35,7 @@ public class LoanCalculator {
         result = calculate(client, maxLoanDuration, idealShortTermLoan, freeCashFlowCalculator, true, true);
         double idealLongTermLoan = result.maxLongTermLoan;
         
-        LoanRequest idealLoanRequest = new LoanRequest(idealShortTermLoan, idealLongTermLoan);
+        LoanRequest idealLoanRequest = new LoanRequest(idealShortTermLoan, idealLongTermLoan, maxLoanDuration);
         
         logger.info("Ideal loan request: " + idealLoanRequest);
         
@@ -142,6 +142,22 @@ public class LoanCalculator {
             yearlyDebtServiceForExistingLoans += existingLoans.calculateYearlyDebtServiceForLongTermLoans(riskParameters.longTermInterestRate, currentDate);
         }
         return yearlyDebtServiceForExistingLoans;
+    }
+    
+    public double calculateDSCR(LoanRequest loanRequest, Client client, FreeCashFlowCalculator freeCashFlowCalculator) {
+        
+        double allShortTermLoan = client.existingLoans.shortTermLoans + loanRequest.shortTermLoan;
+        double interestForShortTermLoan = riskParameters.shortTermInterestRate.multiply(allShortTermLoan);
+        
+        double debtServiceForExistingLongTermLoan = client.existingLoans.calculateYearlyDebtServiceForLongTermLoans(riskParameters.longTermInterestRate, currentDate);
+        
+        double debtServiceForRequestedLongTermLoan = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, 5, loanRequest.longTermLoan);
+        
+        double fullDebtService = interestForShortTermLoan + debtServiceForExistingLongTermLoan + debtServiceForRequestedLongTermLoan;
+        
+        double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
+        
+        return freeCashFlow / fullDebtService; 
     }
     
 }

@@ -8,10 +8,13 @@ public class LoanRequest {
     public final double shortTermLoan;
     
     public final double longTermLoan;
+    
+    public final int longTermLoanDUration;
 
-    public LoanRequest(double shortTermLoan, double longTermLoan) {
+    public LoanRequest(double shortTermLoan, double longTermLoan, int longTermLoanDUration) {
         this.shortTermLoan = shortTermLoan;
         this.longTermLoan = longTermLoan;
+        this.longTermLoanDUration = longTermLoanDUration;
     }
     
     public double sum() {
