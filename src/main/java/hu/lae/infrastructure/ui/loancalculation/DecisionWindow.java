@@ -32,6 +32,7 @@ class DecisionWindow extends Window {
 
     private final static DecimalFormat DF = new DecimalFormat("0.00");
     private final static DecimalFormat PF = new DecimalFormat("0.0%");
+    private final static DecimalFormat PF2 = new DecimalFormat("0.00%");
     private final static DecimalFormat AF;
     
     static {
@@ -64,7 +65,7 @@ class DecisionWindow extends Window {
     
     private Layout createLayout() {
         
-        TextField dscrField = new TextField("DSCR", PF.format(dscr/100));
+        TextField dscrField = new TextField("DSCR", PF2.format(dscr/100));
         dscrField.setWidth("100px");
         dscrField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
         dscrField.setReadOnly(true);
