@@ -8,11 +8,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.vaadin.shared.ui.grid.HeightMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.NumberRenderer;
@@ -25,6 +27,7 @@ import hu.lae.domain.validation.EquityRatioValidator;
 import hu.lae.domain.validation.LiquidityValidator;
 import hu.lae.domain.validation.ValidationResult;
 import hu.lae.infrastructure.ui.VaadinUtil;
+import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.util.Pair;
 
 @SuppressWarnings("serial")
@@ -49,11 +52,16 @@ class DecisionWindow extends Window {
     
     private final double dscr;
     
-    DecisionWindow(RiskParameters riskParameters, Client client, LoanRequest loanRequest, double dscr) {
+    private final ProposalWindow proposalWindow;
+    
+    private final Button backButton = new Button("Back", click -> back());
+    
+    DecisionWindow(RiskParameters riskParameters, Client client, LoanRequest loanRequest, double dscr, ProposalWindow proposalWindow) {
         this.riskParameters= riskParameters;
         this.client = client;
         this.loanRequest = loanRequest;
         this.dscr = dscr;
+        this.proposalWindow = proposalWindow;
         
         setModal(true);
         setCaption("Decision");
@@ -63,6 +71,11 @@ class DecisionWindow extends Window {
         addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
     
+    private void back() {
+        close();
+        UI.getCurrent().addWindow(proposalWindow);
+    }
+
     private Layout createLayout() {
         
         TextField dscrField = new TextField("DSCR", PF2.format(dscr/100));
@@ -76,8 +89,11 @@ class DecisionWindow extends Window {
         VerticalLayout column2 = new VerticalLayout(createWarningsTable());
         column2.setMargin(false);
         
-        HorizontalLayout layout = new HorizontalLayout(column1, column2);
-        layout.setMargin(true);
+        HorizontalLayout columnsLayout = new HorizontalLayout(column1, column2);
+        
+        VerticalLayout layout = new VerticalLayout(columnsLayout, backButton);
+        layout.setComponentAlignment(backButton, Alignment.BOTTOM_CENTER);
+        
         return layout;
     }
     

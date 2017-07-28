@@ -230,7 +230,7 @@ public class ProposalWindow extends Window {
         
         if(errorMessages.isEmpty()) {
             super.close();
-            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, loanRequest, dscr));
+            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, loanRequest, dscr, this));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
         }
