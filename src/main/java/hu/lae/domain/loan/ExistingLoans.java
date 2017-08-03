@@ -2,55 +2,62 @@ package hu.lae.domain.loan;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import hu.lae.domain.riskparameters.InterestRate;
-import hu.lae.util.Clock;
 import hu.lae.util.ExcelFunctions;
 
 public class ExistingLoans {
     
     public static ExistingLoans createEmpty() {
-        return new ExistingLoans(0, 0, Clock.date().plusYears(1), 0);
+        return new ExistingLoans(Collections.emptyList());
     }
 
-    public final long shortTermLoans;
+    public final List<ExistingLoan> existingLoans;
     
-    public final long longTermLoans;
-    
-    public final LocalDate expiry;
-    
-    public final long bullet;
-    
-    public ExistingLoans(long shortTermLoans, long longTermLoans, LocalDate expiry, long bullet) {
-        this.shortTermLoans = shortTermLoans;
-        this.longTermLoans = longTermLoans;
-        this.expiry = expiry;
-        this.bullet = bullet;
+    public ExistingLoans(List<ExistingLoan> existingLoans) {
+        this.existingLoans = Collections.unmodifiableList(existingLoans);
     }
     
     public double calculateYearlyDebtServiceForLongTermLoans(InterestRate longTermInterestRate, LocalDate currentDate) {
-        double quartersUntilMaturity = ChronoUnit.DAYS.between(currentDate, expiry) / 90.0;
-        return -ExcelFunctions.pmt(longTermInterestRate.value, quartersUntilMaturity, longTermLoans, bullet, 0) * 4;
+        
+        return existingLoans.stream()
+            .filter(ExistingLoan::isLongTemLoan)
+            .mapToDouble(l -> {
+                double quartersUntilMaturity = ChronoUnit.DAYS.between(currentDate, l.expiry.get()) / 90.0;
+                return -ExcelFunctions.pmt(longTermInterestRate.value, quartersUntilMaturity, l.amount, 0, 0) * 4;
+            })
+            .sum();
     }
     
     public double calculateYearlyDebtServiceForShortTermLoans(InterestRate shortTermInterestRate) {
-        return shortTermInterestRate.multiply(shortTermLoans);
+        return shortTermInterestRate.multiply(shortTermLoansSum());
+    }
+    
+    public long shortTermLoansSum() {
+        return existingLoans.stream().filter(ExistingLoan::isShortTemLoan).mapToLong(l -> l.amount).sum();
+    }
+    
+    public long longTermLoansSum() {
+        return existingLoans.stream().filter(ExistingLoan::isLongTemLoan).mapToLong(l -> l.amount).sum();
     }
     
     public boolean isValid(LocalDate date) {
-        return longTermLoans == 0 || !expiry.isBefore(date.plusYears(1));
+        return existingLoans.stream().filter(ExistingLoan::isLongTemLoan).allMatch(l -> !l.expiry.get().isBefore(date.plusYears(1)));
+    }
+    
+    public List<Loan> toLoans() {
+        return existingLoans.stream().map(ExistingLoan::toLoan).collect(Collectors.toList());
     }
     
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
-
-    public double sum(boolean refinanceLShortTermLoans, boolean refinanceLongTermLoans) {
-        return (refinanceLShortTermLoans ? 0: shortTermLoans) + (refinanceLongTermLoans ? 0 : longTermLoans);
     }
     
 }

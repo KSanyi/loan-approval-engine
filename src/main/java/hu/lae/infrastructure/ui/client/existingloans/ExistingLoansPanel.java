@@ -18,7 +18,7 @@ public class ExistingLoansPanel extends Panel {
     }
     
     public ExistingLoans getExistingLoans() {
-        return form.getExistingLoans();
+        return form.getValue();
     }
     
 }

@@ -22,7 +22,7 @@ import hu.lae.infrastructure.server.ApplicationService;
 import hu.lae.infrastructure.server.LaeServlet;
 import hu.lae.infrastructure.ui.client.ClientPanel;
 import hu.lae.infrastructure.ui.component.Button;
-import hu.lae.infrastructure.ui.loancalculation.ProposalWindow;
+import hu.lae.infrastructure.ui.loancalculation.proposal.ProposalWindow;
 import hu.lae.infrastructure.ui.riskparameters.RiskParametersPanel;
 import hu.lae.usermanagement.UserInfo;
 import hu.lae.util.Clock;

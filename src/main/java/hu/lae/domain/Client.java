@@ -1,5 +1,6 @@
 package hu.lae.domain;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -12,6 +13,7 @@ import hu.lae.domain.accounting.FinancialHistory;
 import hu.lae.domain.accounting.FinancialStatementData;
 import hu.lae.domain.accounting.IncomeStatement;
 import hu.lae.domain.accounting.IncomeStatementHistory;
+import hu.lae.domain.loan.ExistingLoan;
 import hu.lae.domain.loan.ExistingLoans;
 import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.domain.riskparameters.Industry;
@@ -58,7 +60,10 @@ public class Client {
                 new BalanceSheet(new Assets(250, 40, 10, 20), new Liabilities(800, 80, 60, 0, 1600)), new IncomeStatement(1600, 200, 35, 30, 250));
         
         FinancialHistory financialHistory = new FinancialHistory(Arrays.asList(financialStatementData2016, financialStatementData2015, financialStatementData2014));
-        return new Client("", Industry.AUTOMOTIVE, financialHistory, ExistingLoans.createEmpty());
+        return new Client("", Industry.AUTOMOTIVE, financialHistory, 
+                new ExistingLoans(Arrays.asList(
+                        ExistingLoan.newLongTermLoan(100, LocalDate.of(2021, 2, 12), false),
+                        ExistingLoan.newShortTermLoan(50, true))));
     }
 
     public IncomeStatementHistory incomeStatementHistory() {

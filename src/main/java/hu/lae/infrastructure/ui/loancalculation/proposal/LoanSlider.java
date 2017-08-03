@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.loancalculation;
+package hu.lae.infrastructure.ui.loancalculation.proposal;
 
 import java.lang.invoke.MethodHandles;
 

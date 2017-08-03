@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.loancalculation;
+package hu.lae.infrastructure.ui.loancalculation.proposal;
 
 import java.util.function.Consumer;
 
@@ -10,6 +10,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.infrastructure.ui.VaadinUtil;
@@ -20,11 +21,11 @@ public class LoanHelperWindow extends Window {
 
     private final LoanSelector loanSelector;
     
-    public LoanHelperWindow(LoanCalculator loanCalculator, Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator, LoanRequest loanRequest, boolean refinanceExistingShortTermLoans, boolean refinanceExistingLongTermLoans, Consumer<LoanRequest> action) {
+    public LoanHelperWindow(LoanCalculator loanCalculator, Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator, LoanRequest loanRequest, ExistingLoansRefinancing existingLoanRefinancing, Consumer<LoanRequest> action) {
         setCaption("Loan selection helper");
         setModal(true);
         
-        loanSelector = new LoanSelector(loanCalculator, client, paybackYears, freeCashFlowCalculator, loanRequest, refinanceExistingShortTermLoans, refinanceExistingLongTermLoans);
+        loanSelector = new LoanSelector(loanCalculator, client, paybackYears, freeCashFlowCalculator, loanRequest, existingLoanRefinancing);
         
         Button button = new Button("Use the selected values");
         button.addStyleName(ValoTheme.BUTTON_SMALL);

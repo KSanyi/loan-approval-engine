@@ -1,12 +1,14 @@
-package hu.lae.infrastructure.ui.loancalculation;
+package hu.lae.infrastructure.ui.loancalculation.decision;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Grid;
@@ -17,10 +19,12 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
+import hu.lae.domain.loan.Loan;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.domain.validation.EquityRatioValidator;
@@ -28,10 +32,12 @@ import hu.lae.domain.validation.LiquidityValidator;
 import hu.lae.domain.validation.ValidationResult;
 import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.Button;
+import hu.lae.infrastructure.ui.loancalculation.proposal.ProposalWindow;
+import hu.lae.util.Formatters;
 import hu.lae.util.Pair;
 
 @SuppressWarnings("serial")
-class DecisionWindow extends Window {
+public class DecisionWindow extends Window {
 
     private final static DecimalFormat DF = new DecimalFormat("0.00");
     private final static DecimalFormat PF = new DecimalFormat("0.0%");
@@ -56,7 +62,7 @@ class DecisionWindow extends Window {
     
     private final Button backButton = new Button("Back", click -> back());
     
-    DecisionWindow(RiskParameters riskParameters, Client client, LoanRequest loanRequest, double dscr, ProposalWindow proposalWindow) {
+    public DecisionWindow(RiskParameters riskParameters, Client client, LoanRequest loanRequest, double dscr, ProposalWindow proposalWindow) {
         this.riskParameters= riskParameters;
         this.client = client;
         this.loanRequest = loanRequest;
@@ -83,7 +89,7 @@ class DecisionWindow extends Window {
         dscrField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
         dscrField.setReadOnly(true);
         
-        VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), dscrField);
+        VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), dscrField, createAllLoansTable());
         column1.setMargin(false);
         
         VerticalLayout column2 = new VerticalLayout(createWarningsTable());
@@ -140,6 +146,26 @@ class DecisionWindow extends Window {
         return grid;
     }
     
+    private Grid<Loan> createAllLoansTable() {
+        Grid<Loan> grid = new Grid<>("Existing loans");
+        grid.addColumn(l -> l.loanType.name()).setCaption("Tipus");
+        grid.addColumn(l -> Formatters.formateAmount(l.amount)).setCaption("Összeg").setWidth(90).setStyleGenerator(item -> "v-align-right");
+        grid.addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "").setCaption("Erstés").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
+        grid.addColumn(l -> l.isNew ? VaadinIcons.STAR.getHtml() : "").setCaption("Új").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
+
+        grid.setSelectionMode(SelectionMode.NONE);
+        
+        List<Loan> loans = new ArrayList<>();
+        loans.addAll(loanRequest.toLoans());
+        loans.addAll(client.existingLoans.toLoans());
+        
+        grid.setItems(loans);
+        
+        grid.setHeightByRows(loans.size());
+        grid.addStyleName(VaadinUtil.GRID_SMALL);
+        return grid;
+    }
+    
     private Grid<WariningTableRow> createWarningsTable() {
         
         List<Integer> years = client.financialHistory.years();
@@ -166,11 +192,11 @@ class DecisionWindow extends Window {
             return new Pair<>(PF.format(equityRatio), equityRatioValidator.validate(f));   
         }));
         
-        LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoans, riskParameters.thresholds.liquidityRatio);
+        LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoansSum(), riskParameters.thresholds.liquidityRatio);
         
         Map<Integer, Pair<String, ValidationResult>> liquidityRatios1 = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
-                double liquidityRatio = f.balanceSheet.liquidityRatio1(client.existingLoans.shortTermLoans + loanRequest.shortTermLoan);
+                double liquidityRatio = f.balanceSheet.liquidityRatio1(client.existingLoans.shortTermLoansSum() + loanRequest.shortTermLoan);
                 
                 return client.financialHistory.lastFinancialStatementData().year == f.year ? 
                         new Pair<>(DF.format(liquidityRatio), liquidityRatioValidator.validateRatio1(f, loanRequest)) : new Pair<>("NA", ValidationResult.Ok());
