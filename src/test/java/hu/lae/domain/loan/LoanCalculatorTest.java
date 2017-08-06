@@ -136,15 +136,13 @@ public class LoanCalculatorTest {
         
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, existingLoansRefinancing);
         
-        Assert.assertEquals(790.94, loanApplicationResult.maxLongTermLoan, 0.1);
+        Assert.assertEquals(1086.30, loanApplicationResult.maxLongTermLoan, 0.1);
     }
     
     @Test
     public void maxLongTermLoanWithExistingRefinansableLoans() {
         ExistingLoans existingLoans = new ExistingLoans(Arrays.asList(ExistingLoan.newLongTermLoan(100L, LocalDate.of(2019, 1, 1), false)));
         Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans);
-        
-        ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(Collections.singletonMap(existingLoans.existingLoans.get(0), false));
         
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, existingLoansRefinancing);
         
@@ -159,7 +157,7 @@ public class LoanCalculatorTest {
         LoanRequest loanRequest = loanCalculator.calculateIdealLoanRequest(client, FreeCashFlowCalculator.lastYear);
         
         Assert.assertEquals(303, loanRequest.shortTermLoan, 0.1);
-        Assert.assertEquals(1086.30, loanRequest.longTermLoan, 0.1);
+        Assert.assertEquals(790.94, loanRequest.longTermLoan, 0.1);
     }
     
     @Test
@@ -170,7 +168,7 @@ public class LoanCalculatorTest {
         LoanRequest loanRequest = loanCalculator.calculateIdealLoanRequest(client, FreeCashFlowCalculator.average);
         
         Assert.assertEquals(303, loanRequest.shortTermLoan, 0.1);
-        Assert.assertEquals(785.65, loanRequest.longTermLoan, 0.1);
+        Assert.assertEquals(490.28, loanRequest.longTermLoan, 0.1);
     }
     
     @Test

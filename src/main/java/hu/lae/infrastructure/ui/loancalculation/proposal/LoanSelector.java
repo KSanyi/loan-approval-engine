@@ -80,7 +80,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
     }
     
     private void updateDebtCapacityUsageLabel() {
-        double refinancableExistingLoans = existingLoanRefinancing.refinancableLoans();
+        double refinancableExistingLoans = existingLoanRefinancing.nonRefinancableLoans();
         double debtCapacityUsage = (stLoanSlider.getValue() + ltLoanSlider.getValue() + refinancableExistingLoans) / maxDebtCapacity;
         debtCapacityUsageLabel.setValue("Debt capacity usage: " + PERCENT_FORMATTER.format(debtCapacityUsage));
     }

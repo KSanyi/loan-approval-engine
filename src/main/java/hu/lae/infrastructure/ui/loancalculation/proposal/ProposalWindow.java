@@ -77,7 +77,7 @@ public class ProposalWindow extends Window {
         paybackYearsCombo = new ComboBox<>("Select l/t number of years", generateComboValues(maxLoanDuration));
         paybackYearsCombo.setValue(maxLoanDuration);
         
-        existingLoansRefinancingTable = new ExistingLoansRefinancingTable(client.existingLoans);
+        existingLoansRefinancingTable = new ExistingLoansRefinancingTable(client.existingLoans, loanCalculator.riskParameters.longTermInterestRate,loanCalculator.riskParameters.shortTermInterestRate);
         
         cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.lastYear);
         

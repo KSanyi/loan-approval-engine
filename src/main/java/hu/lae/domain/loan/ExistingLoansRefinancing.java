@@ -27,7 +27,7 @@ public class ExistingLoansRefinancing {
         double yearlyDebtServiceForExistingLoans = 0;
         
         for(ExistingLoan existingLoan : existingLoansRefinancingMap.keySet()) {
-            if(refinance(existingLoan)) {
+            if(!refinance(existingLoan)) {
                 yearlyDebtServiceForExistingLoans += existingLoan.calculateYearlyDebtService(shortTermInterestRate, longTermInterestRate, currentDate);
             }
         }
@@ -35,9 +35,9 @@ public class ExistingLoansRefinancing {
         return yearlyDebtServiceForExistingLoans;
     }
 
-    public double refinancableLoans() {
+    public double nonRefinancableLoans() {
         return existingLoansRefinancingMap.keySet().stream()
-            .filter(this::refinance)
+            .filter(loan -> !refinance(loan))
             .mapToLong(l -> l.amount)
             .sum();
     }
