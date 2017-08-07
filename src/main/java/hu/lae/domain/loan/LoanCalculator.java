@@ -30,7 +30,7 @@ public class LoanCalculator {
     public LoanRequest calculateIdealLoanRequest(Client client, FreeCashFlowCalculator freeCashFlowCalculator) {
         int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(client.industry);
         
-        ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(client.existingLoans, false);
+        ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(client.existingLoans, true);
         
         LoanApplicationResult result = calculate(client, maxLoanDuration, 0, freeCashFlowCalculator, existingLoansRefinancing);
         
