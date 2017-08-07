@@ -66,7 +66,7 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
         
         grid.setDescription("Select loans for refinancing");
         
-        Panel panel = new Panel("Exising loans", grid);
+        Panel panel = new Panel("Existing loans", grid);
         
         return panel;
     }
