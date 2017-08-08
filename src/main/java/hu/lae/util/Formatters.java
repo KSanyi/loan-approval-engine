@@ -5,8 +5,10 @@ import java.text.DecimalFormatSymbols;
 
 public class Formatters {
 
-    private static final DecimalFormat DF = new DecimalFormat("0.00");
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
     private static final DecimalFormat AMOUNT_FORMAT;
+    private final static DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.0%");
+    private final static DecimalFormat PERCENT_FORMAT2 = new DecimalFormat("0.00%");
     
     static {
         DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
@@ -14,14 +16,26 @@ public class Formatters {
         AMOUNT_FORMAT = new DecimalFormat("###,###", decimalFormatSymbols);
     }
     
-    public static String formateAmount(double amount) {
+    public static String formatAmount(double amount) {
         return AMOUNT_FORMAT.format(amount);
+    }
+    
+    public static String formatPercent(double amount) {
+        return PERCENT_FORMAT.format(amount);
+    }
+    
+    public static String formatPercent2(double amount) {
+        return PERCENT_FORMAT2.format(amount);
+    }
+    
+    public static String formatDecimal(double amount) {
+        return DECIMAL_FORMAT.format(amount);
     }
     
     public static String formatYears(double years) {
         
         StringBuilder sb = new StringBuilder();
-        sb.append(DF.format(years));
+        sb.append(DECIMAL_FORMAT.format(years));
         sb.append(" (");
         
         int months = (int)Math.ceil(years * 12);

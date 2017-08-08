@@ -16,17 +16,27 @@ class ThresholdsForm extends CustomField<Thresholds> {
     
     private final NumberField liquidityRatioThresholdField = new NumberField("Liquidity ratio");
     
+    private final NumberField turnoverReqToleranceField = new NumberField("Turnover Req. tolerance");
+    
+    private final NumberField debtCapacityField = new NumberField("Debt capacity limit");
+    
+    private final NumberField localLoanThresholdField = new NumberField("Esrte loan limit");
+    
     ThresholdsForm(Thresholds thresholds) {
     
         setCaption("Thresholds");
         
         equityRatioThresholdField.setNumber(thresholds.equityRatio);
         liquidityRatioThresholdField.setNumber(thresholds.liquidityRatio);
+        turnoverReqToleranceField.setNumber(thresholds.turnoverRequirement);
+        debtCapacityField.setNumber(thresholds.debtCapacity);
+        localLoanThresholdField.setNumber(thresholds.localLoanRatio);
     }
     
     @Override
     public Thresholds getValue() {
-        return new Thresholds(equityRatioThresholdField.getNumber(), liquidityRatioThresholdField.getNumber());
+        return new Thresholds(equityRatioThresholdField.getNumber(), liquidityRatioThresholdField.getNumber(),
+                turnoverReqToleranceField.getNumber(), debtCapacityField.getNumber(), localLoanThresholdField.getNumber());
     }
 
     @Override
@@ -37,10 +47,16 @@ class ThresholdsForm extends CustomField<Thresholds> {
         
         equityRatioThresholdField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
         liquidityRatioThresholdField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
+        turnoverReqToleranceField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
+        debtCapacityField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
+        localLoanThresholdField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
         
-        formLayout.addComponents(equityRatioThresholdField, liquidityRatioThresholdField);
+        formLayout.addComponents(equityRatioThresholdField, liquidityRatioThresholdField, turnoverReqToleranceField, debtCapacityField, localLoanThresholdField);
         formLayout.setComponentAlignment(equityRatioThresholdField, Alignment.MIDDLE_LEFT);
         formLayout.setComponentAlignment(liquidityRatioThresholdField, Alignment.MIDDLE_LEFT);
+        formLayout.setComponentAlignment(turnoverReqToleranceField, Alignment.MIDDLE_LEFT);
+        formLayout.setComponentAlignment(debtCapacityField, Alignment.MIDDLE_LEFT);
+        formLayout.setComponentAlignment(localLoanThresholdField, Alignment.MIDDLE_LEFT);
         
         return formLayout;
     }

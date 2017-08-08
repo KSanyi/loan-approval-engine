@@ -108,7 +108,7 @@ public class LoanSlider extends CustomField<Double> {
             doSetValue(maxLoanValue);
         }
         slider.setMax(maxLoanValue);
-        maxAmountLabel.setValue("<center>Max</center>" + Formatters.formateAmount(maxLoanValue) + " million Ft" );
+        maxAmountLabel.setValue("<center>Max</center>" + Formatters.formatAmount(maxLoanValue) + " million Ft" );
     }
     
 }

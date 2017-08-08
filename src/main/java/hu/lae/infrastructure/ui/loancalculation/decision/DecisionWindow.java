@@ -1,7 +1,6 @@
 package hu.lae.infrastructure.ui.loancalculation.decision;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +23,8 @@ import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
+import hu.lae.domain.loan.CovenantCalculator;
+import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.Loan;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.riskparameters.RiskParameters;
@@ -39,22 +40,15 @@ import hu.lae.util.Pair;
 @SuppressWarnings("serial")
 public class DecisionWindow extends Window {
 
-    private final static DecimalFormat DF = new DecimalFormat("0.00");
-    private final static DecimalFormat PF = new DecimalFormat("0.0%");
-    private final static DecimalFormat PF2 = new DecimalFormat("0.00%");
-    private final static DecimalFormat AF;
-    
-    static {
-        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
-        decimalFormatSymbols.setGroupingSeparator((char) 160);
-        AF = new DecimalFormat("###,###", decimalFormatSymbols);
-    }
-    
     private final RiskParameters riskParameters;
     
     private final Client client;
     
     private final LoanRequest loanRequest;
+    
+    private final double maxDebtCapacity;
+    
+    private final ExistingLoansRefinancing existingLoansRefinancing;
     
     private final double dscr;
     
@@ -62,9 +56,11 @@ public class DecisionWindow extends Window {
     
     private final Button backButton = new Button("Back", click -> back());
     
-    public DecisionWindow(RiskParameters riskParameters, Client client, LoanRequest loanRequest, double dscr, ProposalWindow proposalWindow) {
+    public DecisionWindow(RiskParameters riskParameters, Client client, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, double dscr, double maxDebtCapacity, ProposalWindow proposalWindow) {
         this.riskParameters= riskParameters;
         this.client = client;
+        this.existingLoansRefinancing = existingLoansRefinancing;
+        this.maxDebtCapacity = maxDebtCapacity;
         this.loanRequest = loanRequest;
         this.dscr = dscr;
         this.proposalWindow = proposalWindow;
@@ -84,7 +80,7 @@ public class DecisionWindow extends Window {
 
     private Layout createLayout() {
         
-        TextField dscrField = new TextField("DSCR", PF2.format(dscr/100));
+        TextField dscrField = new TextField("DSCR", Formatters.formatPercent2(dscr/100));
         dscrField.setWidth("100px");
         dscrField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
         dscrField.setReadOnly(true);
@@ -92,7 +88,7 @@ public class DecisionWindow extends Window {
         VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), dscrField, createAllLoansTable());
         column1.setMargin(false);
         
-        VerticalLayout column2 = new VerticalLayout(createWarningsTable());
+        VerticalLayout column2 = new VerticalLayout(createWarningsTable(), createCovenantTable());
         column2.setMargin(false);
         
         HorizontalLayout columnsLayout = new HorizontalLayout(column1, column2);
@@ -146,10 +142,37 @@ public class DecisionWindow extends Window {
         return grid;
     }
     
+    private Grid<CovenantTableRow> createCovenantTable() {
+        Grid<CovenantTableRow> grid = new Grid<>();
+        grid.addColumn(row -> row.caption).setCaption("Covenant");
+        grid.addColumn(row -> row.value).setCaption("Value").setStyleGenerator(item -> "v-align-right");
+        grid.addColumn(row -> row.message).setCaption("Message");
+        
+        CovenantCalculator covenantCalculator = new CovenantCalculator(riskParameters.thresholds.turnoverRequirement);
+        double turnoverReqValue = covenantCalculator.calculateRequiredTurnover(existingLoansRefinancing, loanRequest, client.financialStatementData().incomeStatement.sales);
+        double debtCapacityUsage = CovenantCalculator.calculateDebtgCapacityUsage(loanRequest, maxDebtCapacity, existingLoansRefinancing);
+        double localLoansRatio = covenantCalculator.calculateLocalLoansRatio(existingLoansRefinancing, loanRequest);
+        
+        boolean furtherIndebtnessOk = debtCapacityUsage <= riskParameters.thresholds.debtCapacity;
+        boolean localLoansRatioOk = localLoansRatio <= riskParameters.thresholds.localLoanRatio;
+        
+        List<CovenantTableRow> items = Arrays.asList(
+                new CovenantTableRow("Turnover requirement", Formatters.formatAmount(turnoverReqValue), "-"),
+                new CovenantTableRow("Further indebtedness", Formatters.formatDecimal(debtCapacityUsage), furtherIndebtnessOk ? "-" : "No further indebtedness"),
+                new CovenantTableRow("Account opening clause", Formatters.formatDecimal(localLoansRatio), localLoansRatioOk ? "-" : "No account at other bank"));
+        grid.setItems(items);
+        
+        grid.addStyleName(VaadinUtil.GRID_SMALL);
+        grid.setCaption("Covenants");
+        grid.setHeightMode(HeightMode.ROW);
+        grid.setHeightByRows(items.size());
+        return grid;
+    }
+    
     private Grid<Loan> createAllLoansTable() {
         Grid<Loan> grid = new Grid<>("Existing loans");
         grid.addColumn(l -> l.loanType.name()).setCaption("Tipus");
-        grid.addColumn(l -> Formatters.formateAmount(l.amount)).setCaption("Összeg").setWidth(90).setStyleGenerator(item -> "v-align-right");
+        grid.addColumn(l -> Formatters.formatAmount(l.amount)).setCaption("Összeg").setWidth(90).setStyleGenerator(item -> "v-align-right");
         grid.addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "").setCaption("Erstés").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
         grid.addColumn(l -> l.isNew ? VaadinIcons.STAR.getHtml() : "").setCaption("Új").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
 
@@ -181,7 +204,7 @@ public class DecisionWindow extends Window {
         Map<Integer, Pair<String, ValidationResult>> ownEquityValues = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
                 double ownEquity = f.balanceSheet.liabilities.ownEquity;
-                return new Pair<>(AF.format(ownEquity), ValidationResult.Ok());   
+                return new Pair<>(Formatters.formatAmount(ownEquity), ValidationResult.Ok());   
             }));
         
         EquityRatioValidator equityRatioValidator = new EquityRatioValidator(riskParameters.thresholds.equityRatio);
@@ -189,7 +212,7 @@ public class DecisionWindow extends Window {
         Map<Integer, Pair<String, ValidationResult>> equityRatios = client.financialHistory.financialStatements.stream()
             .collect(Collectors.toMap(f -> f.year, f -> {
             double equityRatio = f.balanceSheet.liabilities.equityRatio();
-            return new Pair<>(PF.format(equityRatio), equityRatioValidator.validate(f));   
+            return new Pair<>(Formatters.formatAmount(equityRatio), equityRatioValidator.validate(f));   
         }));
         
         LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoansSum(), riskParameters.thresholds.liquidityRatio);
@@ -199,36 +222,36 @@ public class DecisionWindow extends Window {
                 double liquidityRatio = f.balanceSheet.liquidityRatio1(client.existingLoans.shortTermLoansSum() + loanRequest.shortTermLoan);
                 
                 return client.financialHistory.lastFinancialStatementData().year == f.year ? 
-                        new Pair<>(DF.format(liquidityRatio), liquidityRatioValidator.validateRatio1(f, loanRequest)) : new Pair<>("NA", ValidationResult.Ok());
+                        new Pair<>(Formatters.formatDecimal(liquidityRatio), liquidityRatioValidator.validateRatio1(f, loanRequest)) : new Pair<>("NA", ValidationResult.Ok());
             }));
         
         Map<Integer, Pair<String, ValidationResult>> liquidityRatios2 = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
                 double liquidityRatio = f.balanceSheet.liquidityRatio2();
                 return client.financialHistory.lastFinancialStatementData().year == f.year ? 
-                        new Pair<>(DF.format(liquidityRatio), liquidityRatioValidator.validateRatio2(f)) : new Pair<>("NA", ValidationResult.Ok());
+                        new Pair<>(Formatters.formatDecimal(liquidityRatio), liquidityRatioValidator.validateRatio2(f)) : new Pair<>("NA", ValidationResult.Ok());
             }));
         
         Map<Integer, Pair<String, ValidationResult>> liquidityRatios3 = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
                 double liquidityRatio = f.balanceSheet.liquidityRatio3();
                 return client.financialHistory.lastFinancialStatementData().year == f.year ? 
-                        new Pair<>(DF.format(liquidityRatio), liquidityRatioValidator.validateRatio3(f)) : new Pair<>("NA", ValidationResult.Ok());
+                        new Pair<>(Formatters.formatDecimal(liquidityRatio), liquidityRatioValidator.validateRatio3(f)) : new Pair<>("NA", ValidationResult.Ok());
             }));
         
         Map<Integer, Pair<String, ValidationResult>> supplierDaysValues = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
-                return new Pair<>(DF.format(f.supplierDays()), ValidationResult.Ok());   
+                return new Pair<>(Formatters.formatDecimal(f.supplierDays()), ValidationResult.Ok());   
         }));
         
         Map<Integer, Pair<String, ValidationResult>> buyersDays = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
-                return new Pair<>(DF.format(f.buyersDays()), ValidationResult.Ok());   
+                return new Pair<>(Formatters.formatDecimal(f.buyersDays()), ValidationResult.Ok());   
         }));
         
         Map<Integer, Pair<String, ValidationResult>> stockDays = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
-                return new Pair<>(DF.format(f.stockDays()), ValidationResult.Ok());   
+                return new Pair<>(Formatters.formatDecimal(f.stockDays()), ValidationResult.Ok());   
         }));
         
         List<WariningTableRow> items = Arrays.asList(
@@ -283,6 +306,19 @@ public class DecisionWindow extends Window {
         public FreeCFTableRow(String caption, Integer value) {
             this.caption = caption;
             this.value = value;
+        }
+    }
+    
+    private static class CovenantTableRow {
+        
+        final String caption;
+        final String value;
+        final String message;
+
+        public CovenantTableRow(String caption, String value, String message) {
+            this.caption = caption;
+            this.value = value;
+            this.message = message;
         }
     }
 }

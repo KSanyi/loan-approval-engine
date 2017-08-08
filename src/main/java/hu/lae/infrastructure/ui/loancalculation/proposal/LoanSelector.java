@@ -13,6 +13,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.loan.CovenantCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanApplicationResult;
 import hu.lae.domain.loan.LoanCalculator;
@@ -80,8 +81,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
     }
     
     private void updateDebtCapacityUsageLabel() {
-        double refinancableExistingLoans = existingLoanRefinancing.nonRefinancableLoans();
-        double debtCapacityUsage = (stLoanSlider.getValue() + ltLoanSlider.getValue() + refinancableExistingLoans) / maxDebtCapacity;
+        double debtCapacityUsage = CovenantCalculator.calculateDebtgCapacityUsage(createLoanRequest(), maxDebtCapacity, existingLoanRefinancing);
         debtCapacityUsageLabel.setValue("Debt capacity usage: " + PERCENT_FORMATTER.format(debtCapacityUsage));
     }
 

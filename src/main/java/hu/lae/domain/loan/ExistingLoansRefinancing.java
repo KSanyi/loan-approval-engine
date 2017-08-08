@@ -41,6 +41,14 @@ public class ExistingLoansRefinancing {
             .mapToLong(l -> l.amount)
             .sum();
     }
+    
+    public double localNonRefinancableLoans() {
+        return existingLoansRefinancingMap.keySet().stream()
+            .filter(loan -> !refinance(loan))
+            .filter(loan -> loan.isLocal)
+            .mapToLong(l -> l.amount)
+            .sum();
+    }
 
     public double refinancableLongTermLoans() {
         return existingLoansRefinancingMap.keySet().stream()

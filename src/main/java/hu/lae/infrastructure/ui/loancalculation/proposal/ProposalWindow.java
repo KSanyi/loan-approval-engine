@@ -66,6 +66,8 @@ public class ProposalWindow extends Window {
     
     private final int maxLoanDuration;
     
+    private final LoanRequest idealLoanRequest;
+    
     private final Button submitButton = new Button("Submit for proposal", click -> submit());
     
     public ProposalWindow(LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
@@ -90,7 +92,10 @@ public class ProposalWindow extends Window {
 
         double yearlyDebtServiceForExistingLShortTermLoans = client.existingLoans.calculateYearlyDebtServiceForShortTermLoans(loanCalculator.riskParameters.shortTermInterestRate);
         double yearlyDebtServiceForExistingLongTermLoans = client.existingLoans.calculateYearlyDebtServiceForLongTermLoans(loanCalculator.riskParameters.longTermInterestRate, currentDate);
-        idealStructurePanel = new IdealStructurePanel(loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue()), maxLoanDuration);
+        
+        idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
+        
+        idealStructurePanel = new IdealStructurePanel(idealLoanRequest, maxLoanDuration);
         setContent(createLayout(yearlyDebtServiceForExistingLShortTermLoans + yearlyDebtServiceForExistingLongTermLoans));
         
         addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
@@ -197,7 +202,7 @@ public class ProposalWindow extends Window {
         
         if(errorMessages.isEmpty()) {
             super.close();
-            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, loanRequest, dscr, this));
+            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, existingLoansRefinancingTable.getValue(), loanRequest, dscr, idealLoanRequest.sum(), this));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
         }

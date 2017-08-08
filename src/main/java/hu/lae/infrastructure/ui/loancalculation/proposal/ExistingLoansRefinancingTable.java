@@ -51,10 +51,10 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
     @Override
     protected Component initContent() {
         grid.addColumn(l -> l.type.toString()).setCaption("Type");
-        grid.addColumn(l -> Formatters.formateAmount(l.amount)).setCaption("Amount").setWidth(90).setStyleGenerator(item -> "v-align-right");
+        grid.addColumn(l -> Formatters.formatAmount(l.amount)).setCaption("Amount").setWidth(90).setStyleGenerator(item -> "v-align-right");
         grid.addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "").setCaption("Erste?").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
         grid.addColumn(l -> l.expiry.map(LocalDate::toString).orElse("")).setCaption("Expiry").setWidth(120);
-        grid.addColumn(l -> Formatters.formateAmount(l.calculateYearlyDebtService(shortTermInterestRate, longTermInterestRate, Clock.date()))).setCaption("Debt service").setWidth(120);
+        grid.addColumn(l -> Formatters.formatAmount(l.calculateYearlyDebtService(shortTermInterestRate, longTermInterestRate, Clock.date()))).setCaption("Debt service").setWidth(120);
         grid.setWidth("600px");
         grid.setSelectionMode(SelectionMode.MULTI);
         grid.addSelectionListener(v -> refinanceChangeListeners.stream().forEach(l -> l.changeHappened()));

@@ -60,7 +60,7 @@ public class LoanCalculatorTest {
         Haircuts haircuts = new Haircuts(0.8, 0.5, 0.8, 0.4);
         RiskParameters riskParameters = new RiskParameters("id1", "default", 0.4, haircuts, new InterestRate(0.03), 
                 new MaxLoanDurations(MapFactory.of(Industry.CONSTRUCTION, 2, Industry.AUTOMOTIVE, 5)),
-                new InterestRate(0.05), 1.2, new Thresholds(0.2, 1.2));
+                new InterestRate(0.05), 1.2, new Thresholds(0.2, 1.2, 0.15, 0.75, 0.8));
         loanCalculator = new LoanCalculator(riskParameters, LocalDate.of(2017,4,1));
     }
     
