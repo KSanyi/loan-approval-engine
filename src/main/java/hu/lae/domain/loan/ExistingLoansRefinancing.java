@@ -23,11 +23,11 @@ public class ExistingLoansRefinancing {
         return existingLoansRefinancingMap.get(existingLoan);
     }
     
-    public double calculateYearlyDebtService(InterestRate shortTermInterestRate, InterestRate longTermInterestRate, LocalDate currentDate) {
+    public double calculateYearlyDebtServiceForLongTermLoans(InterestRate shortTermInterestRate, InterestRate longTermInterestRate, LocalDate currentDate) {
         double yearlyDebtServiceForExistingLoans = 0;
         
         for(ExistingLoan existingLoan : existingLoansRefinancingMap.keySet()) {
-            if(!refinance(existingLoan)) {
+            if(existingLoan.isLongTemLoan() && !refinance(existingLoan)) {
                 yearlyDebtServiceForExistingLoans += existingLoan.calculateYearlyDebtService(shortTermInterestRate, longTermInterestRate, currentDate);
             }
         }
@@ -54,6 +54,14 @@ public class ExistingLoansRefinancing {
         return existingLoansRefinancingMap.keySet().stream()
                 .filter(this::refinance)
                 .filter(l -> l.isLongTemLoan())
+                .mapToLong(l -> l.amount)
+                .sum();
+    }
+
+    public double nonRefinancableShortTermLoans() {
+        return existingLoansRefinancingMap.keySet().stream()
+                .filter(loan -> !refinance(loan))
+                .filter(l -> l.isShortTemLoan())
                 .mapToLong(l -> l.amount)
                 .sum();
     }

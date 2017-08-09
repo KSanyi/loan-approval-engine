@@ -158,8 +158,8 @@ public class DecisionWindow extends Window {
         
         List<CovenantTableRow> items = Arrays.asList(
                 new CovenantTableRow("Turnover requirement", Formatters.formatAmount(turnoverReqValue), "-"),
-                new CovenantTableRow("Further indebtedness", Formatters.formatDecimal(debtCapacityUsage), furtherIndebtnessOk ? "-" : "No further indebtedness"),
-                new CovenantTableRow("Account opening clause", Formatters.formatDecimal(localLoansRatio), localLoansRatioOk ? "-" : "No account at other bank"));
+                new CovenantTableRow("Further indebtedness", Formatters.formatPercent(debtCapacityUsage), furtherIndebtnessOk ? "-" : "No further indebtedness"),
+                new CovenantTableRow("Account opening clause", Formatters.formatDecimal(localLoansRatio), localLoansRatioOk ? "-" : "Further accounts w bank consent"));
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);
