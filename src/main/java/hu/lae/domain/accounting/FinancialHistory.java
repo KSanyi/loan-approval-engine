@@ -27,4 +27,9 @@ public class FinancialHistory {
         return financialStatements.stream().map(f -> f.year).sorted().collect(Collectors.toList());
     }
     
+    @Override
+    public String toString() {
+        return "\n" + financialStatements.stream().map(FinancialStatementData::toString).collect(Collectors.joining("\n")) + "\n";
+    }
+    
 }

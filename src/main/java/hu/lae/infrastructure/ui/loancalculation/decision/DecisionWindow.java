@@ -150,7 +150,7 @@ public class DecisionWindow extends Window {
         
         CovenantCalculator covenantCalculator = new CovenantCalculator(riskParameters.thresholds.turnoverRequirement);
         double turnoverReqValue = covenantCalculator.calculateRequiredTurnover(existingLoansRefinancing, loanRequest, client.financialStatementData().incomeStatement.sales);
-        double debtCapacityUsage = CovenantCalculator.calculateDebtgCapacityUsage(loanRequest, maxDebtCapacity, existingLoansRefinancing);
+        double debtCapacityUsage = CovenantCalculator.calculateDebtCapacityUsage(loanRequest, maxDebtCapacity, existingLoansRefinancing);
         double localLoansRatio = covenantCalculator.calculateLocalLoansRatio(existingLoansRefinancing, loanRequest);
         
         boolean furtherIndebtnessOk = debtCapacityUsage <= riskParameters.thresholds.debtCapacity;

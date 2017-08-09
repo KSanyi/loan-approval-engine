@@ -6,9 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import hu.lae.domain.riskparameters.InterestRate;
 import hu.lae.util.ExcelFunctions;
 
@@ -57,7 +54,7 @@ public class ExistingLoans {
     
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        return "\n" + existingLoans.stream().map(ExistingLoan::toString).collect(Collectors.joining("\n")) + "\n";
     }
     
 }

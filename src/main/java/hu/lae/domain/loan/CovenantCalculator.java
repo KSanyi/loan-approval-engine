@@ -1,13 +1,22 @@
 package hu.lae.domain.loan;
 
+import java.lang.invoke.MethodHandles;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CovenantCalculator {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private final double turnoverReqTolerance;
     
-    public static double calculateDebtgCapacityUsage(LoanRequest loanRequest, double maxDebtCapacity, ExistingLoansRefinancing existingLoansRefinancing) {
+    public static double calculateDebtCapacityUsage(LoanRequest loanRequest, double maxDebtCapacity, ExistingLoansRefinancing existingLoansRefinancing) {
         
         double nonRefinancableExistingLoans = existingLoansRefinancing.nonRefinancableLoans();
         double debtCapacityUsage = (loanRequest.sum() + nonRefinancableExistingLoans) / maxDebtCapacity;
+
+        logger.debug("Calculated Debt Capacity Usage: " + debtCapacityUsage);
         
         return debtCapacityUsage;
     }
@@ -26,6 +35,8 @@ public class CovenantCalculator {
         
         double requiredTurnover = ratio * turnover * (1 - turnoverReqTolerance);
         
+        logger.debug("Calculated Required Turnover: " + requiredTurnover);
+        
         return requiredTurnover;
     }
     
@@ -35,7 +46,11 @@ public class CovenantCalculator {
         
         double localLoans = existingLoansRefinancing.localNonRefinancableLoans() +  + loanRequest.sum();
         
-        return localLoans / allLoans;
+        double localLoansRatio = localLoans / allLoans;
+        
+        logger.debug("Calculated local loans ratio: " + localLoansRatio);
+        
+        return localLoansRatio;
         
     }
     

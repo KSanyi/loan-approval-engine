@@ -81,7 +81,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
     }
     
     private void updateDebtCapacityUsageLabel() {
-        double debtCapacityUsage = CovenantCalculator.calculateDebtgCapacityUsage(createLoanRequest(), maxDebtCapacity, existingLoanRefinancing);
+        double debtCapacityUsage = CovenantCalculator.calculateDebtCapacityUsage(createLoanRequest(), maxDebtCapacity, existingLoanRefinancing);
         debtCapacityUsageLabel.setValue("Debt capacity usage: " + PERCENT_FORMATTER.format(debtCapacityUsage));
     }
 

@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import hu.lae.domain.riskparameters.InterestRate;
 
 public class ExistingLoansRefinancing {
@@ -64,6 +67,11 @@ public class ExistingLoansRefinancing {
                 .filter(l -> l.isShortTemLoan())
                 .mapToLong(l -> l.amount)
                 .sum();
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
     
 }

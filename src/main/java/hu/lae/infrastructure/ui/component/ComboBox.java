@@ -15,7 +15,7 @@ public class ComboBox<T> extends com.vaadin.ui.ComboBox<T> {
         super(caption, options);
         addValueChangeListener(e -> {
             if(e.isUserOriginated()) {
-                logger.debug("USERACTION: '" + e.getValue() + "' selected");
+                logger.debug("USERACTION: "+ caption + ": '" + e.getValue() + "' selected");
             }
         });
     }

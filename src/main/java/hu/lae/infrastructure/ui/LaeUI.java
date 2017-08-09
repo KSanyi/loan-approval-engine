@@ -77,6 +77,9 @@ public class LaeUI extends UI {
 	        if(!client.existingLoans.isValid(Clock.date())) {
 	            Notification.show("Validation error", "Change the expiry of existing loans", Notification.Type.ERROR_MESSAGE);
 	        } else {
+	            logger.info("Risk Parameters: " + riskParameters);
+	            logger.info("Client: " + client);
+	            logger.info("Date: " + currentDate);
 	            ProposalWindow calculatorWindow = new ProposalWindow(new LoanCalculator(riskParameters, currentDate), client, currentDate);
 	            UI.getCurrent().addWindow(calculatorWindow);	            
 	        }

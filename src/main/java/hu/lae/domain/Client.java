@@ -35,11 +35,6 @@ public class Client {
         this.existingLoans = existingLoans;
     }
     
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
-
     public double calculateJustifiableShortTermLoan(Haircuts haircuts) {
         return financialStatementData().balanceSheet.calculateJustifiableShortTermLoan(haircuts);
     }
@@ -68,5 +63,10 @@ public class Client {
 
     public IncomeStatementHistory incomeStatementHistory() {
         return financialHistory.incomeStatementHistory();
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

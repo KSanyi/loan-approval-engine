@@ -48,6 +48,7 @@ public class LoanCalculator {
     public LoanApplicationResult calculate(Client client, int paybackYears, double shortTermLoan, FreeCashFlowCalculator freeCashFlowCalculator, ExistingLoansRefinancing existingLoansRefinancing) {
         
         logger.debug("------------------------- Loan calculation starts -------------------------");
+        logger.debug(existingLoansRefinancing.toString());
         // logger.debug(client.toString());
         // logger.debug("Payback years: " + paybackYears + ", short term loan: " + shortTermLoan + ", FreeCashFlowCalculator: " + freeCashFlowCalculator + ", refinanceExistingLongTermLoans: " + refinanceExistingLongTermLoans);
         
@@ -114,6 +115,11 @@ public class LoanCalculator {
     
     public double calculateMinPaybackYears(Client client, LoanRequest loanRequest, FreeCashFlowCalculator freeCashFlowCalculator, ExistingLoansRefinancing existingLoansRefinancing) {
         
+        logger.debug("------------------------- Min payback years calculation -------------------------");
+        logger.debug(loanRequest.toString());
+        logger.debug("FreeCashFlowCalculator: " + freeCashFlowCalculator);
+        logger.debug(existingLoansRefinancing.toString());
+        
         double idealShortTermLoan = client.calculateJustifiableShortTermLoan(riskParameters.haircuts);
         
         double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
@@ -136,10 +142,18 @@ public class LoanCalculator {
         double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, currentDate);
         cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yearlyDebtServiceForExistingLongTermLoans);
         
-        return ExcelFunctions.nper(riskParameters.longTermInterestRate.value, cashFlowForNewLongTermLoans, -loanRequest.longTermLoan, 0, false);
+        double years = ExcelFunctions.nper(riskParameters.longTermInterestRate.value, cashFlowForNewLongTermLoans, -loanRequest.longTermLoan, 0, false);
+        
+        logger.debug("Calculatyed min payback years: " + years);
+        
+        return years;
     }
     
     public double calculateDSCR(LoanRequest loanRequest, Client client, FreeCashFlowCalculator freeCashFlowCalculator) {
+        
+        logger.debug("------------------------- DSCR calculation -------------------------");
+        logger.debug(loanRequest.toString());
+        logger.debug("FreeCashFlowCalculator: " + freeCashFlowCalculator);
         
         double allShortTermLoan = client.existingLoans.shortTermLoansSum() + loanRequest.shortTermLoan;
         double interestForShortTermLoan = riskParameters.shortTermInterestRate.multiply(allShortTermLoan);
@@ -152,7 +166,11 @@ public class LoanCalculator {
         
         double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
         
-        return freeCashFlow / fullDebtService; 
+        double dscr = freeCashFlow / fullDebtService;
+        
+        logger.debug("Calculated DSCR: " + dscr);
+        
+        return dscr;
     }
     
 }
