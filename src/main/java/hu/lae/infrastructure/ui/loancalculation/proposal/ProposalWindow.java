@@ -66,8 +66,6 @@ public class ProposalWindow extends Window {
     
     private final int maxLoanDuration;
     
-    private final LoanRequest idealLoanRequest;
-    
     private final Button submitButton = new Button("Submit for proposal", click -> submit());
     
     public ProposalWindow(LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
@@ -93,8 +91,7 @@ public class ProposalWindow extends Window {
         double yearlyDebtServiceForExistingLShortTermLoans = client.existingLoans.calculateYearlyDebtServiceForShortTermLoans(loanCalculator.riskParameters.shortTermInterestRate);
         double yearlyDebtServiceForExistingLongTermLoans = client.existingLoans.calculateYearlyDebtServiceForLongTermLoans(loanCalculator.riskParameters.longTermInterestRate, currentDate);
         
-        idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
-        
+        LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
         idealStructurePanel = new IdealStructurePanel(idealLoanRequest, maxLoanDuration);
         setContent(createLayout(yearlyDebtServiceForExistingLShortTermLoans + yearlyDebtServiceForExistingLongTermLoans));
         
@@ -198,10 +195,10 @@ public class ProposalWindow extends Window {
         LoanRequest loanRequest = createLoanRequest();
         List<String> errorMessages = validate(loanRequest);
         
-        double dscr = loanCalculator.calculateDSCR(loanRequest, client, cashflowCalculatorCombo.getValue());
-        
         if(errorMessages.isEmpty()) {
             super.close();
+            double dscr = loanCalculator.calculateDSCR(loanRequest, client, cashflowCalculatorCombo.getValue());
+            LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
             UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, existingLoansRefinancingTable.getValue(), loanRequest, dscr, idealLoanRequest.sum(), this));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
