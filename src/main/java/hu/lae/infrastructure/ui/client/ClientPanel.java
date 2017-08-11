@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
@@ -20,6 +21,7 @@ import hu.lae.domain.riskparameters.Industry;
 import hu.lae.infrastructure.ui.client.existingloans.ExistingLoansPanel;
 import hu.lae.infrastructure.ui.client.finstatement.FinancialHistoryWindow;
 import hu.lae.infrastructure.ui.client.finstatement.FinancialStatementForm;
+import hu.lae.infrastructure.ui.component.PercentField;
 
 @SuppressWarnings("serial")
 public class ClientPanel extends Panel {
@@ -36,6 +38,8 @@ public class ClientPanel extends Panel {
     
     private final FinancialHistoryWindow financialHistoryWindow;
     
+    private final PercentField pdField = new PercentField("PD");
+    
     public ClientPanel(Client client) {
         
         nameField.setValue(client.name);
@@ -43,6 +47,7 @@ public class ClientPanel extends Panel {
         financialStatementForm = new FinancialStatementForm(client.financialStatementData());
         existingLoansPanel = new ExistingLoansPanel(client.existingLoans);
         financialHistoryWindow = new FinancialHistoryWindow(client.financialHistory);
+        pdField.setPercent(client.pd);
         
         setContent(createLayout());
     }
@@ -66,7 +71,9 @@ public class ClientPanel extends Panel {
         historyButton.addStyleName(ValoTheme.BUTTON_LINK);
         historyButton.addStyleName(ValoTheme.BUTTON_SMALL);
         
-        HorizontalLayout row1 = new HorizontalLayout(nameField, industryCombo, historyButton);
+        HorizontalLayout row1 = new HorizontalLayout(nameField, industryCombo, historyButton, pdField);
+        row1.setWidth("805px");
+        row1.setComponentAlignment(pdField, Alignment.MIDDLE_RIGHT);
         HorizontalLayout row2 = new HorizontalLayout(financialStatementForm, existingLoansPanel);
         VerticalLayout mainLayout = new VerticalLayout(row1, row2);
         
@@ -77,7 +84,7 @@ public class ClientPanel extends Panel {
         List<FinancialStatementData> financialStatements = new ArrayList<>(financialHistoryWindow.getFinancialHistory().financialStatements);
         financialStatements.add(financialStatementForm.getValue());
         FinancialHistory financialHistory = new FinancialHistory(financialStatements);
-        return new Client(nameField.getValue(), industryCombo.getValue(), financialHistory, existingLoansPanel.getExistingLoans());
+        return new Client(nameField.getValue(), industryCombo.getValue(), financialHistory, existingLoansPanel.getExistingLoans(), pdField.getPercent());
     }
     
 }

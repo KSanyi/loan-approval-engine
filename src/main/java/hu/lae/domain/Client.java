@@ -28,11 +28,14 @@ public class Client {
     
     public final ExistingLoans existingLoans;
     
-    public Client(String name, Industry industry, FinancialHistory financialHistory, ExistingLoans existingLoans) {
+    public final double pd;
+    
+    public Client(String name, Industry industry, FinancialHistory financialHistory, ExistingLoans existingLoans, double pd) {
         this.name = name;
         this.industry = industry;
         this.financialHistory = financialHistory;
         this.existingLoans = existingLoans;
+        this.pd = pd;
     }
     
     public double calculateJustifiableShortTermLoan(Haircuts haircuts) {
@@ -58,7 +61,7 @@ public class Client {
         return new Client("", Industry.AUTOMOTIVE, financialHistory, 
                 new ExistingLoans(Arrays.asList(
                         ExistingLoan.newLongTermLoan(100, LocalDate.of(2021, 2, 12), false),
-                        ExistingLoan.newShortTermLoan(50, true))));
+                        ExistingLoan.newShortTermLoan(50, true))), 0.015);
     }
 
     public IncomeStatementHistory incomeStatementHistory() {

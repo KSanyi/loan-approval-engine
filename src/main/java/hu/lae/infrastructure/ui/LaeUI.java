@@ -62,9 +62,6 @@ public class LaeUI extends UI {
 	    
 	    ClientPanel clientPanel = new ClientPanel(Client.createDefault());
 	    
-	    HorizontalLayout mainLayout = new HorizontalLayout(riskParametersPanel, clientPanel);
-	    mainLayout.setMargin(true);
-	    
 	    Button calculateButton = new Button("Calculate");
 	    calculateButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 	    calculateButton.addStyleName(ValoTheme.BUTTON_LARGE);
@@ -85,11 +82,16 @@ public class LaeUI extends UI {
 	        }
 	    });
 	    
-	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), mainLayout, calculateButton);
+	    VerticalLayout rightLayout = new VerticalLayout(clientPanel, calculateButton);
+	    rightLayout.setMargin(false);
+	    rightLayout.setComponentAlignment(calculateButton, Alignment.BOTTOM_CENTER);
+        HorizontalLayout mainLayout = new HorizontalLayout(riskParametersPanel, rightLayout);
+        mainLayout.setMargin(true);
+	    
+	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), mainLayout);
 	    pageLayout.setMargin(false);
 	    pageLayout.setSpacing(false);
 	    pageLayout.setSizeUndefined();
-	    pageLayout.setComponentAlignment(calculateButton, Alignment.MIDDLE_CENTER);
 	    
 		setContent(pageLayout);
 	}

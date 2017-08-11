@@ -22,9 +22,12 @@ public class RiskParameters {
     public final double dscrThreshold;
     
     public final Thresholds thresholds;
+    
+    public final CollateralRequirement collateralRequirement;
 
     public RiskParameters(String id, String name, double amortizationRate, Haircuts haircuts, InterestRate shortTermInterestRate,
-            MaxLoanDurations maxLoanDurations, InterestRate longTermInterestRate, double dscrThreshold, Thresholds thresholds) {
+            MaxLoanDurations maxLoanDurations, InterestRate longTermInterestRate, double dscrThreshold, Thresholds thresholds,
+            CollateralRequirement collateralRequirement) {
         this.id = id;
         this.name = name;
         this.amortizationRate = amortizationRate;
@@ -34,6 +37,7 @@ public class RiskParameters {
         this.longTermInterestRate = longTermInterestRate;
         this.dscrThreshold = dscrThreshold;
         this.thresholds = thresholds;
+        this.collateralRequirement = collateralRequirement;
     }
 
     @Override

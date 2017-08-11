@@ -16,6 +16,7 @@ import hu.lae.domain.accounting.FinancialHistory;
 import hu.lae.domain.accounting.FinancialStatementData;
 import hu.lae.domain.accounting.FreeCashFlowCalculator;
 import hu.lae.domain.accounting.IncomeStatement;
+import hu.lae.domain.riskparameters.CollateralRequirement;
 import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.domain.riskparameters.Industry;
 import hu.lae.domain.riskparameters.InterestRate;
@@ -23,6 +24,7 @@ import hu.lae.domain.riskparameters.MaxLoanDurations;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.domain.riskparameters.Thresholds;
 import hu.lae.util.MapFactory;
+import hu.lae.util.Pair;
 
 public class LoanCalculatorTest {
 
@@ -51,7 +53,7 @@ public class LoanCalculatorTest {
     
     FinancialHistory financialHistory = new FinancialHistory(Arrays.asList(financialStatementData2014, financialStatementData2015, financialStatementData2016));
     
-    private Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, ExistingLoans.createEmpty());
+    private Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, ExistingLoans.createEmpty(), 0.015);
 
     private ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(client.existingLoans, false);
     
@@ -60,7 +62,11 @@ public class LoanCalculatorTest {
         Haircuts haircuts = new Haircuts(0.8, 0.5, 0.8, 0.4);
         RiskParameters riskParameters = new RiskParameters("id1", "default", 0.4, haircuts, new InterestRate(0.03), 
                 new MaxLoanDurations(MapFactory.of(Industry.CONSTRUCTION, 2, Industry.AUTOMOTIVE, 5)),
-                new InterestRate(0.05), 1.2, new Thresholds(0.2, 1.2, 0.15, 0.75, 0.8));
+                new InterestRate(0.05), 1.2, new Thresholds(0.2, 1.2, 0.15, 0.75, 0.8),
+                new CollateralRequirement(MapFactory.of(
+                        0.0, new Pair<>(50L, 0.7), 
+                        0.02, new Pair<>(30L, 0.4), 
+                        0.04, new Pair<>(0L, 0.0))));
         loanCalculator = new LoanCalculator(riskParameters, LocalDate.of(2017,4,1));
     }
     
@@ -130,7 +136,7 @@ public class LoanCalculatorTest {
     @Test
     public void maxLongTermLoanWithExistingLoans() {
         ExistingLoans existingLoans = new ExistingLoans(Arrays.asList(ExistingLoan.newLongTermLoan(100L, LocalDate.of(2019, 1, 1), false)));
-        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans);
+        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans, 0.015);
         
         ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(Collections.singletonMap(existingLoans.existingLoans.get(0), false));
         
@@ -142,7 +148,7 @@ public class LoanCalculatorTest {
     @Test
     public void maxLongTermLoanWithExistingRefinansableLoans() {
         ExistingLoans existingLoans = new ExistingLoans(Arrays.asList(ExistingLoan.newLongTermLoan(100L, LocalDate.of(2019, 1, 1), false)));
-        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans);
+        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans, 0.015);
         
         LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, 5, 303, FreeCashFlowCalculator.lastYear, existingLoansRefinancing);
         
@@ -152,7 +158,7 @@ public class LoanCalculatorTest {
     @Test
     public void idealStructure() {
         ExistingLoans existingLoans = new ExistingLoans(Arrays.asList(ExistingLoan.newLongTermLoan(100L, LocalDate.of(2019, 1, 1), false)));
-        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans);
+        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans, 0.015);
         
         LoanRequest loanRequest = loanCalculator.calculateIdealLoanRequest(client, FreeCashFlowCalculator.lastYear);
         
@@ -163,7 +169,7 @@ public class LoanCalculatorTest {
     @Test
     public void idealStructureWithAverageCFCalc() {
         ExistingLoans existingLoans = new ExistingLoans(Arrays.asList(ExistingLoan.newLongTermLoan(100L, LocalDate.of(2019, 1, 1), false)));
-        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans);
+        Client client = new Client("Test client", Industry.AUTOMOTIVE, financialHistory, existingLoans, 0.015);
         
         LoanRequest loanRequest = loanCalculator.calculateIdealLoanRequest(client, FreeCashFlowCalculator.average);
         

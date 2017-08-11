@@ -152,6 +152,7 @@ public class DecisionWindow extends Window {
         double turnoverReqValue = covenantCalculator.calculateRequiredTurnover(existingLoansRefinancing, loanRequest, client.financialStatementData().incomeStatement.sales);
         double debtCapacityUsage = CovenantCalculator.calculateDebtCapacityUsage(loanRequest, maxDebtCapacity, existingLoansRefinancing);
         double localLoansRatio = covenantCalculator.calculateLocalLoansRatio(existingLoansRefinancing, loanRequest);
+        double allLocalLoans = covenantCalculator.allLocalLoans(existingLoansRefinancing, loanRequest);
         
         boolean furtherIndebtnessOk = debtCapacityUsage <= riskParameters.thresholds.debtCapacity;
         boolean localLoansRatioOk = localLoansRatio <= riskParameters.thresholds.localLoanRatio;
@@ -159,7 +160,9 @@ public class DecisionWindow extends Window {
         List<CovenantTableRow> items = Arrays.asList(
                 new CovenantTableRow("Turnover requirement", Formatters.formatAmount(turnoverReqValue), "-"),
                 new CovenantTableRow("Further indebtedness", Formatters.formatPercent(debtCapacityUsage), furtherIndebtnessOk ? "-" : "No further indebtedness"),
-                new CovenantTableRow("Account opening clause", Formatters.formatDecimal(localLoansRatio), localLoansRatioOk ? "-" : "Further accounts w bank consent"));
+                new CovenantTableRow("Account opening clause", Formatters.formatDecimal(localLoansRatio), localLoansRatioOk ? "-" : "Further accounts w bank consent"),
+                new CovenantTableRow("Collateral requirement", "", riskParameters.collateralRequirement.evaluate(client.pd, (long)allLocalLoans, debtCapacityUsage)));
+        
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);

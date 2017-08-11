@@ -17,7 +17,7 @@ public class RiskParametersPanel extends Panel {
     
     public RiskParametersPanel(RiskParameterRepository riskParameterRepository) {
         setCaption("Risk parameters");
-        setWidth("280px");
+        //setWidth("280px");
         
         riskParametersForm = new RiskParametersForm(riskParameterRepository.loadRiskParameters());
         updateButton.addStyleName(ValoTheme.BUTTON_PRIMARY);

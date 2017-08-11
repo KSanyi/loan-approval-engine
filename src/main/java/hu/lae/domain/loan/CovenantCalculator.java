@@ -44,7 +44,7 @@ public class CovenantCalculator {
         
         double allLoans = existingLoansRefinancing.nonRefinancableLoans() + loanRequest.sum();
         
-        double localLoans = existingLoansRefinancing.localNonRefinancableLoans() +  + loanRequest.sum();
+        double localLoans = allLocalLoans(existingLoansRefinancing, loanRequest);
         
         double localLoansRatio = localLoans / allLoans;
         
@@ -52,6 +52,11 @@ public class CovenantCalculator {
         
         return localLoansRatio;
         
+    }
+    
+    public double allLocalLoans(ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest) {
+        
+        return existingLoansRefinancing.localNonRefinancableLoans() +  + loanRequest.sum();
     }
     
 }
