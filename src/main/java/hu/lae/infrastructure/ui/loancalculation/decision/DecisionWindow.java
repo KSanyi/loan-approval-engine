@@ -68,7 +68,6 @@ public class DecisionWindow extends Window {
         setModal(true);
         setCaption("Decision");
         setContent(createLayout());
-        setSizeUndefined();
         
         addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
@@ -146,7 +145,7 @@ public class DecisionWindow extends Window {
         Grid<CovenantTableRow> grid = new Grid<>();
         grid.addColumn(row -> row.caption).setCaption("Covenant");
         grid.addColumn(row -> row.value).setCaption("Value").setStyleGenerator(item -> "v-align-right");
-        grid.addColumn(row -> row.message).setCaption("Message");
+        grid.addColumn(row -> row.message).setCaption("Contractual covenant");
         
         CovenantCalculator covenantCalculator = new CovenantCalculator(riskParameters.thresholds.turnoverRequirement);
         double turnoverReqValue = covenantCalculator.calculateRequiredTurnover(existingLoansRefinancing, loanRequest, client.financialStatementData().incomeStatement.sales);
@@ -158,26 +157,27 @@ public class DecisionWindow extends Window {
         boolean localLoansRatioOk = localLoansRatio <= riskParameters.thresholds.localLoanRatio;
         
         List<CovenantTableRow> items = Arrays.asList(
-                new CovenantTableRow("Turnover requirement", Formatters.formatAmount(turnoverReqValue), "-"),
+                new CovenantTableRow("Turnover requirement", "", "Min HUF " + Formatters.formatAmount(turnoverReqValue) + " mln turnover"),
                 new CovenantTableRow("Further indebtedness", Formatters.formatPercent(debtCapacityUsage), furtherIndebtnessOk ? "-" : "No further indebtedness"),
-                new CovenantTableRow("Account opening clause", Formatters.formatDecimal(localLoansRatio), localLoansRatioOk ? "-" : "Further accounts w bank consent"),
+                new CovenantTableRow("Account opening clause", Formatters.formatDecimal(localLoansRatio), localLoansRatioOk ? "No restriction" : "Further accounts w bank consent"),
                 new CovenantTableRow("Collateral requirement", "", riskParameters.collateralRequirement.evaluate(client.pd, (long)allLocalLoans, debtCapacityUsage)));
-        
+
         grid.setItems(items);
         
         grid.addStyleName(VaadinUtil.GRID_SMALL);
         grid.setCaption("Covenants");
         grid.setHeightMode(HeightMode.ROW);
         grid.setHeightByRows(items.size());
+        grid.setWidth("600px");
         return grid;
     }
     
     private Grid<Loan> createAllLoansTable() {
         Grid<Loan> grid = new Grid<>("Existing loans");
-        grid.addColumn(l -> l.loanType.name()).setCaption("Tipus");
-        grid.addColumn(l -> Formatters.formatAmount(l.amount)).setCaption("Összeg").setWidth(90).setStyleGenerator(item -> "v-align-right");
-        grid.addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "").setCaption("Erstés").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
-        grid.addColumn(l -> l.isNew ? VaadinIcons.STAR.getHtml() : "").setCaption("Új").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
+        grid.addColumn(l -> l.loanType.name()).setCaption("Type");
+        grid.addColumn(l -> Formatters.formatAmount(l.amount)).setCaption("Amount").setWidth(90).setStyleGenerator(item -> "v-align-right");
+        grid.addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "").setCaption("Own").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
+        grid.addColumn(l -> l.isNew ? VaadinIcons.STAR.getHtml() : "").setCaption("New").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
 
         grid.setSelectionMode(SelectionMode.NONE);
         

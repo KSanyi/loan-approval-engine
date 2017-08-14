@@ -28,8 +28,8 @@ public class CollateralRequirement {
         
         this.map = new TreeMap<>(MapFactory.of(
                 limits.get(0), new Entry("Low PD", map.get(limits.get(0)).v1, map.get(limits.get(0)).v2, "no collateral", "0 coll. value POR or private surety or institutional guarantee"),
-                limits.get(1), new Entry("Low PD", map.get(limits.get(1)).v1, map.get(limits.get(1)).v2, "0 coll. value POR or private surety or portfolio guarantee", "50% RE OR institutional guarantee"),
-                limits.get(2), new Entry("Low PD", map.get(limits.get(2)).v1, map.get(limits.get(2)).v2, "", "80% RE or min 80% institutional guarantee")));
+                limits.get(1), new Entry("Medium PD", map.get(limits.get(1)).v1, map.get(limits.get(1)).v2, "0 coll. value POR or private surety or portfolio guarantee", "50% RE OR institutional guarantee"),
+                limits.get(2), new Entry("High PD", map.get(limits.get(2)).v1, map.get(limits.get(2)).v2, "", "80% RE or min 80% institutional guarantee")));
     }
 
     public String evaluate(double pd, long allLocalLoan, double debtCapacityUsage) {

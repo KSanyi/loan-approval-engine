@@ -213,4 +213,13 @@ public class LoanCalculatorTest {
         Assert.assertEquals(5.06, minPaybackYears, 0.1);
     }
     
+    @Test
+    public void dscr() {
+        LoanRequest loanRequest = new LoanRequest(400, 1000, 5);
+        
+        double dscr = loanCalculator.calculateDSCR(loanRequest, client, FreeCashFlowCalculator.lastYear);
+        
+        Assert.assertEquals(1.28, dscr, 0.01);
+    }
+    
 }
