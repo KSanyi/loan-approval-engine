@@ -211,7 +211,8 @@ public class ProposalWindow extends Window {
     
     private List<String> validate(LoanRequest loanRequest) {
         
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), 0, cashflowCalculatorCombo.getValue(), existingLoansRefinancingTable.getValue());
+        //TODO make it smarter
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), existingLoansRefinancingTable.getValue());
         long maxShortTermLoan = (long)loanApplicationResult.maxShortTermLoan;
         
         List<String> errorMessages = new ArrayList<>();
@@ -221,7 +222,7 @@ public class ProposalWindow extends Window {
         if(loanRequest.shortTermLoan > maxShortTermLoan) {
             errorMessages.add("Short term loan must not exceed " + maxShortTermLoan);
         }
-        loanApplicationResult = loanCalculator.calculate(client, paybackYearsCombo.getValue(), loanRequest.shortTermLoan, cashflowCalculatorCombo.getValue(), existingLoansRefinancingTable.getValue());
+        loanApplicationResult = loanCalculator.calculate(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), existingLoansRefinancingTable.getValue());
         if(loanRequest.longTermLoan > loanApplicationResult.maxLongTermLoan) {
             errorMessages.add("Long term loan must not exceed " + (long)loanApplicationResult.maxLongTermLoan);
         }

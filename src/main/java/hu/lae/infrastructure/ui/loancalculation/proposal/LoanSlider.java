@@ -34,6 +34,7 @@ public class LoanSlider extends CustomField<Double> {
     LoanSlider(String caption) {
         setCaption(caption);
         slider.setValue(0d);
+        slider.setMax(Double.MAX_VALUE);
         amountField.setValue("0");
         slider.addValueChangeListener(this::valueChanged);
     }

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import hu.lae.domain.riskparameters.InterestRate;
+import hu.lae.util.ExcelFunctions;
 
 public class ExistingLoansRefinancing {
 
@@ -24,6 +25,20 @@ public class ExistingLoansRefinancing {
     
     private boolean refinance(ExistingLoan existingLoan) {
         return existingLoansRefinancingMap.get(existingLoan);
+    }
+    
+    public double calculateYearlyDebtServiceForShortTermLoans(InterestRate shortTermInterestRate, InterestRate longTermInterestRate, LoanRequest idealLoanRequest) {
+        double nonRefinancableShortTermLoans = nonRefinancableShortTermLoans();
+        
+        double xdebtService = ExcelFunctions.pmt(longTermInterestRate.value, idealLoanRequest.longTermLoanDuration, nonRefinancableShortTermLoans - idealLoanRequest.shortTermLoan);
+        double x = shortTermInterestRate.multiply(idealLoanRequest.shortTermLoan) + xdebtService;
+        
+        if(nonRefinancableShortTermLoans > idealLoanRequest.shortTermLoan) {
+            double debtService = ExcelFunctions.pmt(longTermInterestRate.value, idealLoanRequest.longTermLoanDuration, nonRefinancableShortTermLoans - idealLoanRequest.shortTermLoan);
+            return shortTermInterestRate.multiply(idealLoanRequest.shortTermLoan) + debtService;
+        } else {
+            return shortTermInterestRate.multiply(nonRefinancableShortTermLoans);
+        }
     }
     
     public double calculateYearlyDebtServiceForLongTermLoans(InterestRate shortTermInterestRate, InterestRate longTermInterestRate, LocalDate currentDate) {

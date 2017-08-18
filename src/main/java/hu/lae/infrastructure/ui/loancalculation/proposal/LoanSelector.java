@@ -48,19 +48,19 @@ public class LoanSelector extends CustomField<LoanRequest> {
         this.existingLoanRefinancing = existingLoanRefinancing;
         this.maxDebtCapacity = loanCalculator.calculateIdealLoanRequest(client, freeCashFlowCalculator).sum();
         
-        stLoanSlider.addValueChangeListener(v -> shortTermLoanChanged(v.getValue()));
-        ltLoanSlider.addValueChangeListener(v -> longTermLoanChanged(v.getValue()));
+        stLoanSlider.setValue(loanRequest.shortTermLoan);
+        ltLoanSlider.setValue(loanRequest.longTermLoan);
         
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, 0, freeCashFlowCalculator, existingLoanRefinancing); 
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, createLoanRequest(), freeCashFlowCalculator, existingLoanRefinancing); 
         stLoanSlider.setMaxLoanValue(loanApplicationResult.maxShortTermLoan);
         ltLoanSlider.setMaxLoanValue(loanApplicationResult.maxLongTermLoan);
         
-        stLoanSlider.setValue(loanRequest.shortTermLoan);
-        ltLoanSlider.setValue(loanRequest.longTermLoan);
+        stLoanSlider.addValueChangeListener(v -> shortTermLoanChanged(v.getValue()));
+        ltLoanSlider.addValueChangeListener(v -> longTermLoanChanged(v.getValue()));
     }
     
     private void shortTermLoanChanged(double shortTermLoan) {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, paybackYears, shortTermLoan, freeCashFlowCalculator, existingLoanRefinancing);
+        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, createLoanRequest(), freeCashFlowCalculator, existingLoanRefinancing);
         ltLoanSlider.setMaxLoanValue(loanApplicationResult.maxLongTermLoan);
         updateDebtCapacityUsageLabel();
         checkLiquidityRatio();
