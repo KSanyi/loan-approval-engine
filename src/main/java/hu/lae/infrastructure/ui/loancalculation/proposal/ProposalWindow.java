@@ -27,7 +27,6 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.accounting.FreeCashFlowCalculator;
-import hu.lae.domain.loan.LoanApplicationResult;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.validation.LiquidityValidator;
@@ -212,8 +211,8 @@ public class ProposalWindow extends Window {
     private List<String> validate(LoanRequest loanRequest) {
         
         //TODO make it smarter
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), existingLoansRefinancingTable.getValue());
-        long maxShortTermLoan = (long)loanApplicationResult.maxShortTermLoan;
+        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, loanRequest.longTermLoan, paybackYearsCombo.getValue(), existingLoansRefinancingTable.getValue(), cashflowCalculatorCombo.getValue());
+        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, paybackYearsCombo.getValue(), existingLoansRefinancingTable.getValue(), cashflowCalculatorCombo.getValue());
         
         List<String> errorMessages = new ArrayList<>();
         if(loanRequest.longTermLoan < existingLoansRefinancingTable.getValue().refinancableLongTermLoans()) {
@@ -222,9 +221,8 @@ public class ProposalWindow extends Window {
         if(loanRequest.shortTermLoan > maxShortTermLoan) {
             errorMessages.add("Short term loan must not exceed " + maxShortTermLoan);
         }
-        loanApplicationResult = loanCalculator.calculate(client, createLoanRequest(), cashflowCalculatorCombo.getValue(), existingLoansRefinancingTable.getValue());
-        if(loanRequest.longTermLoan > loanApplicationResult.maxLongTermLoan) {
-            errorMessages.add("Long term loan must not exceed " + (long)loanApplicationResult.maxLongTermLoan);
+        if(loanRequest.longTermLoan > maxLongTermLoan) {
+            errorMessages.add("Long term loan must not exceed " + (long)maxLongTermLoan);
         }
         
         return errorMessages;

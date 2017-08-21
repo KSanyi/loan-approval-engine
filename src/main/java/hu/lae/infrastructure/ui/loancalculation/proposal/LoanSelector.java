@@ -15,7 +15,6 @@ import hu.lae.domain.Client;
 import hu.lae.domain.accounting.FreeCashFlowCalculator;
 import hu.lae.domain.loan.CovenantCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
-import hu.lae.domain.loan.LoanApplicationResult;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.validation.LiquidityValidator;
@@ -31,7 +30,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
     private final LoanCalculator loanCalculator;
     private final Client client;
     private final FreeCashFlowCalculator freeCashFlowCalculator;
-    private final ExistingLoansRefinancing existingLoanRefinancing;
+    private final ExistingLoansRefinancing existingLoansRefinancing;
     
     private final LoanSlider stLoanSlider = new LoanSlider("Short term loan");
     private final LoanSlider ltLoanSlider = new LoanSlider("Long term loan");
@@ -40,28 +39,33 @@ public class LoanSelector extends CustomField<LoanRequest> {
 
     private final double maxDebtCapacity;
     
-    public LoanSelector(LoanCalculator loanCalculator, Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator, LoanRequest loanRequest, ExistingLoansRefinancing existingLoanRefinancing) {
+    private final int longTermLoanDuration;
+    
+    public LoanSelector(LoanCalculator loanCalculator, Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator, LoanRequest loanRequest, ExistingLoansRefinancing existingLoansRefinancing) {
         this.loanCalculator = loanCalculator;
         this.client = client;
         this.freeCashFlowCalculator = freeCashFlowCalculator;
         this.paybackYears = paybackYears;
-        this.existingLoanRefinancing = existingLoanRefinancing;
+        this.existingLoansRefinancing = existingLoansRefinancing;
         this.maxDebtCapacity = loanCalculator.calculateIdealLoanRequest(client, freeCashFlowCalculator).sum();
+        this.longTermLoanDuration = loanRequest.longTermLoanDuration;
+        
         
         stLoanSlider.setValue(loanRequest.shortTermLoan);
         ltLoanSlider.setValue(loanRequest.longTermLoan);
         
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, createLoanRequest(), freeCashFlowCalculator, existingLoanRefinancing); 
-        stLoanSlider.setMaxLoanValue(loanApplicationResult.maxShortTermLoan);
-        ltLoanSlider.setMaxLoanValue(loanApplicationResult.maxLongTermLoan);
+        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, loanRequest.longTermLoan, longTermLoanDuration, existingLoansRefinancing, freeCashFlowCalculator);
+        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, paybackYears, existingLoansRefinancing, freeCashFlowCalculator);
+        ltLoanSlider.setMaxLoanValue(maxShortTermLoan);
+        stLoanSlider.setMaxLoanValue(maxLongTermLoan);
         
         stLoanSlider.addValueChangeListener(v -> shortTermLoanChanged(v.getValue()));
         ltLoanSlider.addValueChangeListener(v -> longTermLoanChanged(v.getValue()));
     }
     
     private void shortTermLoanChanged(double shortTermLoan) {
-        LoanApplicationResult loanApplicationResult = loanCalculator.calculate(client, createLoanRequest(), freeCashFlowCalculator, existingLoanRefinancing);
-        ltLoanSlider.setMaxLoanValue(loanApplicationResult.maxLongTermLoan);
+        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, shortTermLoan, paybackYears, existingLoansRefinancing, freeCashFlowCalculator);
+        ltLoanSlider.setMaxLoanValue(maxLongTermLoan);
         updateDebtCapacityUsageLabel();
         checkLiquidityRatio();
     }
@@ -77,11 +81,13 @@ public class LoanSelector extends CustomField<LoanRequest> {
    }
     
     private void longTermLoanChanged(double longTermLoan) {
+        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, longTermLoan, longTermLoanDuration, existingLoansRefinancing, freeCashFlowCalculator);
+        stLoanSlider.setMaxLoanValue(maxShortTermLoan);
         updateDebtCapacityUsageLabel();
     }
     
     private void updateDebtCapacityUsageLabel() {
-        double debtCapacityUsage = CovenantCalculator.calculateDebtCapacityUsage(createLoanRequest(), maxDebtCapacity, existingLoanRefinancing);
+        double debtCapacityUsage = CovenantCalculator.calculateDebtCapacityUsage(createLoanRequest(), maxDebtCapacity, existingLoansRefinancing);
         debtCapacityUsageLabel.setValue("Debt capacity usage: " + PERCENT_FORMATTER.format(debtCapacityUsage));
     }
 
