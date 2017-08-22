@@ -56,8 +56,8 @@ public class LoanSelector extends CustomField<LoanRequest> {
         
         double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, loanRequest.longTermLoan, longTermLoanDuration, existingLoansRefinancing, freeCashFlowCalculator);
         double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, paybackYears, existingLoansRefinancing, freeCashFlowCalculator);
-        ltLoanSlider.setMaxLoanValue(maxShortTermLoan);
-        stLoanSlider.setMaxLoanValue(maxLongTermLoan);
+        stLoanSlider.setMaxLoanValue(maxShortTermLoan);
+        ltLoanSlider.setMaxLoanValue(maxLongTermLoan);
         
         stLoanSlider.addValueChangeListener(v -> shortTermLoanChanged(v.getValue()));
         ltLoanSlider.addValueChangeListener(v -> longTermLoanChanged(v.getValue()));

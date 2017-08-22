@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import hu.lae.domain.Client;
 import hu.lae.domain.accounting.CashFlow;
 import hu.lae.domain.accounting.FreeCashFlowCalculator;
-import hu.lae.domain.riskparameters.Industry;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.util.ExcelFunctions;
 
@@ -37,12 +36,14 @@ public class LoanCalculator {
         
         LoanRequest idealLoanRequest = new LoanRequest(idealShortTermLoan, idealLongTermLoan, maxLoanDuration);
         
-        logger.info("Ideal loan request: " + idealLoanRequest);
-        
         return idealLoanRequest;
     }
     
     public double calculateMaxLongTermLoan(Client client, double shortTermLoanAmount, int paybackYears, ExistingLoansRefinancing existingLoansRefinancing, FreeCashFlowCalculator freeCashFlowCalculator) {
+        
+        logger.debug("------------------------- Max long term loan calculation -------------------------");
+        logger.debug("Short term loan: " + shortTermLoanAmount + " paybackYears: " + paybackYears + " FreeCashFlowCalculator: " + freeCashFlowCalculator);
+        logger.debug(existingLoansRefinancing.toString());
         
         double justifiableShortTermLoan = client.calculateJustifiableShortTermLoan(riskParameters.haircuts);
         double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
@@ -67,10 +68,18 @@ public class LoanCalculator {
         double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, currentDate);
         cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yearlyDebtServiceForExistingLongTermLoans);
         
-        return new CashFlow(paybackYears, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate); 
+        double maxLongTermLoan = new CashFlow(paybackYears, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate);
+        
+        logger.debug("Calculated max long term loan: " + maxLongTermLoan);
+        
+        return maxLongTermLoan;
     }
     
     public double calculateMaxShortTermLoan(Client client, double longTermLoan, int paybackYears, ExistingLoansRefinancing existingLoansRefinancing, FreeCashFlowCalculator freeCashFlowCalculator) {
+        
+        logger.debug("------------------------- Max short term loan calculation -------------------------");
+        logger.debug("Long term loan: " + longTermLoan + " paybackYears: " + paybackYears + " FreeCashFlowCalculator: " + freeCashFlowCalculator);
+        logger.debug(existingLoansRefinancing.toString());
         
         LoanRequest idealLoanRequest = calculateIdealLoanRequest(client, freeCashFlowCalculator);
         
@@ -82,29 +91,22 @@ public class LoanCalculator {
         double remaining = freeCashFlow - (yearlyDebtServiceForExistingShortTermLoans + yearlyDebtServiceForExistingLongTermLoans + yearlyDebtServiceForNewLongTermLoans);
         
         int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(client.industry);
+        
+        double maxShortTermLoan;
         if(idealLoanRequest.shortTermLoan > existingLoansRefinancing.nonRefinancableShortTermLoans()) {
             double diff = idealLoanRequest.shortTermLoan - existingLoansRefinancing.nonRefinancableShortTermLoans();
             double interest = riskParameters.shortTermInterestRate.multiply(diff);
             double xxx1 = remaining - interest;
             double xxx2 = new CashFlow(maxLoanDuration, xxx1).presentValue(riskParameters.longTermInterestRate);
             double xxx3 = remaining / riskParameters.shortTermInterestRate.value;
-            return Math.min(diff, xxx3) + Math.max(0, xxx2);
+            maxShortTermLoan = Math.min(diff, xxx3) + Math.max(0, xxx2);
         } else {
-            return new CashFlow(maxLoanDuration, remaining).presentValue(riskParameters.longTermInterestRate);
+            maxShortTermLoan = new CashFlow(maxLoanDuration, remaining).presentValue(riskParameters.longTermInterestRate);
         }
-    }
-    
-    private double calculateMaxShortTermLoanOld(double justifiableShortTermloan, double freeCashFlow, Industry industry, ExistingLoansRefinancing existingLoansRefinancing) {
         
-        double cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.shortTermInterestRate.multiply(justifiableShortTermloan));
+        logger.debug("Calculated max short term loan: " + maxShortTermLoan);
         
-        // logger.info("Cash flow remaining for long term loans: " + cashFlowForNewLongTermLoans);
-        
-        double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, currentDate);
-        cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yearlyDebtServiceForExistingLongTermLoans);
-        
-        int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(industry);
-        return justifiableShortTermloan + new CashFlow(maxLoanDuration, cashFlowForNewLongTermLoans).presentValue(riskParameters.longTermInterestRate); 
+        return maxShortTermLoan;
     }
     
     public double calculateMinPaybackYears(Client client, LoanRequest loanRequest, FreeCashFlowCalculator freeCashFlowCalculator, ExistingLoansRefinancing existingLoansRefinancing) {

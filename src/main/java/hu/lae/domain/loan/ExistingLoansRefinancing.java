@@ -30,11 +30,8 @@ public class ExistingLoansRefinancing {
     public double calculateYearlyDebtServiceForShortTermLoans(InterestRate shortTermInterestRate, InterestRate longTermInterestRate, LoanRequest idealLoanRequest) {
         double nonRefinancableShortTermLoans = nonRefinancableShortTermLoans();
         
-        double xdebtService = ExcelFunctions.pmt(longTermInterestRate.value, idealLoanRequest.longTermLoanDuration, nonRefinancableShortTermLoans - idealLoanRequest.shortTermLoan);
-        double x = shortTermInterestRate.multiply(idealLoanRequest.shortTermLoan) + xdebtService;
-        
         if(nonRefinancableShortTermLoans > idealLoanRequest.shortTermLoan) {
-            double debtService = ExcelFunctions.pmt(longTermInterestRate.value, idealLoanRequest.longTermLoanDuration, nonRefinancableShortTermLoans - idealLoanRequest.shortTermLoan);
+            double debtService = -ExcelFunctions.pmt(longTermInterestRate.value, idealLoanRequest.longTermLoanDuration, nonRefinancableShortTermLoans - idealLoanRequest.shortTermLoan);
             return shortTermInterestRate.multiply(idealLoanRequest.shortTermLoan) + debtService;
         } else {
             return shortTermInterestRate.multiply(nonRefinancableShortTermLoans);
