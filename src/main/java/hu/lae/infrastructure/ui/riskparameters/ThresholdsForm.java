@@ -8,35 +8,36 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.riskparameters.Thresholds;
 import hu.lae.infrastructure.ui.component.NumberField;
+import hu.lae.infrastructure.ui.component.PercentField;
 
 @SuppressWarnings("serial")
 class ThresholdsForm extends CustomField<Thresholds> {
 
-    private final NumberField equityRatioThresholdField = new NumberField("Equity ratio");
+    private final PercentField equityRatioThresholdField = new PercentField("Equity ratio");
     
     private final NumberField liquidityRatioThresholdField = new NumberField("Liquidity ratio");
     
-    private final NumberField turnoverReqToleranceField = new NumberField("Turnover Req. tolerance");
+    private final PercentField turnoverReqToleranceField = new PercentField("Turnover Req. tolerance");
     
-    private final NumberField debtCapacityField = new NumberField("Debt capacity limit");
+    private final PercentField debtCapacityField = new PercentField("Debt capacity limit");
     
-    private final NumberField localLoanThresholdField = new NumberField("Esrte loan limit");
+    private final PercentField localLoanThresholdField = new PercentField("Esrte loan limit");
     
     ThresholdsForm(Thresholds thresholds) {
     
         setCaption("Thresholds");
         
-        equityRatioThresholdField.setNumber(thresholds.equityRatio);
+        equityRatioThresholdField.setPercent(thresholds.equityRatio);
         liquidityRatioThresholdField.setNumber(thresholds.liquidityRatio);
-        turnoverReqToleranceField.setNumber(thresholds.turnoverRequirement);
-        debtCapacityField.setNumber(thresholds.debtCapacity);
-        localLoanThresholdField.setNumber(thresholds.localLoanRatio);
+        turnoverReqToleranceField.setPercent(thresholds.turnoverRequirement);
+        debtCapacityField.setPercent(thresholds.debtCapacity);
+        localLoanThresholdField.setPercent(thresholds.localLoanRatio);
     }
     
     @Override
     public Thresholds getValue() {
-        return new Thresholds(equityRatioThresholdField.getNumber(), liquidityRatioThresholdField.getNumber(),
-                turnoverReqToleranceField.getNumber(), debtCapacityField.getNumber(), localLoanThresholdField.getNumber());
+        return new Thresholds(equityRatioThresholdField.getPercent(), liquidityRatioThresholdField.getNumber(),
+                turnoverReqToleranceField.getPercent(), debtCapacityField.getPercent(), localLoanThresholdField.getPercent());
     }
 
     @Override

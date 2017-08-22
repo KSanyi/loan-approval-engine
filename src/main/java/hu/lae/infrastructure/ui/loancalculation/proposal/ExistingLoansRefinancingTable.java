@@ -51,6 +51,7 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
     @Override
     protected Component initContent() {
         grid.addColumn(l -> l.type.toString()).setCaption("Type");
+ 
         
         grid.addColumn(l -> Formatters.formatAmount(l.amount))
             .setCaption("Amount")
@@ -58,7 +59,7 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
             .setStyleGenerator(item -> "v-align-right");
         
         grid.addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "")
-            .setCaption("Erste?")
+            .setCaption("Own")
             .setRenderer(new HtmlRenderer())
             .setWidth(80)
             .setStyleGenerator(item -> "v-align-center");
@@ -71,7 +72,7 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
             .setCaption("Debt service")
             .setWidth(120)
             .setStyleGenerator(item -> "v-align-right");
-        
+
         grid.setWidth("600px");
         grid.setSelectionMode(SelectionMode.MULTI);
         grid.addSelectionListener(v -> refinanceChangeListeners.stream().forEach(l -> l.changeHappened()));
