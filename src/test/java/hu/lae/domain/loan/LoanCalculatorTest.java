@@ -79,7 +79,7 @@ public class LoanCalculatorTest {
         Assert.assertEquals(0, maxLongTermLoanForMaxShortTermLoan, 0.1);
         
         double maxLongTermLoanForLessThanMaxShortTermLoan = loanCalculator.calculateMaxLongTermLoan(client, maxShortTermLoan - 100, 5, existingLoansRefinancing, FreeCashFlowCalculator.lastYear);
-        //Assert.assertTrue(maxLongTermLoanForLessThanMaxShortTermLoan > 0);
+        Assert.assertTrue(maxLongTermLoanForLessThanMaxShortTermLoan > 0);
     }
     
     @Test
@@ -87,14 +87,14 @@ public class LoanCalculatorTest {
         
         double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, 0, 3, existingLoansRefinancing, FreeCashFlowCalculator.lastYear);
         
-        Assert.assertEquals(1614.44, maxShortTermLoan, 0.1);
+        Assert.assertEquals(1395.87, maxShortTermLoan, 0.1);
         
         double maxLongTermLoanForMaxShortTermLoan = loanCalculator.calculateMaxLongTermLoan(client, maxShortTermLoan, 3, existingLoansRefinancing, FreeCashFlowCalculator.lastYear);
         
         Assert.assertEquals(0, maxLongTermLoanForMaxShortTermLoan, 0.1);
         
         double maxLongTermLoanForLessThanMaxShortTermLoan = loanCalculator.calculateMaxLongTermLoan(client, maxShortTermLoan - 100, 5, existingLoansRefinancing, FreeCashFlowCalculator.lastYear);
-        //Assert.assertTrue(maxLongTermLoanForLessThanMaxShortTermLoan > 0);
+        Assert.assertTrue(maxLongTermLoanForLessThanMaxShortTermLoan > 0);
     }
     
     @Test

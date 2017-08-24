@@ -88,7 +88,7 @@ public class LoanCalculatorTest2 {
         
         double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, 50, 5, existingLoansRefinancing, FreeCashFlowCalculator.average);
         
-        Assert.assertEquals(233.04, maxShortTermLoan, 0.1);
+        Assert.assertEquals(219.69, maxShortTermLoan, 0.1);
         Assert.assertEquals(151.21, maxLongTermLoan, 0.1);
     }
     

@@ -96,7 +96,7 @@ public class LoanCalculator {
         if(idealLoanRequest.shortTermLoan > existingLoansRefinancing.nonRefinancableShortTermLoans()) {
             double diff = idealLoanRequest.shortTermLoan - existingLoansRefinancing.nonRefinancableShortTermLoans();
             double interest = riskParameters.shortTermInterestRate.multiply(diff);
-            double xxx1 = remaining - interest;
+            double xxx1 = (remaining - interest) / riskParameters.dscrThreshold;
             double xxx2 = new CashFlow(maxLoanDuration, xxx1).presentValue(riskParameters.longTermInterestRate);
             double xxx3 = remaining / riskParameters.shortTermInterestRate.value;
             maxShortTermLoan = Math.min(diff, xxx3) + Math.max(0, xxx2);
