@@ -87,7 +87,7 @@ public class LoanCalculatorTest {
         
         double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, 0, 3, existingLoansRefinancing, FreeCashFlowCalculator.lastYear);
         
-        Assert.assertEquals(1395.87, maxShortTermLoan, 0.1);
+        Assert.assertEquals(1389.3, maxShortTermLoan, 0.1);
         
         double maxLongTermLoanForMaxShortTermLoan = loanCalculator.calculateMaxLongTermLoan(client, maxShortTermLoan, 3, existingLoansRefinancing, FreeCashFlowCalculator.lastYear);
         
