@@ -27,6 +27,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.validation.LiquidityValidator;
@@ -78,7 +79,7 @@ public class ProposalWindow extends Window {
         
         existingLoansRefinancingTable = new ExistingLoansRefinancingTable(client.existingLoans, loanCalculator.riskParameters.longTermInterestRate,loanCalculator.riskParameters.shortTermInterestRate);
         
-        cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.lastYear);
+        cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.average);
         
         cashflowCalculatorCombo.addValueChangeListener(v -> updateIdealStructurePanel());
         cashflowCalculatorCombo.addValueChangeListener(v -> updateMinPaybackYearsLabel());
@@ -87,12 +88,15 @@ public class ProposalWindow extends Window {
         longTermLoanField.addValueChangeListener(v -> updateMinPaybackYearsLabel());
         existingLoansRefinancingTable.addRefinanceChangeListener(() -> updateMinPaybackYearsLabel());
 
-        double yearlyDebtServiceForExistingLShortTermLoans = client.existingLoans.calculateYearlyDebtServiceForShortTermLoans(loanCalculator.riskParameters.shortTermInterestRate);
-        double yearlyDebtServiceForExistingLongTermLoans = client.existingLoans.calculateYearlyDebtServiceForLongTermLoans(loanCalculator.riskParameters.longTermInterestRate, currentDate);
+        ExistingLoansRefinancing existingLoansRefinancing = existingLoansRefinancingTable.getValue();
         
         LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
         idealStructurePanel = new IdealStructurePanel(idealLoanRequest, maxLoanDuration);
-        setContent(createLayout(yearlyDebtServiceForExistingLShortTermLoans + yearlyDebtServiceForExistingLongTermLoans));
+        
+        double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(loanCalculator.riskParameters.shortTermInterestRate, loanCalculator.riskParameters.longTermInterestRate, currentDate);
+        double yearlyDebtServiceForExistingShortTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForShortTermLoans(loanCalculator.riskParameters.shortTermInterestRate, loanCalculator.riskParameters.longTermInterestRate, idealLoanRequest);
+        
+        setContent(createLayout(yearlyDebtServiceForExistingShortTermLoans + yearlyDebtServiceForExistingLongTermLoans));
         
         addShortcutListener(VaadinUtil.createErrorSubmissionShortcutListener());
     }
@@ -197,9 +201,11 @@ public class ProposalWindow extends Window {
         
         if(errorMessages.isEmpty()) {
             super.close();
-            double dscr = loanCalculator.calculateDSCR(loanRequest, client, cashflowCalculatorCombo.getValue());
-            LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
-            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, existingLoansRefinancingTable.getValue(), loanRequest, dscr, idealLoanRequest.sum(), this));
+            ExistingLoansRefinancing existingLoansRefinancing = existingLoansRefinancingTable.getValue();
+            FreeCashFlowCalculator freeCashFlowCalculator = cashflowCalculatorCombo.getValue();
+            double dscr = loanCalculator.calculateDSCR(loanRequest, client, existingLoansRefinancing, freeCashFlowCalculator);
+            LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, freeCashFlowCalculator);
+            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, existingLoansRefinancing, loanRequest, dscr, idealLoanRequest.sum(), this));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
         }

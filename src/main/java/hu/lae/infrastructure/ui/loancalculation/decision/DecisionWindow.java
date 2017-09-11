@@ -222,7 +222,7 @@ public class DecisionWindow extends Window {
         
         Map<Integer, Pair<String, ValidationResult>> liquidityRatios1 = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {
-                double liquidityRatio = f.balanceSheet.liquidityRatio1(client.existingLoans.shortTermLoansSum() + loanRequest.shortTermLoan);
+                double liquidityRatio = f.balanceSheet.liquidityRatio1(existingLoansRefinancing.nonRefinancableShortTermLoans() + loanRequest.shortTermLoan);
                 
                 return client.financialHistory.lastFinancialStatementData().year == f.year ? 
                         new Pair<>(Formatters.formatDecimal(liquidityRatio), liquidityRatioValidator.validateRatio1(f, loanRequest)) : new Pair<>("NA", ValidationResult.Ok());

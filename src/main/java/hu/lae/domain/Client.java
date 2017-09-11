@@ -60,8 +60,9 @@ public class Client {
         FinancialHistory financialHistory = new FinancialHistory(Arrays.asList(financialStatementData2016, financialStatementData2015, financialStatementData2014));
         return new Client("", Industry.AUTOMOTIVE, financialHistory, 
                 new ExistingLoans(Arrays.asList(
-                        ExistingLoan.newLongTermLoan(100, LocalDate.of(2021, 2, 12), false),
-                        ExistingLoan.newShortTermLoan(50, true))), 0.015);
+                        ExistingLoan.newShortTermLoan(100, false),
+                        ExistingLoan.newLongTermLoan(150, LocalDate.of(2021, 2, 12), false),
+                        ExistingLoan.newLongTermLoan(200, LocalDate.of(2020, 4, 1), false))), 0.015);
     }
 
     public IncomeStatementHistory incomeStatementHistory() {

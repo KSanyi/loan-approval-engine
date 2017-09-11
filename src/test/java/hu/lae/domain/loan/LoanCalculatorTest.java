@@ -221,7 +221,7 @@ public class LoanCalculatorTest {
     public void dscr() {
         LoanRequest loanRequest = new LoanRequest(400, 1000, 5);
         
-        double dscr = loanCalculator.calculateDSCR(loanRequest, client, FreeCashFlowCalculator.lastYear);
+        double dscr = loanCalculator.calculateDSCR(loanRequest, client, existingLoansRefinancing, FreeCashFlowCalculator.lastYear);
         
         Assert.assertEquals(1.28, dscr, 0.01);
     }

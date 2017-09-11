@@ -145,16 +145,16 @@ public class LoanCalculator {
         return years;
     }
     
-    public double calculateDSCR(LoanRequest loanRequest, Client client, FreeCashFlowCalculator freeCashFlowCalculator) {
+    public double calculateDSCR(LoanRequest loanRequest, Client client, ExistingLoansRefinancing existingLoansRefinancing, FreeCashFlowCalculator freeCashFlowCalculator) {
         
         logger.debug("------------------------- DSCR calculation -------------------------");
         logger.debug(loanRequest.toString());
         logger.debug("FreeCashFlowCalculator: " + freeCashFlowCalculator);
         
-        double allShortTermLoan = client.existingLoans.shortTermLoansSum() + loanRequest.shortTermLoan;
+        double allShortTermLoan = existingLoansRefinancing.nonRefinancableShortTermLoans() + loanRequest.shortTermLoan;
         double interestForShortTermLoan = riskParameters.shortTermInterestRate.multiply(allShortTermLoan);
         
-        double debtServiceForExistingLongTermLoan = client.existingLoans.calculateYearlyDebtServiceForLongTermLoans(riskParameters.longTermInterestRate, currentDate);
+        double debtServiceForExistingLongTermLoan = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.longTermInterestRate, riskParameters.shortTermInterestRate, currentDate);
         
         double debtServiceForRequestedLongTermLoan = -ExcelFunctions.pmt(riskParameters.longTermInterestRate.value, 5, loanRequest.longTermLoan);
         
