@@ -52,8 +52,8 @@ public class ExistingLoan {
         }
     }
     
-    public Loan toLoan() {
-        return new Loan(false, amount, type, isLocal);
+    public Loan toLoan(boolean refinanced) {
+        return new Loan(false, amount, type, isLocal, refinanced);
     }
     
     @Override

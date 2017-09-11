@@ -173,8 +173,8 @@ public class DecisionWindow extends Window {
     }
     
     private Grid<Loan> createAllLoansTable() {
-        Grid<Loan> grid = new Grid<>("Existing loans");
-        grid.addColumn(l -> l.loanType.name()).setCaption("Type");
+        Grid<Loan> grid = new Grid<>("Loans");
+        grid.addColumn(l -> l.loanType.name() + (l.refinanced ? " - refinanced" : "")).setCaption("Type");
         grid.addColumn(l -> Formatters.formatAmount(l.amount)).setCaption("Amount").setWidth(90).setStyleGenerator(item -> "v-align-right");
         grid.addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "").setCaption("Own").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
         grid.addColumn(l -> l.isNew ? VaadinIcons.STAR.getHtml() : "").setCaption("New").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
@@ -183,7 +183,7 @@ public class DecisionWindow extends Window {
         
         List<Loan> loans = new ArrayList<>();
         loans.addAll(loanRequest.toLoans());
-        loans.addAll(client.existingLoans.toLoans());
+        loans.addAll(existingLoansRefinancing.toLoans());
         
         grid.setItems(loans);
         

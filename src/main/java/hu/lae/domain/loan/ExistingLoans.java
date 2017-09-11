@@ -21,10 +21,6 @@ public class ExistingLoans {
         return existingLoans.stream().filter(ExistingLoan::isLongTemLoan).allMatch(l -> !l.expiry.get().isBefore(date.plusYears(1)));
     }
     
-    public List<Loan> toLoans() {
-        return existingLoans.stream().map(ExistingLoan::toLoan).collect(Collectors.toList());
-    }
-    
     @Override
     public String toString() {
         return "\n" + existingLoans.stream().map(ExistingLoan::toString).collect(Collectors.joining("\n")) + "\n";

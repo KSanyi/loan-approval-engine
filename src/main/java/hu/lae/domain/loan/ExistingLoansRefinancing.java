@@ -1,6 +1,7 @@
 package hu.lae.domain.loan;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -92,6 +93,10 @@ public class ExistingLoansRefinancing {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
+    public List<Loan> toLoans() {
+        return existingLoansRefinancingMap.keySet().stream().map(loan -> loan.toLoan(existingLoansRefinancingMap.get(loan))).collect(Collectors.toList());
     }
     
 }

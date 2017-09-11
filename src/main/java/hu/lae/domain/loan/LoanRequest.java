@@ -27,10 +27,10 @@ public class LoanRequest {
     public List<Loan> toLoans() {
         List<Loan> loans = new ArrayList<>();
         if(shortTermLoan > 0) {
-            loans.add(new Loan(true, shortTermLoan, LoanType.ShortTerm, true));
+            loans.add(new Loan(true, shortTermLoan, LoanType.ShortTerm, true, false));
         }
         if(longTermLoan > 0) {
-            loans.add(new Loan(true, longTermLoan, LoanType.LongTerm, true));
+            loans.add(new Loan(true, longTermLoan, LoanType.LongTerm, true, false));
         }
         return loans;
     }
