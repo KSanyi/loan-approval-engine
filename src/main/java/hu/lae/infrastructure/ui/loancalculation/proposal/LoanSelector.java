@@ -71,7 +71,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
     }
     
     private void checkLiquidityRatio() {
-   	 LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoansSum(), loanCalculator.riskParameters.thresholds.liquidityRatio);
+   	 LiquidityValidator liquidityRatioValidator = new LiquidityValidator(existingLoansRefinancing.nonRefinancableShortTermLoans(), loanCalculator.riskParameters.thresholds.liquidityRatio);
         ValidationResult validationResult = liquidityRatioValidator.validateRatio1(client.financialStatementData(), createLoanRequest());
         if(validationResult.isOk()) {
         	stLoanSlider.setComponentError(null);

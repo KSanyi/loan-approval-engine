@@ -218,7 +218,7 @@ public class DecisionWindow extends Window {
             return new Pair<>(Formatters.formatAmount(equityRatio), equityRatioValidator.validate(f));   
         }));
         
-        LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoansSum(), riskParameters.thresholds.liquidityRatio);
+        LiquidityValidator liquidityRatioValidator = new LiquidityValidator(existingLoansRefinancing.nonRefinancableShortTermLoans(), riskParameters.thresholds.liquidityRatio);
         
         Map<Integer, Pair<String, ValidationResult>> liquidityRatios1 = client.financialHistory.financialStatements.stream()
                 .collect(Collectors.toMap(f -> f.year, f -> {

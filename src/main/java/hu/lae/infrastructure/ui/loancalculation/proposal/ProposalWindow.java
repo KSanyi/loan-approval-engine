@@ -129,7 +129,8 @@ public class ProposalWindow extends Window {
     }
     
     private void checkLiquidityRatio() {
-    	 LiquidityValidator liquidityRatioValidator = new LiquidityValidator(client.existingLoans.shortTermLoansSum(), loanCalculator.riskParameters.thresholds.liquidityRatio);
+        double nonRefinancableShortTermLoans = existingLoansRefinancingTable.getValue().nonRefinancableShortTermLoans();
+    	 LiquidityValidator liquidityRatioValidator = new LiquidityValidator(nonRefinancableShortTermLoans, loanCalculator.riskParameters.thresholds.liquidityRatio);
          ValidationResult validationResult = liquidityRatioValidator.validateRatio1(client.financialStatementData(), createLoanRequest());
          if(validationResult.isOk()) {
         	 shortTermLoanField.setComponentError(null);
