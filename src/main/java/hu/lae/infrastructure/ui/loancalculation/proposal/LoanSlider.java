@@ -105,11 +105,14 @@ public class LoanSlider extends CustomField<Double> {
     }
     
     void setMaxLoanValue(double maxLoanValue) {
-        if(maxLoanValue < loanValue) {
-            doSetValue(maxLoanValue);
+        
+        int roundedMaxValue = (int)maxLoanValue;
+        
+        if(roundedMaxValue < loanValue) {
+            doSetValue((double)roundedMaxValue);
         }
-        slider.setMax(maxLoanValue);
-        maxAmountLabel.setValue("<center>Max</center>" + Formatters.formatAmount(maxLoanValue) + " million Ft" );
+        slider.setMax(roundedMaxValue);
+        maxAmountLabel.setValue("<center>Max</center>" + Formatters.formatAmount(roundedMaxValue) + " million Ft" );
     }
     
 }
