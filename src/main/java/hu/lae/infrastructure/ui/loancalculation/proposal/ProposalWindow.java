@@ -225,6 +225,9 @@ public class ProposalWindow extends Window {
         if(loanRequest.longTermLoan < existingLoansRefinancingTable.getValue().refinancableLongTermLoans()) {
             errorMessages.add("Long term loan request must be enough to cover the existing long term loans");
         }
+        if(loanRequest.shortTermLoan < existingLoansRefinancingTable.getValue().refinancableShortTermLoans()) {
+            errorMessages.add("Short term loan request must be enough to cover the existing short term loans");
+        }
         if(loanRequest.shortTermLoan > maxShortTermLoan) {
             errorMessages.add("Short term loan must not exceed " + maxShortTermLoan);
         }

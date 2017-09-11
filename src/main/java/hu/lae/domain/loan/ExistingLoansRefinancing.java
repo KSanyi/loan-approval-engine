@@ -81,6 +81,14 @@ public class ExistingLoansRefinancing {
                 .sum();
     }
     
+    public double refinancableShortTermLoans() {
+        return existingLoansRefinancingMap.keySet().stream()
+                .filter(this::refinance)
+                .filter(l -> l.isShortTemLoan())
+                .mapToLong(l -> l.amount)
+                .sum();
+    }
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
