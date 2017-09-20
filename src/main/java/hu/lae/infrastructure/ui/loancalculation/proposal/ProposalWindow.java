@@ -222,12 +222,11 @@ public class ProposalWindow extends Window {
         double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, paybackYearsCombo.getValue(), existingLoansRefinancingTable.getValue(), cashflowCalculatorCombo.getValue());
         
         List<String> errorMessages = new ArrayList<>();
-        if(loanRequest.longTermLoan < existingLoansRefinancingTable.getValue().refinancableLongTermLoans()) {
-            errorMessages.add("Long term loan request must be enough to cover the existing long term loans");
+        
+        if(loanRequest.sum() < existingLoansRefinancingTable.getValue().refinancableLoans()) {
+            errorMessages.add("Loan request must be enough to cover the existing refinanceable loans");
         }
-        if(loanRequest.shortTermLoan < existingLoansRefinancingTable.getValue().refinancableShortTermLoans()) {
-            errorMessages.add("Short term loan request must be enough to cover the existing short term loans");
-        }
+        
         if(loanRequest.shortTermLoan > maxShortTermLoan) {
             errorMessages.add("Short term loan must not exceed " + maxShortTermLoan);
         }

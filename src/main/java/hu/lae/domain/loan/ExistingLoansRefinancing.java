@@ -58,6 +58,13 @@ public class ExistingLoansRefinancing {
             .sum();
     }
     
+    public double refinancableLoans() {
+        return existingLoansRefinancingMap.keySet().stream()
+            .filter(this::refinance)
+            .mapToLong(l -> l.amount)
+            .sum();
+    }
+    
     public double localNonRefinancableLoans() {
         return existingLoansRefinancingMap.keySet().stream()
             .filter(loan -> !refinance(loan))
@@ -66,25 +73,9 @@ public class ExistingLoansRefinancing {
             .sum();
     }
 
-    public double refinancableLongTermLoans() {
-        return existingLoansRefinancingMap.keySet().stream()
-                .filter(this::refinance)
-                .filter(l -> l.isLongTemLoan())
-                .mapToLong(l -> l.amount)
-                .sum();
-    }
-
     public double nonRefinancableShortTermLoans() {
         return existingLoansRefinancingMap.keySet().stream()
                 .filter(loan -> !refinance(loan))
-                .filter(l -> l.isShortTemLoan())
-                .mapToLong(l -> l.amount)
-                .sum();
-    }
-    
-    public double refinancableShortTermLoans() {
-        return existingLoansRefinancingMap.keySet().stream()
-                .filter(this::refinance)
                 .filter(l -> l.isShortTemLoan())
                 .mapToLong(l -> l.amount)
                 .sum();
