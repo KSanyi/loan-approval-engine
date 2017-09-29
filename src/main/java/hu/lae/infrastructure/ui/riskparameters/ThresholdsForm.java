@@ -1,9 +1,11 @@
 package hu.lae.infrastructure.ui.riskparameters;
 
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.riskparameters.Thresholds;
@@ -25,8 +27,6 @@ class ThresholdsForm extends CustomField<Thresholds> {
     
     ThresholdsForm(Thresholds thresholds) {
     
-        setCaption("Thresholds");
-        
         equityRatioThresholdField.setPercent(thresholds.equityRatio);
         liquidityRatioThresholdField.setNumber(thresholds.liquidityRatio);
         turnoverReqToleranceField.setPercent(thresholds.turnoverRequirement);
@@ -44,7 +44,7 @@ class ThresholdsForm extends CustomField<Thresholds> {
     protected Component initContent() {
         FormLayout formLayout = new FormLayout();
         formLayout.setSpacing(false);
-        formLayout.setMargin(false);
+        formLayout.setMargin(new MarginInfo(false, true));
         
         equityRatioThresholdField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
         liquidityRatioThresholdField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
@@ -59,7 +59,10 @@ class ThresholdsForm extends CustomField<Thresholds> {
         formLayout.setComponentAlignment(debtCapacityField, Alignment.MIDDLE_LEFT);
         formLayout.setComponentAlignment(localLoanThresholdField, Alignment.MIDDLE_LEFT);
         
-        return formLayout;
+        Panel panel = new Panel("Thresholds", formLayout);
+        panel.addStyleName("colored");
+        
+        return panel;
     }
 
     @Override

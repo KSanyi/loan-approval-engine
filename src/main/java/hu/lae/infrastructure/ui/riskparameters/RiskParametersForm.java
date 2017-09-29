@@ -1,8 +1,9 @@
 package hu.lae.infrastructure.ui.riskparameters;
 
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Panel;
 
 import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.domain.riskparameters.InterestRate;
@@ -11,7 +12,7 @@ import hu.lae.infrastructure.ui.component.NumberField;
 import hu.lae.infrastructure.ui.component.PercentField;
 
 @SuppressWarnings("serial")
-class RiskParametersForm extends VerticalLayout {
+class RiskParametersForm extends HorizontalLayout {
 
     private final RiskParameters riskParameters;
     
@@ -34,12 +35,14 @@ class RiskParametersForm extends VerticalLayout {
         thresholdsForm = new ThresholdsForm(riskParameters.thresholds);
         collateralRequirementsForm = new CollateralRequirementsForm(riskParameters.collateralRequirement);
         
-        setSpacing(false);
-        setMargin(false);
         FormLayout layout = new FormLayout(amortizationRateField, arField, stockField, cashField, otherField, dscrThresholdField, shortTermInterestRateField, longTermInterestRateField);
         layout.setSpacing(false);
-        layout.setMargin(false);
-        addComponents(layout, new Label(""), maxLoanDurationsForm, new Label(""), thresholdsForm, new Label(""), collateralRequirementsForm);
+        layout.setMargin(new MarginInfo(false, true));
+        
+        Panel panel = new Panel("Basic", layout);
+        panel.addStyleName("colored");
+        
+        addComponents(panel, maxLoanDurationsForm, thresholdsForm, collateralRequirementsForm);
         
         amortizationRateField.setPercent(riskParameters.amortizationRate);
         dscrThresholdField.setNumber(riskParameters.dscrThreshold);

@@ -7,10 +7,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.riskparameters.Industry;
@@ -24,8 +26,6 @@ class MaxLoanDurationsForm extends CustomField<MaxLoanDurations> {
     
     MaxLoanDurationsForm(MaxLoanDurations maxLoanDurations) {
     
-        setCaption("Max loan durations");
-        
         for(Industry industry : Industry.values()) {
             ComboBox<Integer> combo = new ComboBox<>(industry.displayName, generateComboValues());
             combo.setValue(maxLoanDurations.maxLoanDuration(industry));
@@ -47,7 +47,7 @@ class MaxLoanDurationsForm extends CustomField<MaxLoanDurations> {
     protected Component initContent() {
         FormLayout formLayout = new FormLayout();
         formLayout.setSpacing(false);
-        formLayout.setMargin(false);
+        formLayout.setMargin(new MarginInfo(false, true));
         
         for(Industry industry : Industry.values()) {
             ComboBox<Integer> combo = combos.get(industry);
@@ -59,7 +59,10 @@ class MaxLoanDurationsForm extends CustomField<MaxLoanDurations> {
             formLayout.setComponentAlignment(combo, Alignment.MIDDLE_LEFT);
         }
         
-        return formLayout;
+        Panel panel = new Panel("Max loan durations", formLayout);
+        panel.addStyleName("colored");
+        
+        return panel;
     }
     
     private static List<Integer> generateComboValues() {

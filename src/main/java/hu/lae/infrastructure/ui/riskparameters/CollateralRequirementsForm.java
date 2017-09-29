@@ -9,6 +9,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.riskparameters.CollateralRequirement;
@@ -22,7 +23,6 @@ public class CollateralRequirementsForm extends CustomField<CollateralRequiremen
     private GridLayout layout = new GridLayout(7, 3);
     
     public CollateralRequirementsForm(CollateralRequirement collateralRequirement) {
-        setCaption("Collaterals");
         for(double limit : collateralRequirement.map.keySet()) {
             CollateralRequirement.Entry entry = collateralRequirement.map.get(limit);
             PercentField pdField = new PercentField("PD limit");
@@ -41,6 +41,7 @@ public class CollateralRequirementsForm extends CustomField<CollateralRequiremen
             layout.addComponents(label, gap(), pdField, gap(), amountLimitField, gap(), dcField);
             layout.setComponentAlignment(label, Alignment.BOTTOM_RIGHT);
         }
+        layout.setMargin(true);
     }
     
     private static Component gap() {
@@ -65,7 +66,10 @@ public class CollateralRequirementsForm extends CustomField<CollateralRequiremen
 
     @Override
     protected Component initContent() {
-        return layout;
+        Panel panel = new Panel("Collaterals", layout);
+        panel.addStyleName("colored");
+        
+        return panel;
     }
 
     @Override
