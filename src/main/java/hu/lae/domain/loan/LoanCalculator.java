@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import hu.lae.domain.Client;
 import hu.lae.domain.accounting.CashFlow;
 import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.industry.IndustryData;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.util.ExcelFunctions;
 
@@ -18,11 +19,14 @@ public class LoanCalculator {
     
     public final RiskParameters riskParameters;
     
+    public final IndustryData industryData;
+    
     private final LocalDate currentDate;
 
-    public LoanCalculator(RiskParameters riskParameters, LocalDate currentDate) {
+    public LoanCalculator(RiskParameters riskParameters, IndustryData industryData, LocalDate currentDate) {
         this.riskParameters = riskParameters;
         this.currentDate = currentDate;
+        this.industryData = industryData;
     }
     
     public LoanRequest calculateIdealLoanRequest(Client client, FreeCashFlowCalculator freeCashFlowCalculator) {

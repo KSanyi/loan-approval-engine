@@ -1,13 +1,14 @@
-package hu.lae.infrastructure.ui.riskparameters;
+package hu.lae.infrastructure.ui.parameters.riskparameters;
 
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.domain.riskparameters.OwnEquityRatioThresholds;
 import hu.lae.domain.riskparameters.Thresholds;
 import hu.lae.infrastructure.ui.component.NumberField;
 import hu.lae.infrastructure.ui.component.PercentField;
@@ -25,6 +26,9 @@ class ThresholdsForm extends CustomField<Thresholds> {
     
     private final PercentField localLoanThresholdField = new PercentField("Esrte loan limit");
     
+    private final PercentField ownEquityRatioThreshold1Field = new PercentField("Own equity r threshold 1");
+	private final PercentField ownEquityRatioThreshold2Field = new PercentField("Own equity r threshold 2");
+    
     ThresholdsForm(Thresholds thresholds) {
     
         equityRatioThresholdField.setPercent(thresholds.equityRatio);
@@ -32,12 +36,15 @@ class ThresholdsForm extends CustomField<Thresholds> {
         turnoverReqToleranceField.setPercent(thresholds.turnoverRequirement);
         debtCapacityField.setPercent(thresholds.debtCapacity);
         localLoanThresholdField.setPercent(thresholds.localLoanRatio);
+        ownEquityRatioThreshold1Field.setPercent(thresholds.ownEquityRatioThresholds.threshold1);
+        ownEquityRatioThreshold2Field.setPercent(thresholds.ownEquityRatioThresholds.threshold2);
     }
     
     @Override
     public Thresholds getValue() {
         return new Thresholds(equityRatioThresholdField.getPercent(), liquidityRatioThresholdField.getNumber(),
-                turnoverReqToleranceField.getPercent(), debtCapacityField.getPercent(), localLoanThresholdField.getPercent());
+                turnoverReqToleranceField.getPercent(), debtCapacityField.getPercent(), localLoanThresholdField.getPercent(),
+                new OwnEquityRatioThresholds(ownEquityRatioThreshold1Field.getPercent(), ownEquityRatioThreshold2Field.getPercent()));
     }
 
     @Override
@@ -46,18 +53,13 @@ class ThresholdsForm extends CustomField<Thresholds> {
         formLayout.setSpacing(false);
         formLayout.setMargin(new MarginInfo(false, true));
         
-        equityRatioThresholdField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
-        liquidityRatioThresholdField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
-        turnoverReqToleranceField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
-        debtCapacityField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
-        localLoanThresholdField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
+        Label label = new Label("");
         
-        formLayout.addComponents(equityRatioThresholdField, liquidityRatioThresholdField, turnoverReqToleranceField, debtCapacityField, localLoanThresholdField);
-        formLayout.setComponentAlignment(equityRatioThresholdField, Alignment.MIDDLE_LEFT);
-        formLayout.setComponentAlignment(liquidityRatioThresholdField, Alignment.MIDDLE_LEFT);
-        formLayout.setComponentAlignment(turnoverReqToleranceField, Alignment.MIDDLE_LEFT);
-        formLayout.setComponentAlignment(debtCapacityField, Alignment.MIDDLE_LEFT);
-        formLayout.setComponentAlignment(localLoanThresholdField, Alignment.MIDDLE_LEFT);
+        formLayout.addComponents(equityRatioThresholdField, liquidityRatioThresholdField, turnoverReqToleranceField, debtCapacityField, localLoanThresholdField,
+        		label, ownEquityRatioThreshold1Field, ownEquityRatioThreshold2Field);
+        
+        ownEquityRatioThreshold1Field.setDescription("If the own equity ratio is below this percent of the industrial average the loan maturity must be max 3 years", ContentMode.HTML);
+        ownEquityRatioThreshold2Field.setDescription("If the own equity ratio is below this percent of the industrial average the loan maturity must be max 1 year", ContentMode.HTML);
         
         Panel panel = new Panel("Thresholds", formLayout);
         panel.addStyleName("colored");

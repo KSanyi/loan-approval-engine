@@ -1,8 +1,10 @@
-package hu.lae.infrastructure.ui.riskparameters;
+package hu.lae.infrastructure.ui.parameters.riskparameters;
 
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomField;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Panel;
 
 import hu.lae.domain.riskparameters.Haircuts;
@@ -12,7 +14,7 @@ import hu.lae.infrastructure.ui.component.NumberField;
 import hu.lae.infrastructure.ui.component.PercentField;
 
 @SuppressWarnings("serial")
-class RiskParametersForm extends HorizontalLayout {
+public class RiskParametersForm extends CustomField<RiskParameters> {
 
     private final RiskParameters riskParameters;
     
@@ -28,21 +30,12 @@ class RiskParametersForm extends HorizontalLayout {
     private final ThresholdsForm thresholdsForm;
     private final CollateralRequirementsForm collateralRequirementsForm;
 
-    RiskParametersForm(RiskParameters riskParameters) {
+    public RiskParametersForm(RiskParameters riskParameters) {
         this.riskParameters = riskParameters;
-
+        
         maxLoanDurationsForm = new MaxLoanDurationsForm(riskParameters.maxLoanDurations);
         thresholdsForm = new ThresholdsForm(riskParameters.thresholds);
         collateralRequirementsForm = new CollateralRequirementsForm(riskParameters.collateralRequirement);
-        
-        FormLayout layout = new FormLayout(amortizationRateField, arField, stockField, cashField, otherField, dscrThresholdField, shortTermInterestRateField, longTermInterestRateField);
-        layout.setSpacing(false);
-        layout.setMargin(new MarginInfo(false, true));
-        
-        Panel panel = new Panel("Basic", layout);
-        panel.addStyleName("colored");
-        
-        addComponents(panel, maxLoanDurationsForm, thresholdsForm, collateralRequirementsForm);
         
         amortizationRateField.setPercent(riskParameters.amortizationRate);
         dscrThresholdField.setNumber(riskParameters.dscrThreshold);
@@ -55,8 +48,9 @@ class RiskParametersForm extends HorizontalLayout {
         otherField.setPercent(riskParameters.haircuts.other);
     }
     
-    RiskParameters getRiskParameters() {
-        return new RiskParameters(riskParameters.id, riskParameters.name, 
+	@Override
+	public RiskParameters getValue() {
+		return new RiskParameters(riskParameters.id, riskParameters.name, 
                 amortizationRateField.getPercent(), 
                 new Haircuts(arField.getPercent(), stockField.getPercent(), cashField.getPercent(),  otherField.getPercent()),
                 new InterestRate(shortTermInterestRateField.getPercent()),
@@ -65,6 +59,30 @@ class RiskParametersForm extends HorizontalLayout {
                 dscrThresholdField.getNumber(),
                 thresholdsForm.getValue(),
                 collateralRequirementsForm.getValue());
-    }
+	}
+
+	@Override
+	protected Component initContent() {
+		
+		FormLayout layout = new FormLayout(amortizationRateField, arField, stockField, cashField, otherField, dscrThresholdField, shortTermInterestRateField, longTermInterestRateField);
+        layout.setSpacing(false);
+        layout.setMargin(new MarginInfo(false, true));
+        
+        Panel panel = new Panel("Basic", layout);
+        panel.addStyleName("colored");
+		
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.setSpacing(true);
+		gridLayout.setColumns(4);
+		
+		gridLayout.addComponents(panel, maxLoanDurationsForm, thresholdsForm, collateralRequirementsForm);
+        
+		return gridLayout;
+	}
+
+	@Override
+	protected void doSetValue(RiskParameters value) {
+		throw new IllegalStateException();
+	}
     
 }

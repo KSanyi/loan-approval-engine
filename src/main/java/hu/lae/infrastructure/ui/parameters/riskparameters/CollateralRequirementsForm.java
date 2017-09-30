@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.riskparameters;
+package hu.lae.infrastructure.ui.parameters.riskparameters;
 
 import java.util.Arrays;
 import java.util.HashMap;

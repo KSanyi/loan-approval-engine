@@ -15,12 +15,16 @@ public class Thresholds {
     
     public final double localLoanRatio;
     
-    public Thresholds(double equityRatio, double liquidityRatio, double turnoverReqTolerance, double debtCapacity, double localLoanRatio) {
+    public final OwnEquityRatioThresholds ownEquityRatioThresholds;
+    
+    public Thresholds(double equityRatio, double liquidityRatio, double turnoverReqTolerance, double debtCapacity, double localLoanRatio,
+    		OwnEquityRatioThresholds ownEquityRatioThresholds) {
         this.equityRatio = equityRatio;
         this.liquidityRatio = liquidityRatio;
         this.turnoverRequirement = turnoverReqTolerance;
         this.debtCapacity = debtCapacity;
         this.localLoanRatio = localLoanRatio;
+        this.ownEquityRatioThresholds = ownEquityRatioThresholds;
     }
     
     @Override

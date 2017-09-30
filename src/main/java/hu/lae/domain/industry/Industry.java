@@ -1,4 +1,4 @@
-package hu.lae.domain.riskparameters;
+package hu.lae.domain.industry;
 
 public enum Industry {
 

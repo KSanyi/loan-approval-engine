@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import hu.lae.domain.accounting.BalanceSheet;
 import hu.lae.domain.accounting.BalanceSheet.Assets;
 import hu.lae.domain.accounting.BalanceSheet.Liabilities;
+import hu.lae.domain.industry.Industry;
 import hu.lae.domain.accounting.FinancialHistory;
 import hu.lae.domain.accounting.FinancialStatementData;
 import hu.lae.domain.accounting.IncomeStatement;
@@ -16,7 +17,6 @@ import hu.lae.domain.accounting.IncomeStatementHistory;
 import hu.lae.domain.loan.ExistingLoan;
 import hu.lae.domain.loan.ExistingLoans;
 import hu.lae.domain.riskparameters.Haircuts;
-import hu.lae.domain.riskparameters.Industry;
 
 public class Client {
 

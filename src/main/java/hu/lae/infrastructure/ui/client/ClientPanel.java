@@ -17,7 +17,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import hu.lae.domain.Client;
 import hu.lae.domain.accounting.FinancialHistory;
 import hu.lae.domain.accounting.FinancialStatementData;
-import hu.lae.domain.riskparameters.Industry;
+import hu.lae.domain.industry.Industry;
 import hu.lae.infrastructure.ui.client.existingloans.ExistingLoansPanel;
 import hu.lae.infrastructure.ui.client.finstatement.FinancialHistoryWindow;
 import hu.lae.infrastructure.ui.client.finstatement.FinancialStatementForm;

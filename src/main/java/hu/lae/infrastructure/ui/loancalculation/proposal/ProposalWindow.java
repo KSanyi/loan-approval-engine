@@ -72,7 +72,10 @@ public class ProposalWindow extends Window {
         this.loanCalculator = loanCalculator;
         this.client = client;
         setModal(true);
-        maxLoanDuration = loanCalculator.riskParameters.maxLoanDurations.maxLoanDuration(client.industry); 
+        
+        double ownEquityRatioAverage = loanCalculator.industryData.ownEquityRatioAverage(client.industry);
+        
+        maxLoanDuration = loanCalculator.riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio()); 
 
         paybackYearsCombo = new ComboBox<>("Select l/t number of years", generateComboValues(maxLoanDuration));
         paybackYearsCombo.setValue(maxLoanDuration);
@@ -221,6 +224,10 @@ public class ProposalWindow extends Window {
         double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, loanRequest.longTermLoan, paybackYearsCombo.getValue(), existingLoansRefinancingTable.getValue(), cashflowCalculatorCombo.getValue());
         double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, paybackYearsCombo.getValue(), existingLoansRefinancingTable.getValue(), cashflowCalculatorCombo.getValue());
         
+        double ownEquityRatioAverage = loanCalculator.industryData.ownEquityRatioAverage(client.industry);
+        double loanIncrement = loanRequest.sum() - existingLoansRefinancingTable.getValue().refinancableLoans();
+        int maxLoanDuration = loanCalculator.riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio(loanIncrement));
+        
         List<String> errorMessages = new ArrayList<>();
         
         if(loanRequest.sum() < existingLoansRefinancingTable.getValue().refinancableLoans()) {
@@ -232,6 +239,9 @@ public class ProposalWindow extends Window {
         }
         if(loanRequest.longTermLoan > maxLongTermLoan) {
             errorMessages.add("Long term loan must not exceed " + (long)maxLongTermLoan);
+        }
+        if(maxLoanDuration < paybackYearsCombo.getValue()) {
+        	errorMessages.add("Decrease loan amount or maturity shall be decreased to RP years");
         }
         
         return errorMessages;

@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.riskparameters;
+package hu.lae.infrastructure.ui.parameters.riskparameters;
 
 import com.vaadin.ui.FormLayout;
 

@@ -2,6 +2,7 @@ package hu.lae.domain.loan;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,11 +16,13 @@ import hu.lae.domain.accounting.FinancialHistory;
 import hu.lae.domain.accounting.FinancialStatementData;
 import hu.lae.domain.accounting.FreeCashFlowCalculator;
 import hu.lae.domain.accounting.IncomeStatement;
+import hu.lae.domain.industry.Industry;
+import hu.lae.domain.industry.IndustryData;
 import hu.lae.domain.riskparameters.CollateralRequirement;
 import hu.lae.domain.riskparameters.Haircuts;
-import hu.lae.domain.riskparameters.Industry;
 import hu.lae.domain.riskparameters.InterestRate;
 import hu.lae.domain.riskparameters.MaxLoanDurations;
+import hu.lae.domain.riskparameters.OwnEquityRatioThresholds;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.domain.riskparameters.Thresholds;
 import hu.lae.util.MapFactory;
@@ -66,12 +69,18 @@ public class LoanCalculatorTest2 {
         Haircuts haircuts = new Haircuts(0.8, 0.5, 0.8, 0.4);
         RiskParameters riskParameters = new RiskParameters("id1", "default", 0.4, haircuts, new InterestRate(0.10), 
                 new MaxLoanDurations(MapFactory.of(Industry.CONSTRUCTION, 2, Industry.AUTOMOTIVE, 5)),
-                new InterestRate(0.05), 1.2, new Thresholds(0.2, 1.2, 0.15, 0.75, 0.8),
+                new InterestRate(0.05), 1.2, new Thresholds(0.2, 1.2, 0.15, 0.75, 0.8, new OwnEquityRatioThresholds(0.7, 0.5)),
                 new CollateralRequirement(MapFactory.of(
                         0.0, new Pair<>(50L, 0.7), 
                         0.02, new Pair<>(30L, 0.4), 
                         0.04, new Pair<>(0L, 0.0))));
-        loanCalculator = new LoanCalculator(riskParameters, LocalDate.of(2017,4,1));
+        
+        Map<Industry, Double> ownEquityRatioAverageMap = MapFactory.of(
+        		Industry.AUTOMOTIVE, 0.4,
+        		Industry.CONSTRUCTION, 0.5);
+		IndustryData industryData = new IndustryData(ownEquityRatioAverageMap);
+        
+        loanCalculator = new LoanCalculator(riskParameters, industryData, LocalDate.of(2017,4,1));
     }
     
     @Test

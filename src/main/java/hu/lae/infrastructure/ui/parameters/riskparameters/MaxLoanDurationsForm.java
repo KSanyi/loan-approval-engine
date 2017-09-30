@@ -1,4 +1,4 @@
-package hu.lae.infrastructure.ui.riskparameters;
+package hu.lae.infrastructure.ui.parameters.riskparameters;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -15,7 +15,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.domain.riskparameters.Industry;
+import hu.lae.domain.industry.Industry;
 import hu.lae.domain.riskparameters.MaxLoanDurations;
 import hu.lae.infrastructure.ui.component.ComboBox;
 

@@ -3,6 +3,8 @@ package hu.lae.domain.riskparameters;
 import java.util.Collections;
 import java.util.Map;
 
+import hu.lae.domain.industry.Industry;
+
 public class MaxLoanDurations {
 
     private final Map<Industry, Integer> maxLoanDurationMap;

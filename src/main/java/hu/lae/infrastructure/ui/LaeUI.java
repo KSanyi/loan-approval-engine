@@ -16,6 +16,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
+import hu.lae.domain.industry.IndustryData;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.infrastructure.server.ApplicationService;
@@ -23,7 +24,7 @@ import hu.lae.infrastructure.server.LaeServlet;
 import hu.lae.infrastructure.ui.client.ClientPanel;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.infrastructure.ui.loancalculation.proposal.ProposalWindow;
-import hu.lae.infrastructure.ui.riskparameters.ParametersWindow;
+import hu.lae.infrastructure.ui.parameters.ParametersWindow;
 import hu.lae.usermanagement.UserInfo;
 import hu.lae.util.Clock;
 
@@ -75,7 +76,7 @@ public class LaeUI extends UI {
 	}
 
     public void showRiskParametersScreen() {
-        ParametersWindow.show(applicationService.riskParameterRepository);
+        ParametersWindow.show(applicationService.riskParameterRepository, applicationService.industryDataRepository);
     }
     
     private void setScreen(Layout screen) {
@@ -92,6 +93,7 @@ public class LaeUI extends UI {
         
         calculateButton.addClickListener(click -> {
             RiskParameters riskParameters = applicationService.riskParameterRepository.loadRiskParameters();
+            IndustryData industryData = applicationService.industryDataRepository.loadIndustryData();
             LocalDate currentDate = Clock.date();
             
             Client client = clientPanel.getClient();
@@ -101,7 +103,7 @@ public class LaeUI extends UI {
                 logger.info("Risk Parameters: " + riskParameters);
                 logger.info("Client: " + client);
                 logger.info("Date: " + currentDate);
-                ProposalWindow calculatorWindow = new ProposalWindow(new LoanCalculator(riskParameters, currentDate), client, currentDate);
+                ProposalWindow calculatorWindow = new ProposalWindow(new LoanCalculator(riskParameters, industryData, currentDate), client, currentDate);
                 UI.getCurrent().addWindow(calculatorWindow);                
             }
         });

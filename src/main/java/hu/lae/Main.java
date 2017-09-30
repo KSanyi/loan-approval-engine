@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.lae.domain.industry.InMemoryIndustryDataRepository;
 import hu.lae.domain.riskparameters.InMemoryRiskParametersRepository;
 import hu.lae.infrastructure.authenticator.UserServiceAuthenticator;
 import hu.lae.infrastructure.server.ApplicationService;
@@ -22,7 +23,10 @@ public class Main {
         
         String userServiceUrl = getUserServiceUrl();
 
-        ApplicationService applicationService = new ApplicationService(new UserServiceAuthenticator(userServiceUrl), new InMemoryRiskParametersRepository());
+        ApplicationService applicationService = new ApplicationService(
+        		new UserServiceAuthenticator(userServiceUrl),
+        		new InMemoryRiskParametersRepository(),
+        		new InMemoryIndustryDataRepository());
 
         Clock.setStaticDate(LocalDate.of(2017, 4, 1));
         

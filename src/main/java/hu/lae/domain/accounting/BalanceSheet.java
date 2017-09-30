@@ -99,6 +99,11 @@ public class BalanceSheet {
             return ((double)ownEquity - evaluationReserve) / total;
         }
         
+        public double equityRatio(double newLoan) {
+            if(total == 0) return 0;  
+            return ((double)ownEquity - evaluationReserve) / (total + newLoan);
+        }
+        
         @Override
         public String toString() {
             return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
