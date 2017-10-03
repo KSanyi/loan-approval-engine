@@ -54,9 +54,11 @@ public class DecisionWindow extends Window {
     
     private final ProposalWindow proposalWindow;
     
+    private final DebtChart debtChart;
+    
     private final Button backButton = new Button("Back", click -> back());
     
-    public DecisionWindow(RiskParameters riskParameters, Client client, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, double dscr, double maxDebtCapacity, ProposalWindow proposalWindow) {
+    public DecisionWindow(RiskParameters riskParameters, Client client, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, double dscr, double maxDebtCapacity, double freeCashFlow, ProposalWindow proposalWindow) {
         this.riskParameters= riskParameters;
         this.client = client;
         this.existingLoansRefinancing = existingLoansRefinancing;
@@ -64,6 +66,8 @@ public class DecisionWindow extends Window {
         this.loanRequest = loanRequest;
         this.dscr = dscr;
         this.proposalWindow = proposalWindow;
+        
+        debtChart = new DebtChart(freeCashFlow, existingLoansRefinancing, loanRequest);
         
         setModal(true);
         setCaption("Decision");
@@ -92,7 +96,10 @@ public class DecisionWindow extends Window {
         
         HorizontalLayout columnsLayout = new HorizontalLayout(column1, column2);
         
-        VerticalLayout layout = new VerticalLayout(columnsLayout, backButton);
+        backButton.addStyleName(ValoTheme.BUTTON_SMALL);
+        
+        VerticalLayout layout = new VerticalLayout(columnsLayout, debtChart, backButton);
+        layout.setComponentAlignment(debtChart, Alignment.BOTTOM_CENTER);
         layout.setComponentAlignment(backButton, Alignment.BOTTOM_CENTER);
         
         return layout;

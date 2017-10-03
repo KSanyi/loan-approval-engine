@@ -30,6 +30,7 @@ import hu.lae.domain.accounting.FreeCashFlowCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
+import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.domain.validation.LiquidityValidator;
 import hu.lae.domain.validation.ValidationResult;
 import hu.lae.infrastructure.ui.LaeUI;
@@ -66,6 +67,8 @@ public class ProposalWindow extends Window {
     
     private final int maxLoanDuration;
     
+    private final RiskParameters riskParameters;
+    
     private final Button submitButton = new Button("Submit for proposal", click -> submit());
     
     public ProposalWindow(LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
@@ -75,12 +78,14 @@ public class ProposalWindow extends Window {
         
         double ownEquityRatioAverage = loanCalculator.industryData.ownEquityRatioAverage(client.industry);
         
-        maxLoanDuration = loanCalculator.riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio()); 
+        riskParameters = loanCalculator.riskParameters;
+        
+        maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio()); 
 
         paybackYearsCombo = new ComboBox<>("Select l/t number of years", generateComboValues(maxLoanDuration));
         paybackYearsCombo.setValue(maxLoanDuration);
         
-        existingLoansRefinancingTable = new ExistingLoansRefinancingTable(client.existingLoans, loanCalculator.riskParameters.longTermInterestRate,loanCalculator.riskParameters.shortTermInterestRate);
+        existingLoansRefinancingTable = new ExistingLoansRefinancingTable(client.existingLoans, riskParameters.longTermInterestRate, riskParameters.shortTermInterestRate);
         
         cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.average);
         
@@ -96,8 +101,8 @@ public class ProposalWindow extends Window {
         LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
         idealStructurePanel = new IdealStructurePanel(idealLoanRequest, maxLoanDuration);
         
-        double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(loanCalculator.riskParameters.shortTermInterestRate, loanCalculator.riskParameters.longTermInterestRate, currentDate);
-        double yearlyDebtServiceForExistingShortTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForShortTermLoans(loanCalculator.riskParameters.shortTermInterestRate, loanCalculator.riskParameters.longTermInterestRate, idealLoanRequest);
+        double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, currentDate);
+        double yearlyDebtServiceForExistingShortTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForShortTermLoans(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, idealLoanRequest);
         
         setContent(createLayout(yearlyDebtServiceForExistingShortTermLoans + yearlyDebtServiceForExistingLongTermLoans));
         
@@ -137,7 +142,7 @@ public class ProposalWindow extends Window {
     
     private void checkLiquidityRatio() {
         double nonRefinancableShortTermLoans = existingLoansRefinancingTable.getValue().nonRefinancableShortTermLoans();
-    	 LiquidityValidator liquidityRatioValidator = new LiquidityValidator(nonRefinancableShortTermLoans, loanCalculator.riskParameters.thresholds.liquidityRatio);
+    	 LiquidityValidator liquidityRatioValidator = new LiquidityValidator(nonRefinancableShortTermLoans, riskParameters.thresholds.liquidityRatio);
          ValidationResult validationResult = liquidityRatioValidator.validateRatio1(client.financialStatementData(), createLoanRequest());
          if(validationResult.isOk()) {
         	 shortTermLoanField.setComponentError(null);
@@ -208,7 +213,8 @@ public class ProposalWindow extends Window {
             FreeCashFlowCalculator freeCashFlowCalculator = cashflowCalculatorCombo.getValue();
             double dscr = loanCalculator.calculateDSCR(loanRequest, client, existingLoansRefinancing, freeCashFlowCalculator);
             LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, freeCashFlowCalculator);
-            UI.getCurrent().addWindow(new DecisionWindow(loanCalculator.riskParameters, client, existingLoansRefinancing, loanRequest, dscr, idealLoanRequest.sum(), this));
+            double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
+            UI.getCurrent().addWindow(new DecisionWindow(riskParameters, client, existingLoansRefinancing, loanRequest, dscr, idealLoanRequest.sum(), freeCashFlow, this));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
         }
@@ -226,7 +232,7 @@ public class ProposalWindow extends Window {
         
         double ownEquityRatioAverage = loanCalculator.industryData.ownEquityRatioAverage(client.industry);
         double loanIncrement = loanRequest.sum() - existingLoansRefinancingTable.getValue().refinancableLoans();
-        int maxLoanDuration = loanCalculator.riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio(loanIncrement));
+        int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio(loanIncrement));
         
         List<String> errorMessages = new ArrayList<>();
         

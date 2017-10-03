@@ -5,7 +5,6 @@ import java.util.List;
 
 public class MathUtil {
 
-    
     public static double directProduct(List<Double> a, List<Double> b) {
         if(a.size() != b.size()) throw new IllegalArgumentException("Size of lists must be equal");
         
@@ -16,6 +15,12 @@ public class MathUtil {
             sum += a.get(i) * b.get(i);
         }
         return sum;
+    }
+    
+    public static double round(double value, int digits) {
+        
+        double x = Math.pow(10, digits);
+        return Math.round(value * x) / x;
     }
     
 }
