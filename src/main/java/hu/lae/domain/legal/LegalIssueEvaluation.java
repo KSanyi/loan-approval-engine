@@ -35,7 +35,7 @@ public class LegalIssueEvaluation {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
-    static class EvaluationEntry {
+    public static class EvaluationEntry {
         
         public final Level inProgressLevel;
         

@@ -8,8 +8,10 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.industry.IndustryDataRepository;
+import hu.lae.domain.legal.LegalParametersRepository;
 import hu.lae.domain.riskparameters.RiskParametersRepository;
 import hu.lae.infrastructure.ui.parameters.industrydata.IndustryDataScreen;
+import hu.lae.infrastructure.ui.parameters.legalparameters.LegalParametersScreen;
 import hu.lae.infrastructure.ui.parameters.riskparameters.RiskParametersScreen;
 
 @SuppressWarnings("serial")
@@ -17,7 +19,7 @@ public class ParametersWindow extends Window {
 
     private final TabSheet tabsheet = new TabSheet();
 
-    private ParametersWindow(RiskParametersRepository riskParameterRepository, IndustryDataRepository industryDataRepository) {
+    private ParametersWindow(RiskParametersRepository riskParameterRepository, LegalParametersRepository legalParametersRepository, IndustryDataRepository industryDataRepository) {
         
         setCaption("Parameters");
         
@@ -27,11 +29,11 @@ public class ParametersWindow extends Window {
         Tab tab = tabsheet.addTab(new RiskParametersScreen(riskParameterRepository));
         tab.setCaption("Risk parameters");
         
-        Tab tab2 = tabsheet.addTab(new IndustryDataScreen(industryDataRepository));
-        tab2.setCaption("Industry parameters");
-        
-        Tab tab3 = tabsheet.addTab(new Label("Under construction"));
-        tab3.setCaption("Legal parameters");
+        Tab tab2 = tabsheet.addTab(new LegalParametersScreen(legalParametersRepository));
+        tab2.setCaption("Legal parameters");
+
+        Tab tab3 = tabsheet.addTab(new IndustryDataScreen(industryDataRepository));
+        tab3.setCaption("Industry parameters");
         
         Tab tab4 = tabsheet.addTab(new Label("Under construction"));
         tab4.setCaption("Other parameters");
@@ -39,11 +41,11 @@ public class ParametersWindow extends Window {
         setContent(tabsheet);
         setModal(true);
         setWidth("1300px");
-        setHeight("550px");
+        setHeight("750px");
     }
     
-    public static void show(RiskParametersRepository riskParameterRepository, IndustryDataRepository industryDataRepository) {
-        UI.getCurrent().addWindow(new ParametersWindow(riskParameterRepository, industryDataRepository));
+    public static void show(RiskParametersRepository riskParameterRepository, LegalParametersRepository legalParametersRepository, IndustryDataRepository industryDataRepository) {
+        UI.getCurrent().addWindow(new ParametersWindow(riskParameterRepository, legalParametersRepository, industryDataRepository));
     }
     
 }

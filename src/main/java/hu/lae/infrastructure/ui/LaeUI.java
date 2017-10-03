@@ -76,7 +76,7 @@ public class LaeUI extends UI {
 	}
 
     public void showRiskParametersScreen() {
-        ParametersWindow.show(applicationService.riskParameterRepository, applicationService.industryDataRepository);
+        ParametersWindow.show(applicationService.riskParameterRepository, applicationService.legalParametersRepository, applicationService.industryDataRepository);
     }
     
     private void setScreen(Layout screen) {

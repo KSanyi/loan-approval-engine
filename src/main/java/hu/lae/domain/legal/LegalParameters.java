@@ -14,12 +14,16 @@ public class LegalParameters {
     
     public final int maxLoanMaturityForJudge;
     
-    public final Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap;
+    private final Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap;
 
     public LegalParameters(int maxJudgeEntries, int maxLoanMaturityForJudge, Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap) {
         this.maxJudgeEntries = maxJudgeEntries;
         this.maxLoanMaturityForJudge = maxLoanMaturityForJudge;
         this.legalIssueEvaluationMap = legalIssueEvaluationMap;
+    }
+    
+    public LegalIssueEvaluation get(LegalIssueType issueType) {
+        return legalIssueEvaluationMap.get(issueType);
     }
     
     public LegalEvaluationResult evaluate(LegalData legalData) {
