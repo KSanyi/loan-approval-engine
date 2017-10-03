@@ -3,7 +3,7 @@ package hu.lae.infrastructure.ui.client.finstatement.incomestatement;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
-import hu.lae.domain.accounting.IncomeStatement;
+import hu.lae.domain.finance.IncomeStatement;
 
 @SuppressWarnings("serial")
 public class IncomeStatementPanel extends Panel {

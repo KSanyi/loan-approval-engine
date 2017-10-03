@@ -3,9 +3,9 @@ package hu.lae.domain.accounting;
 import org.junit.Assert;
 import org.junit.Test;
 
-import hu.lae.domain.accounting.BalanceSheet;
-import hu.lae.domain.accounting.BalanceSheet.Assets;
-import hu.lae.domain.accounting.BalanceSheet.Liabilities;
+import hu.lae.domain.finance.BalanceSheet;
+import hu.lae.domain.finance.BalanceSheet.Assets;
+import hu.lae.domain.finance.BalanceSheet.Liabilities;
 import hu.lae.domain.riskparameters.Haircuts;
 
 public class BalanceSheetTest {

@@ -3,6 +3,9 @@ package hu.lae.domain.accounting;
 import org.junit.Assert;
 import org.junit.Test;
 
+import hu.lae.domain.finance.FreeCashFlowCalculator;
+import hu.lae.domain.finance.IncomeStatement;
+import hu.lae.domain.finance.IncomeStatementHistory;
 import hu.lae.util.MapFactory;
 
 public class FreeCashFlowCalculatorTest {

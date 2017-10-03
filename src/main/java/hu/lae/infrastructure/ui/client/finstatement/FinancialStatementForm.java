@@ -4,7 +4,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.HorizontalLayout;
 
-import hu.lae.domain.accounting.FinancialStatementData;
+import hu.lae.domain.finance.FinancialStatementData;
 import hu.lae.infrastructure.ui.client.finstatement.balancesheet.BalanceSheetPanel;
 import hu.lae.infrastructure.ui.client.finstatement.incomestatement.IncomeStatementPanel;
 

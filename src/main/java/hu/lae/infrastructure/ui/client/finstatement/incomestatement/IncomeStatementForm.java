@@ -2,7 +2,7 @@ package hu.lae.infrastructure.ui.client.finstatement.incomestatement;
 
 import com.vaadin.ui.FormLayout;
 
-import hu.lae.domain.accounting.IncomeStatement;
+import hu.lae.domain.finance.IncomeStatement;
 import hu.lae.infrastructure.ui.component.AmountField;
 
 @SuppressWarnings("serial")

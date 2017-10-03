@@ -1,4 +1,4 @@
-package hu.lae.domain.accounting;
+package hu.lae.domain.finance;
 
 import java.util.Comparator;
 import java.util.List;

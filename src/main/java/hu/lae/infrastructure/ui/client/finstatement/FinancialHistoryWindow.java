@@ -14,7 +14,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.domain.accounting.FinancialHistory;
+import hu.lae.domain.finance.FinancialHistory;
 
 @SuppressWarnings("serial")
 public class FinancialHistoryWindow extends Window {

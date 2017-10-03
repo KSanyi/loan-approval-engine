@@ -9,9 +9,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.domain.accounting.BalanceSheet;
-import hu.lae.domain.accounting.BalanceSheet.Assets;
-import hu.lae.domain.accounting.BalanceSheet.Liabilities;
+import hu.lae.domain.finance.BalanceSheet;
+import hu.lae.domain.finance.BalanceSheet.Assets;
+import hu.lae.domain.finance.BalanceSheet.Liabilities;
 import hu.lae.infrastructure.ui.component.AmountField;
 
 @SuppressWarnings("serial")

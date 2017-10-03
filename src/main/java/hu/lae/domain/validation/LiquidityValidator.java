@@ -6,7 +6,7 @@ import java.text.DecimalFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hu.lae.domain.accounting.FinancialStatementData;
+import hu.lae.domain.finance.FinancialStatementData;
 import hu.lae.domain.loan.LoanRequest;
 
 public class LiquidityValidator {

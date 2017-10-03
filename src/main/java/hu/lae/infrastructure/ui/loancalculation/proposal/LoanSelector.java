@@ -12,7 +12,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
 import hu.lae.domain.Client;
-import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.finance.FreeCashFlowCalculator;
 import hu.lae.domain.loan.CovenantCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanCalculator;

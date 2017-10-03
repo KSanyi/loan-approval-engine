@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.lae.domain.Client;
-import hu.lae.domain.accounting.CashFlow;
-import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.finance.CashFlow;
+import hu.lae.domain.finance.FreeCashFlowCalculator;
 import hu.lae.domain.industry.IndustryData;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.util.ExcelFunctions;

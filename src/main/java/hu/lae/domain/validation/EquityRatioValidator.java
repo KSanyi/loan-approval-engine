@@ -2,7 +2,7 @@ package hu.lae.domain.validation;
 
 import java.text.DecimalFormat;
 
-import hu.lae.domain.accounting.FinancialStatementData;
+import hu.lae.domain.finance.FinancialStatementData;
 
 public class EquityRatioValidator {
 

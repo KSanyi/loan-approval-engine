@@ -3,11 +3,11 @@ package hu.lae.domain;
 import org.junit.Assert;
 import org.junit.Test;
 
-import hu.lae.domain.accounting.BalanceSheet;
-import hu.lae.domain.accounting.BalanceSheet.Assets;
-import hu.lae.domain.accounting.BalanceSheet.Liabilities;
-import hu.lae.domain.accounting.FinancialStatementData;
-import hu.lae.domain.accounting.IncomeStatement;
+import hu.lae.domain.finance.BalanceSheet;
+import hu.lae.domain.finance.FinancialStatementData;
+import hu.lae.domain.finance.IncomeStatement;
+import hu.lae.domain.finance.BalanceSheet.Assets;
+import hu.lae.domain.finance.BalanceSheet.Liabilities;
 
 public class ClientTest {
 

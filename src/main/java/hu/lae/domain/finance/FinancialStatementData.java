@@ -1,4 +1,4 @@
-package hu.lae.domain.accounting;
+package hu.lae.domain.finance;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

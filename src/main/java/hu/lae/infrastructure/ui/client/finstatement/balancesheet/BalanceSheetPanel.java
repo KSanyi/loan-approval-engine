@@ -2,7 +2,7 @@ package hu.lae.infrastructure.ui.client.finstatement.balancesheet;
 
 import com.vaadin.ui.Panel;
 
-import hu.lae.domain.accounting.BalanceSheet;
+import hu.lae.domain.finance.BalanceSheet;
 
 @SuppressWarnings("serial")
 public class BalanceSheetPanel extends Panel {

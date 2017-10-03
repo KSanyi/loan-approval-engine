@@ -26,7 +26,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
-import hu.lae.domain.accounting.FreeCashFlowCalculator;
+import hu.lae.domain.finance.FreeCashFlowCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
