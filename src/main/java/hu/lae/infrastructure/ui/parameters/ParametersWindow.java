@@ -30,16 +30,16 @@ public class ParametersWindow extends Window {
         Tab tab2 = tabsheet.addTab(new IndustryDataScreen(industryDataRepository));
         tab2.setCaption("Industry parameters");
         
-        Tab tab3 = tabsheet.addTab(new Label("Legal parameters"));
+        Tab tab3 = tabsheet.addTab(new Label("Under construction"));
         tab3.setCaption("Legal parameters");
         
-        Tab tab4 = tabsheet.addTab(new Label("Other parameters"));
+        Tab tab4 = tabsheet.addTab(new Label("Under construction"));
         tab4.setCaption("Other parameters");
         
         setContent(tabsheet);
         setModal(true);
         setWidth("1300px");
-        setHeight("450px");
+        setHeight("550px");
     }
     
     public static void show(RiskParametersRepository riskParameterRepository, IndustryDataRepository industryDataRepository) {

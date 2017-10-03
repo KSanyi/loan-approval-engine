@@ -15,7 +15,7 @@ public class InMemoryRiskParametersRepository implements RiskParametersRepositor
                 new MaxLoanDurations(MapFactory.of(Industry.CONSTRUCTION, 2, Industry.AUTOMOTIVE, 5)),
                 new InterestRate(0.05),
                 1.2,
-                new Thresholds(0.2, 1.2, 0.15, 0.75, 0.8, new OwnEquityRatioThresholds(0.7, 0.5)),
+                new Thresholds(0.2, 1.2, 0.15, 0.75, 0.8, new OwnEquityRatioThresholds(0.7, 3, 0.5, 1)),
                 new CollateralRequirement(MapFactory.of(
                         0.0, new Pair<>(50L, 0.7), 
                         0.02, new Pair<>(30L, 0.4), 
