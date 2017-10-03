@@ -4,7 +4,7 @@ import hu.lae.domain.industry.Industry;
 import hu.lae.util.MapFactory;
 import hu.lae.util.Pair;
 
-public class InMemoryRiskParametersRepository implements RiskParameterRepository {
+public class InMemoryRiskParametersRepository implements RiskParametersRepository {
 
     private RiskParameters riskParameters;
     

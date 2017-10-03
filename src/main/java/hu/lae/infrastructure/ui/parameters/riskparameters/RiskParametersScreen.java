@@ -5,19 +5,19 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.domain.riskparameters.RiskParameterRepository;
+import hu.lae.domain.riskparameters.RiskParametersRepository;
 import hu.lae.infrastructure.ui.component.Button;
 
 @SuppressWarnings("serial")
 public class RiskParametersScreen extends VerticalLayout {
 
-	private final RiskParameterRepository riskParameterRepository;
+	private final RiskParametersRepository riskParameterRepository;
     
     private final Button saveButton = new Button("Save", click -> save());
     
     private final RiskParametersForm riskParametersForm;
 	
-	public RiskParametersScreen(RiskParameterRepository riskParameterRepository) {
+	public RiskParametersScreen(RiskParametersRepository riskParameterRepository) {
 		
 		this.riskParameterRepository = riskParameterRepository;
         

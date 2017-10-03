@@ -1,6 +1,6 @@
 package hu.lae.domain.riskparameters;
 
-public interface RiskParameterRepository {
+public interface RiskParametersRepository {
 
     RiskParameters loadRiskParameters();
     

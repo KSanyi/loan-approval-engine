@@ -8,7 +8,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.industry.IndustryDataRepository;
-import hu.lae.domain.riskparameters.RiskParameterRepository;
+import hu.lae.domain.riskparameters.RiskParametersRepository;
 import hu.lae.infrastructure.ui.parameters.industrydata.IndustryDataScreen;
 import hu.lae.infrastructure.ui.parameters.riskparameters.RiskParametersScreen;
 
@@ -17,7 +17,7 @@ public class ParametersWindow extends Window {
 
     private final TabSheet tabsheet = new TabSheet();
 
-    private ParametersWindow(RiskParameterRepository riskParameterRepository, IndustryDataRepository industryDataRepository) {
+    private ParametersWindow(RiskParametersRepository riskParameterRepository, IndustryDataRepository industryDataRepository) {
         
         setCaption("Parameters");
         
@@ -42,7 +42,7 @@ public class ParametersWindow extends Window {
         setHeight("450px");
     }
     
-    public static void show(RiskParameterRepository riskParameterRepository, IndustryDataRepository industryDataRepository) {
+    public static void show(RiskParametersRepository riskParameterRepository, IndustryDataRepository industryDataRepository) {
         UI.getCurrent().addWindow(new ParametersWindow(riskParameterRepository, industryDataRepository));
     }
     

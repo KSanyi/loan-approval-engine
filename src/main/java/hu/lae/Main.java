@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.lae.domain.industry.InMemoryIndustryDataRepository;
+import hu.lae.domain.legal.InMemoryLegalParametersRepository;
 import hu.lae.domain.riskparameters.InMemoryRiskParametersRepository;
 import hu.lae.infrastructure.authenticator.UserServiceAuthenticator;
 import hu.lae.infrastructure.server.ApplicationService;
@@ -26,6 +27,7 @@ public class Main {
         ApplicationService applicationService = new ApplicationService(
         		new UserServiceAuthenticator(userServiceUrl),
         		new InMemoryRiskParametersRepository(),
+        		new InMemoryLegalParametersRepository(),
         		new InMemoryIndustryDataRepository());
 
         Clock.setStaticDate(LocalDate.of(2017, 4, 1));
