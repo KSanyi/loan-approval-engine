@@ -17,23 +17,26 @@ import com.byteowls.vaadin.chartjs.options.scale.DefaultScale;
 import hu.lae.domain.loan.ExistingLoan;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanRequest;
+import hu.lae.domain.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.util.Clock;
+import hu.lae.util.ExcelFunctions;
 import hu.lae.util.MathUtil;
 
 @SuppressWarnings("serial")
-public class DebtChart extends ChartJs {
+public class DebtServiceChart extends ChartJs {
 
-    DebtChart(double freeCashFlow, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest) {
-        super(createConfig(loanRequest.longTermLoanDuration, freeCashFlow, existingLoansRefinancing, loanRequest));
+    DebtServiceChart(double freeCashFlow, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, RiskParameters riskParameters) {
+        super(createConfig(freeCashFlow, existingLoansRefinancing, loanRequest, riskParameters));
         
         setWidth("1100px");
         setHeight("300px");
     }
     
-    private static BarChartConfig createConfig(int longTermloanDuration, double freeCashFlow, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest) {
+    private static BarChartConfig createConfig(double freeCashFlow, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, RiskParameters riskParameters) {
         BarChartConfig config = new BarChartConfig();
         
-        List<LocalDate> dates = dates(longTermloanDuration);
+        List<LocalDate> dates = dates(loanRequest.longTermLoanDuration);
         
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM");
         List<String> labels = dates.stream().map(date -> date.format(dtf)).collect(Collectors.toList());
@@ -42,16 +45,16 @@ public class DebtChart extends ChartJs {
             .labelsAsList(labels)
             .addDataset(createFreeCFDataset(dates, freeCashFlow));
         
-        createExistingLoanDatasets(dates, existingLoansRefinancing).stream().forEach(config.data()::addDataset);
+        createExistingLoanDatasets(dates, existingLoansRefinancing, riskParameters).stream().forEach(config.data()::addDataset);
         config.data()
-            .addDataset(createNewSTLoanDataset(dates, loanRequest.shortTermLoan))
-            .addDataset(createNewLTLoanDataset(dates, loanRequest.longTermLoan));
+            .addDataset(createNewSTLoanDataset(dates, loanRequest.shortTermLoan, riskParameters.shortTermInterestRate))
+            .addDataset(createNewLTLoanDataset(dates, loanRequest.longTermLoan, loanRequest.longTermLoanDuration, riskParameters.longTermInterestRate));
         
         config.options()
             .responsive(true)
             .title()
                 .display(true)
-                .text("Debt chart")
+                .text("Debt service chart")
                 .and()
             .tooltips()
                 .mode(InteractionMode.INDEX)
@@ -84,9 +87,10 @@ public class DebtChart extends ChartJs {
             .dataAsList(data);
     }
     
-    private static BarDataset createNewSTLoanDataset(List<LocalDate> dates, double amount) {
+    private static BarDataset createNewSTLoanDataset(List<LocalDate> dates, double shortTermLoan, InterestRate shortTermInterestRate) {
         
-        double roundedValue = MathUtil.round(amount / 4, 1);
+    	double yearlyDebtService = shortTermInterestRate.multiply(shortTermLoan);
+        double roundedValue = MathUtil.round(yearlyDebtService / 4, 1);
         
         List<Double> data = dates.stream().map(d -> roundedValue).collect(Collectors.toList());
         
@@ -95,9 +99,10 @@ public class DebtChart extends ChartJs {
             .dataAsList(data);
     }
     
-    private static BarDataset createNewLTLoanDataset(List<LocalDate> dates, double amount) {
+    private static BarDataset createNewLTLoanDataset(List<LocalDate> dates, double longTermLoan, int paybackYears, InterestRate longTermInterestRate) {
         
-        double roundedValue = MathUtil.round(amount / 4, 1);
+    	double yearlyDebtService = -ExcelFunctions.pmt(longTermInterestRate.value, paybackYears, longTermLoan);
+        double roundedValue = MathUtil.round(yearlyDebtService / 4, 1);
         
         List<Double> data = dates.stream().map(d -> roundedValue).collect(Collectors.toList());
         
@@ -106,13 +111,14 @@ public class DebtChart extends ChartJs {
             .dataAsList(data);
     }
     
-    private static List<BarDataset> createExistingLoanDatasets(List<LocalDate> dates, ExistingLoansRefinancing existingLoansRefinancing) {
+    private static List<BarDataset> createExistingLoanDatasets(List<LocalDate> dates, ExistingLoansRefinancing existingLoansRefinancing, RiskParameters riskParameters) {
         
         List<BarDataset> datasets = new ArrayList<>();
         int index = 1;
         for(ExistingLoan existingLoan : existingLoansRefinancing.existingLoansRefinancingMap.keySet()) {
+        	double yearlyDebtService = existingLoan.calculateYearlyDebtService(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, Clock.date());
             if(existingLoan.isShortTemLoan()) {
-                List<Double> data = dates.stream().map(d -> MathUtil.round(existingLoan.amount / 4, 1)).collect(Collectors.toList());
+                List<Double> data = dates.stream().map(d -> MathUtil.round(yearlyDebtService / 4, 1)).collect(Collectors.toList());
                 datasets.add(new BarDataset()
                         .label("Existing Short Term Loan " + index++).stack("1").backgroundColor(existingShortTermLoanColor(index))
                         .dataAsList(data));
@@ -122,8 +128,9 @@ public class DebtChart extends ChartJs {
         index = 1;
         for(ExistingLoan existingLoan : existingLoansRefinancing.existingLoansRefinancingMap.keySet()) {
             if(existingLoan.isLongTemLoan()) {
+            	double yearlyDebtService = existingLoan.calculateYearlyDebtService(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, Clock.date());
                 List<Double> data = dates.stream()
-                        .map(d -> d.isAfter(existingLoan.expiry.get()) ? 0.0 : MathUtil.round(existingLoan.amount / 4, 1))
+                        .map(d -> d.isAfter(existingLoan.expiry.get()) ? 0.0 : MathUtil.round(yearlyDebtService / 4, 1))
                         .collect(Collectors.toList());
                 datasets.add(new BarDataset()
                         .label("Existing Long Term Loan " + index++).stack("1").backgroundColor(existingLongTermLoanColor(index))
