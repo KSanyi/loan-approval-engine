@@ -41,7 +41,7 @@ public class ParametersWindow extends Window {
         setContent(tabsheet);
         setModal(true);
         setWidth("1300px");
-        setHeight("750px");
+        setHeight("900px");
     }
     
     public static void show(RiskParametersRepository riskParameterRepository, LegalParametersRepository legalParametersRepository, IndustryDataRepository industryDataRepository) {

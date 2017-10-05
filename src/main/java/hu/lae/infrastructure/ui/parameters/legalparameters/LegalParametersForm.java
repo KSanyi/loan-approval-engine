@@ -3,57 +3,51 @@ package hu.lae.infrastructure.ui.parameters.legalparameters;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.renderers.ComponentRenderer;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import hu.lae.domain.legal.LegalIssueEvaluation.EvaluationEntry;
-import hu.lae.domain.legal.LegalIssueType;
 import hu.lae.domain.legal.LegalParameters;
-import hu.lae.infrastructure.ui.VaadinUtil;
 
 @SuppressWarnings("serial")
 public class LegalParametersForm extends CustomField<LegalParameters> {
 
-    private final Grid<Row> grid;
+    private final ComboBox<Integer> maxJudgeEntriesCombo = new ComboBox<>("Max judge entries", generateComboValues(10));
+    private final ComboBox<Integer> maxLoanMaturityForJudgeCombo = new ComboBox<>("Max loan maturity for judge", generateComboValues(5));
     
-    private LegalParameters legalParameters;
+    private final LegalParametersTable legalParametersTable;
     
     public LegalParametersForm(LegalParameters legalParameters) {
         
-        this.legalParameters = legalParameters;
+        maxJudgeEntriesCombo.setValue(legalParameters.maxJudgeEntries);
+        maxLoanMaturityForJudgeCombo.setValue(legalParameters.maxLoanMaturityForJudge);
         
-        grid = new Grid<>();
-        grid.addColumn(g -> g.issueType.displayName).setCaption("");
-        grid.addColumn(g -> g.inProgressLevelButton, new ComponentRenderer()).setCaption("In progress").setWidth(110);
-        grid.addColumn(g -> g.inHistoryLevelButton, new ComponentRenderer()).setCaption("In history").setWidth(110);
-        grid.addColumn(g -> g.limitationYearsCombo, new ComponentRenderer()).setCaption("Limitation").setWidth(110);
-        
-        grid.setHeightByRows(LegalIssueType.values().length);
-        grid.setRowHeight(35);
-        
-        List<Row> items = Stream.of(LegalIssueType.values())
-                .map(issueType -> new Row(issueType, legalParameters.get(issueType).companyEntry))
-                .collect(Collectors.toList());
-        
-        grid.setItems(items);
-        grid.setWidth("700px");
-        grid.addStyleName(VaadinUtil.GRID_SMALL);
+        legalParametersTable = new LegalParametersTable(legalParameters.legalIssueEvaluationMap);
     }
-
+    
     @Override
     public LegalParameters getValue() {
-        return legalParameters;
+        return new LegalParameters(maxJudgeEntriesCombo.getValue(), maxLoanMaturityForJudgeCombo.getValue(), legalParametersTable.getLegalIssueEvaluationMap());
     }
 
     @Override
     protected Component initContent() {
-        return grid;
+        
+        maxJudgeEntriesCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
+        maxJudgeEntriesCombo.setWidth("70px");
+        maxJudgeEntriesCombo.setEmptySelectionAllowed(false);
+        
+        maxLoanMaturityForJudgeCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
+        maxLoanMaturityForJudgeCombo.setWidth("70px");
+        maxLoanMaturityForJudgeCombo.setEmptySelectionAllowed(false);
+        
+        VerticalLayout layout = new VerticalLayout(new HorizontalLayout(maxJudgeEntriesCombo, maxLoanMaturityForJudgeCombo), legalParametersTable);
+        layout.setMargin(false);
+        return layout;
     }
 
     @Override
@@ -61,28 +55,8 @@ public class LegalParametersForm extends CustomField<LegalParameters> {
         throw new IllegalStateException();
     }
     
-    static class Row {
-        
-        final LegalIssueType issueType;
-        
-        final LevelButton inProgressLevelButton;
-        final LevelButton inHistoryLevelButton;
-        final ComboBox<Integer> limitationYearsCombo = new ComboBox<>(null, generateComboValues());
-        
-        public Row(LegalIssueType issueType, EvaluationEntry evaluationEntry) {
-            this.issueType = issueType;
-            inProgressLevelButton = new LevelButton(evaluationEntry.inProgressLevel);
-            inHistoryLevelButton = new LevelButton(evaluationEntry.inHistoryLevel);
-            limitationYearsCombo.setValue(evaluationEntry.limitationYears);
-            
-            limitationYearsCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
-            limitationYearsCombo.setWidth("60px");
-            limitationYearsCombo.setEmptySelectionAllowed(false);
-        }
-
-        private static List<Integer> generateComboValues() {
-            return IntStream.range(1, 101).mapToObj(i -> i).collect(Collectors.toList());
-        }
+    private static List<Integer> generateComboValues(int maxValue) {
+        return IntStream.range(1, maxValue + 1).mapToObj(i -> i).collect(Collectors.toList());
     }
 
 }
