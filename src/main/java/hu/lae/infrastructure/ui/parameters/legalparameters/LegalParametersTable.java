@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.vaadin.ui.ComboBox;
+import hu.lae.infrastructure.ui.component.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
@@ -103,12 +103,12 @@ class Row {
     
     Row(LegalIssueType issueType, EvaluationEntry companyEvaluationEntry, EvaluationEntry groupEvaluationEntry) {
         this.issueType = issueType;
-        companyInProgressLevelButton = new LevelButton(companyEvaluationEntry.inProgressLevel);
-        companyInHistoryLevelButton = new LevelButton(companyEvaluationEntry.inHistoryLevel);
+        companyInProgressLevelButton = new LevelButton(companyEvaluationEntry.inProgressLevel, "company.inProgress." + issueType);
+        companyInHistoryLevelButton = new LevelButton(companyEvaluationEntry.inHistoryLevel, "company.inHistory." + issueType);
         companyLimitationYearsCombo.setValue(companyEvaluationEntry.limitationYears);
         
-        groupInProgressLevelButton = new LevelButton(groupEvaluationEntry.inProgressLevel);
-        groupInHistoryLevelButton = new LevelButton(groupEvaluationEntry.inHistoryLevel);
+        groupInProgressLevelButton = new LevelButton(groupEvaluationEntry.inProgressLevel, "group.inProgress." + issueType);
+        groupInHistoryLevelButton = new LevelButton(groupEvaluationEntry.inHistoryLevel, "group.inHistory." + issueType);
         groupLimitationYearsCombo.setValue(groupEvaluationEntry.limitationYears);
         
         companyLimitationYearsCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);

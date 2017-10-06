@@ -30,7 +30,7 @@ public class Menu extends MenuBar {
         
         @Override
         public void menuSelected(MenuItem selectedItem) {
-            logger.debug("Menuitem '" + selectedItem.getText() + "' was clicked");
+            logger.debug("USERACTION: Menuitem '" + selectedItem.getText() + "' was clicked");
             action.menuSelected(selectedItem);
         }
     }

@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import hu.lae.infrastructure.ui.component.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;

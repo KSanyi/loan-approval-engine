@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import hu.lae.infrastructure.ui.component.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.HorizontalLayout;
@@ -28,7 +28,7 @@ class ExistingLoansForm extends CustomField<ExistingLoans> {
     }
     
     private void addLoan(ExistingLoan existingLoan) {
-        Button deleteButton = new Button(VaadinIcons.CLOSE);
+        Button deleteButton = new Button(VaadinIcons.CLOSE, "delete.existing.loan");
         deleteButton.addStyleName(ValoTheme.BUTTON_SMALL);
         deleteButton.addStyleName(ValoTheme.BUTTON_DANGER);
         HorizontalLayout wrapper = new HorizontalLayout(new ExistingLoanField(existingLoan), deleteButton);

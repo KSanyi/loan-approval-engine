@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
+import hu.lae.infrastructure.ui.component.Button;
+import hu.lae.infrastructure.ui.component.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.UI;

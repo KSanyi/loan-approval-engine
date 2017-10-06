@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import hu.lae.infrastructure.ui.component.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;

@@ -12,10 +12,14 @@ public class ComboBox<T> extends com.vaadin.ui.ComboBox<T> {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     public ComboBox(String caption, Collection<T> options) {
+        this(caption, caption, options);
+    }
+    
+    public ComboBox(String caption, String id, Collection<T> options) {
         super(caption, options);
         addValueChangeListener(e -> {
             if(e.isUserOriginated()) {
-                logger.debug("USERACTION: "+ caption + ": '" + e.getValue() + "' selected");
+                logger.debug("USERACTION: "+ id + ": '" + e.getValue() + "' selected");
             }
         });
     }

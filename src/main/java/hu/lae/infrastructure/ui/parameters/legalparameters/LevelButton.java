@@ -1,6 +1,6 @@
 package hu.lae.infrastructure.ui.parameters.legalparameters;
 
-import com.vaadin.ui.Button;
+import hu.lae.infrastructure.ui.component.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.themes.ValoTheme;
@@ -12,10 +12,11 @@ public class LevelButton extends CustomField<Level>{
 
     private Level level = Level.GO;
     
-    private final Button button = new Button();
+    private final Button button;
     
-    LevelButton(Level level) {
+    LevelButton(Level level, String id) {
         this.level = level;
+        this.button = new Button("", id);
         initButton(level);
         button.setHeight("25px");
         button.addClickListener(click -> clicked());
