@@ -17,11 +17,9 @@ public class RiskParameters {
     
     public final Haircuts haircuts;
     
-    public final InterestRate shortTermInterestRate;
+    public final InterestRates interestRates;
     
     public final MaxLoanDurations maxLoanDurations;
-    
-    public final InterestRate longTermInterestRate;
     
     public final double dscrThreshold;
     
@@ -29,16 +27,15 @@ public class RiskParameters {
     
     public final CollateralRequirement collateralRequirement;
     
-    public RiskParameters(String id, String name, double amortizationRate, Haircuts haircuts, InterestRate shortTermInterestRate,
-            MaxLoanDurations maxLoanDurations, InterestRate longTermInterestRate, double dscrThreshold, Thresholds thresholds,
+    public RiskParameters(String id, String name, double amortizationRate, Haircuts haircuts, InterestRates interestRates,
+            MaxLoanDurations maxLoanDurations, double dscrThreshold, Thresholds thresholds,
             CollateralRequirement collateralRequirement) {
         this.id = id;
         this.name = name;
         this.amortizationRate = amortizationRate;
         this.haircuts = haircuts;
-        this.shortTermInterestRate = shortTermInterestRate;
+        this.interestRates = interestRates;
         this.maxLoanDurations = maxLoanDurations;
-        this.longTermInterestRate = longTermInterestRate;
         this.dscrThreshold = dscrThreshold;
         this.thresholds = thresholds;
         this.collateralRequirement = collateralRequirement;

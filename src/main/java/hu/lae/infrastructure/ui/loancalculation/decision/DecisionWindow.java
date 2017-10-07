@@ -67,7 +67,7 @@ public class DecisionWindow extends Window {
         this.dscr = dscr;
         this.proposalWindow = proposalWindow;
         
-        debtServiceChart = new DebtServiceChart(freeCashFlow, existingLoansRefinancing, loanRequest, riskParameters);
+        debtServiceChart = new DebtServiceChart(freeCashFlow, existingLoansRefinancing, loanRequest, riskParameters.interestRates);
         
         setModal(true);
         setCaption("Decision");

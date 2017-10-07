@@ -18,7 +18,7 @@ import hu.lae.domain.loan.ExistingLoan;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.riskparameters.InterestRate;
-import hu.lae.domain.riskparameters.RiskParameters;
+import hu.lae.domain.riskparameters.InterestRates;
 import hu.lae.util.Clock;
 import hu.lae.util.ExcelFunctions;
 import hu.lae.util.MathUtil;
@@ -26,14 +26,14 @@ import hu.lae.util.MathUtil;
 @SuppressWarnings("serial")
 public class DebtServiceChart extends ChartJs {
 
-    DebtServiceChart(double freeCashFlow, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, RiskParameters riskParameters) {
-        super(createConfig(freeCashFlow, existingLoansRefinancing, loanRequest, riskParameters));
+    DebtServiceChart(double freeCashFlow, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, InterestRates interestRates) {
+        super(createConfig(freeCashFlow, existingLoansRefinancing, loanRequest, interestRates));
         
         setWidth("1100px");
         setHeight("300px");
     }
     
-    private static BarChartConfig createConfig(double freeCashFlow, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, RiskParameters riskParameters) {
+    private static BarChartConfig createConfig(double freeCashFlow, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, InterestRates interestRates) {
         BarChartConfig config = new BarChartConfig();
         
         List<LocalDate> dates = dates(loanRequest.longTermLoanDuration);
@@ -45,10 +45,10 @@ public class DebtServiceChart extends ChartJs {
             .labelsAsList(labels)
             .addDataset(createFreeCFDataset(dates, freeCashFlow));
         
-        createExistingLoanDatasets(dates, existingLoansRefinancing, riskParameters).stream().forEach(config.data()::addDataset);
+        createExistingLoanDatasets(dates, existingLoansRefinancing, interestRates).stream().forEach(config.data()::addDataset);
         config.data()
-            .addDataset(createNewSTLoanDataset(dates, loanRequest.shortTermLoan, riskParameters.shortTermInterestRate))
-            .addDataset(createNewLTLoanDataset(dates, loanRequest.longTermLoan, loanRequest.longTermLoanDuration, riskParameters.longTermInterestRate));
+            .addDataset(createNewSTLoanDataset(dates, loanRequest.shortTermLoan, interestRates.shortTermInterestRate))
+            .addDataset(createNewLTLoanDataset(dates, loanRequest.longTermLoan, loanRequest.longTermLoanDuration, interestRates.longTermInterestRate));
         
         config.options()
             .responsive(true)
@@ -111,12 +111,12 @@ public class DebtServiceChart extends ChartJs {
             .dataAsList(data);
     }
     
-    private static List<BarDataset> createExistingLoanDatasets(List<LocalDate> dates, ExistingLoansRefinancing existingLoansRefinancing, RiskParameters riskParameters) {
+    private static List<BarDataset> createExistingLoanDatasets(List<LocalDate> dates, ExistingLoansRefinancing existingLoansRefinancing, InterestRates interestRates) {
         
         List<BarDataset> datasets = new ArrayList<>();
         int index = 1;
         for(ExistingLoan existingLoan : existingLoansRefinancing.existingLoansRefinancingMap.keySet()) {
-        	double yearlyDebtService = existingLoan.calculateYearlyDebtService(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, Clock.date());
+        	double yearlyDebtService = existingLoan.calculateYearlyDebtService(interestRates, Clock.date());
             if(existingLoan.isShortTemLoan()) {
                 List<Double> data = dates.stream().map(d -> MathUtil.round(yearlyDebtService / 4, 1)).collect(Collectors.toList());
                 datasets.add(new BarDataset()
@@ -128,7 +128,7 @@ public class DebtServiceChart extends ChartJs {
         index = 1;
         for(ExistingLoan existingLoan : existingLoansRefinancing.existingLoansRefinancingMap.keySet()) {
             if(existingLoan.isLongTemLoan()) {
-            	double yearlyDebtService = existingLoan.calculateYearlyDebtService(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, Clock.date());
+            	double yearlyDebtService = existingLoan.calculateYearlyDebtService(interestRates, Clock.date());
                 List<Double> data = dates.stream()
                         .map(d -> d.isAfter(existingLoan.expiry.get()) ? 0.0 : MathUtil.round(yearlyDebtService / 4, 1))
                         .collect(Collectors.toList());

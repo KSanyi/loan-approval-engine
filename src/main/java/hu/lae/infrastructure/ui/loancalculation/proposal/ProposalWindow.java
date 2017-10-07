@@ -27,6 +27,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
+import hu.lae.domain.loan.DSCRCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
@@ -39,6 +40,7 @@ import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.infrastructure.ui.component.ComboBox;
 import hu.lae.infrastructure.ui.loancalculation.decision.DecisionWindow;
+import hu.lae.util.Clock;
 import hu.lae.util.Formatters;
 
 @SuppressWarnings("serial")
@@ -85,7 +87,7 @@ public class ProposalWindow extends Window {
         paybackYearsCombo = new ComboBox<>("Select l/t number of years", generateComboValues(maxLoanDuration));
         paybackYearsCombo.setValue(maxLoanDuration);
         
-        existingLoansRefinancingTable = new ExistingLoansRefinancingTable(client.existingLoans, riskParameters.longTermInterestRate, riskParameters.shortTermInterestRate);
+        existingLoansRefinancingTable = new ExistingLoansRefinancingTable(client.existingLoans, riskParameters.interestRates);
         
         cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.average);
         
@@ -101,8 +103,8 @@ public class ProposalWindow extends Window {
         LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, cashflowCalculatorCombo.getValue());
         idealStructurePanel = new IdealStructurePanel(idealLoanRequest, maxLoanDuration);
         
-        double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, currentDate);
-        double yearlyDebtServiceForExistingShortTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForShortTermLoans(riskParameters.shortTermInterestRate, riskParameters.longTermInterestRate, idealLoanRequest);
+        double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.interestRates, currentDate);
+        double yearlyDebtServiceForExistingShortTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForShortTermLoans(riskParameters.interestRates, idealLoanRequest);
         
         setContent(createLayout(yearlyDebtServiceForExistingShortTermLoans + yearlyDebtServiceForExistingLongTermLoans));
         
@@ -211,9 +213,9 @@ public class ProposalWindow extends Window {
             super.close();
             ExistingLoansRefinancing existingLoansRefinancing = existingLoansRefinancingTable.getValue();
             FreeCashFlowCalculator freeCashFlowCalculator = cashflowCalculatorCombo.getValue();
-            double dscr = loanCalculator.calculateDSCR(loanRequest, client, existingLoansRefinancing, freeCashFlowCalculator);
-            LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, freeCashFlowCalculator);
             double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
+            double dscr = DSCRCalculator.calculateDSCR(riskParameters.interestRates, freeCashFlow, loanRequest, existingLoansRefinancing, Clock.date());
+            LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, freeCashFlowCalculator);
             UI.getCurrent().addWindow(new DecisionWindow(riskParameters, client, existingLoansRefinancing, loanRequest, dscr, idealLoanRequest.sum(), freeCashFlow, this));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);

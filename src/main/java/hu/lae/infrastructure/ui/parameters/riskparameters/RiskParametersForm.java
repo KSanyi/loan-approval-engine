@@ -8,7 +8,7 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Panel;
 
 import hu.lae.domain.riskparameters.Haircuts;
-import hu.lae.domain.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.InterestRates;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.infrastructure.ui.component.NumberField;
 import hu.lae.infrastructure.ui.component.PercentField;
@@ -39,8 +39,8 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
         
         amortizationRateField.setPercent(riskParameters.amortizationRate);
         dscrThresholdField.setNumber(riskParameters.dscrThreshold);
-        shortTermInterestRateField.setPercent(riskParameters.shortTermInterestRate.value);
-        longTermInterestRateField.setPercent(riskParameters.longTermInterestRate.value);
+        shortTermInterestRateField.setPercent(riskParameters.interestRates.shortTermInterestRate.value);
+        longTermInterestRateField.setPercent(riskParameters.interestRates.longTermInterestRate.value);
         
         arField.setPercent(riskParameters.haircuts.accountsReceivable);
         stockField.setPercent(riskParameters.haircuts.stock);
@@ -53,9 +53,8 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
 		return new RiskParameters(riskParameters.id, riskParameters.name, 
                 amortizationRateField.getPercent(), 
                 new Haircuts(arField.getPercent(), stockField.getPercent(), cashField.getPercent(),  otherField.getPercent()),
-                new InterestRate(shortTermInterestRateField.getPercent()),
+                new InterestRates(shortTermInterestRateField.getPercent(), longTermInterestRateField.getPercent()),
                 maxLoanDurationsForm.getValue(),
-                new InterestRate(longTermInterestRateField.getPercent()),
                 dscrThresholdField.getNumber(),
                 thresholdsForm.getValue(),
                 collateralRequirementsForm.getValue());

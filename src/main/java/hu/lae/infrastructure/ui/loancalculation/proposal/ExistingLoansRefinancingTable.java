@@ -17,7 +17,7 @@ import com.vaadin.ui.renderers.HtmlRenderer;
 import hu.lae.domain.loan.ExistingLoan;
 import hu.lae.domain.loan.ExistingLoans;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
-import hu.lae.domain.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.InterestRates;
 import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.util.Clock;
 import hu.lae.util.Formatters;
@@ -31,14 +31,11 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
     
     private final List<RefinanceChangeListener> refinanceChangeListeners = new ArrayList<>();
     
-    private final InterestRate longTermInterestRate;
+    private final InterestRates interestRates;
     
-    private final InterestRate shortTermInterestRate;
-    
-    ExistingLoansRefinancingTable(ExistingLoans existingLoans, InterestRate longTermInterestRate, InterestRate shortTermInterestRate) {
+    ExistingLoansRefinancingTable(ExistingLoans existingLoans, InterestRates interestRates) {
         this.existingLoans = existingLoans;
-        this.longTermInterestRate = longTermInterestRate;
-        this.shortTermInterestRate = shortTermInterestRate;
+        this.interestRates = interestRates;
         grid = new Grid<>();
     }
     
@@ -68,7 +65,7 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
             .setCaption("Expiry")
             .setWidth(120);
         
-        grid.addColumn(l -> Formatters.formatAmount(l.calculateYearlyDebtService(shortTermInterestRate, longTermInterestRate, Clock.date())))
+        grid.addColumn(l -> Formatters.formatAmount(l.calculateYearlyDebtService(interestRates, Clock.date())))
             .setCaption("Debt service")
             .setWidth(120)
             .setStyleGenerator(item -> "v-align-right");

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import hu.lae.domain.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.InterestRates;
 import hu.lae.util.ExcelFunctions;
 
 public class ExistingLoansRefinancing {
@@ -28,23 +28,23 @@ public class ExistingLoansRefinancing {
         return existingLoansRefinancingMap.get(existingLoan);
     }
     
-    public double calculateYearlyDebtServiceForShortTermLoans(InterestRate shortTermInterestRate, InterestRate longTermInterestRate, LoanRequest idealLoanRequest) {
+    public double calculateYearlyDebtServiceForShortTermLoans(InterestRates interestRates, LoanRequest idealLoanRequest) {
         double nonRefinancableShortTermLoans = nonRefinancableShortTermLoans();
         
         if(nonRefinancableShortTermLoans > idealLoanRequest.shortTermLoan) {
-            double debtService = -ExcelFunctions.pmt(longTermInterestRate.value, idealLoanRequest.longTermLoanDuration, nonRefinancableShortTermLoans - idealLoanRequest.shortTermLoan);
-            return shortTermInterestRate.multiply(idealLoanRequest.shortTermLoan) + debtService;
+            double debtService = -ExcelFunctions.pmt(interestRates.longTermInterestRate.value, idealLoanRequest.longTermLoanDuration, nonRefinancableShortTermLoans - idealLoanRequest.shortTermLoan);
+            return interestRates.shortTermInterestRate.multiply(idealLoanRequest.shortTermLoan) + debtService;
         } else {
-            return shortTermInterestRate.multiply(nonRefinancableShortTermLoans);
+            return interestRates.shortTermInterestRate.multiply(nonRefinancableShortTermLoans);
         }
     }
     
-    public double calculateYearlyDebtServiceForLongTermLoans(InterestRate shortTermInterestRate, InterestRate longTermInterestRate, LocalDate currentDate) {
+    public double calculateYearlyDebtServiceForLongTermLoans(InterestRates interestRates, LocalDate currentDate) {
         double yearlyDebtServiceForExistingLoans = 0;
         
         for(ExistingLoan existingLoan : existingLoansRefinancingMap.keySet()) {
             if(existingLoan.isLongTemLoan() && !refinance(existingLoan)) {
-                yearlyDebtServiceForExistingLoans += existingLoan.calculateYearlyDebtService(shortTermInterestRate, longTermInterestRate, currentDate);
+                yearlyDebtServiceForExistingLoans += existingLoan.calculateYearlyDebtService(interestRates, currentDate);
             }
         }
         

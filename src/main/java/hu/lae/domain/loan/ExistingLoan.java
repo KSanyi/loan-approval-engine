@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import hu.lae.domain.riskparameters.InterestRate;
+import hu.lae.domain.riskparameters.InterestRates;
 import hu.lae.util.ExcelFunctions;
 
 public class ExistingLoan {
@@ -43,12 +43,12 @@ public class ExistingLoan {
         return type == LoanType.LongTerm;
     }
     
-    public double calculateYearlyDebtService(InterestRate shortTermInterestRate, InterestRate longTermInterestRate, LocalDate currentDate) {
+    public double calculateYearlyDebtService(InterestRates interestRates, LocalDate currentDate) {
         if(isShortTemLoan()) {
-            return shortTermInterestRate.multiply(amount);
+            return interestRates.shortTermInterestRate.multiply(amount);
         } else {
             double quartersUntilMaturity = ChronoUnit.DAYS.between(currentDate, expiry.get()) / 90.0;
-            return -ExcelFunctions.pmt(longTermInterestRate.value, quartersUntilMaturity, amount, 0, 0) * 4;
+            return -ExcelFunctions.pmt(interestRates.longTermInterestRate.value, quartersUntilMaturity, amount, 0, 0) * 4;
         }
     }
     
