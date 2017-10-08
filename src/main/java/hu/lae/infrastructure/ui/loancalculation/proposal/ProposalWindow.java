@@ -233,12 +233,12 @@ public class ProposalWindow extends Window {
         double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, paybackYearsCombo.getValue(), existingLoansRefinancingTable.getValue(), cashflowCalculatorCombo.getValue());
         
         double ownEquityRatioAverage = loanCalculator.industryData.ownEquityRatioAverage(client.industry);
-        double loanIncrement = loanRequest.sum() - existingLoansRefinancingTable.getValue().refinancableLoans();
+        double loanIncrement = loanRequest.sum() - existingLoansRefinancingTable.getValue().sumOfRefinancableLoans();
         int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio(loanIncrement));
         
         List<String> errorMessages = new ArrayList<>();
         
-        if(loanRequest.sum() < existingLoansRefinancingTable.getValue().refinancableLoans()) {
+        if(loanRequest.sum() < existingLoansRefinancingTable.getValue().sumOfRefinancableLoans()) {
             errorMessages.add("Loan request must be enough to cover the existing refinanceable loans");
         }
         

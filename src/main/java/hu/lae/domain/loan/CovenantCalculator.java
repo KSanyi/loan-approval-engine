@@ -13,7 +13,7 @@ public class CovenantCalculator {
     
     public static double calculateDebtCapacityUsage(LoanRequest loanRequest, double maxDebtCapacity, ExistingLoansRefinancing existingLoansRefinancing) {
         
-        double nonRefinancableExistingLoans = existingLoansRefinancing.nonRefinancableLoans();
+        double nonRefinancableExistingLoans = existingLoansRefinancing.sumOfNonRefinancableLoans();
         double debtCapacityUsage = (loanRequest.sum() + nonRefinancableExistingLoans) / maxDebtCapacity;
 
         logger.debug("Calculated Debt Capacity Usage: " + debtCapacityUsage);
@@ -27,7 +27,7 @@ public class CovenantCalculator {
 
     public double calculateRequiredTurnover(ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, long turnover) {
         
-        double allLoans = existingLoansRefinancing.nonRefinancableLoans() + loanRequest.sum();
+        double allLoans = existingLoansRefinancing.sumOfNonRefinancableLoans() + loanRequest.sum();
         
         double localLoans = existingLoansRefinancing.localNonRefinancableLoans() +  + loanRequest.sum();
         
@@ -42,7 +42,7 @@ public class CovenantCalculator {
     
     public double calculateLocalLoansRatio(ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest) {
         
-        double allLoans = existingLoansRefinancing.nonRefinancableLoans() + loanRequest.sum();
+        double allLoans = existingLoansRefinancing.sumOfNonRefinancableLoans() + loanRequest.sum();
         
         double localLoans = allLocalLoans(existingLoansRefinancing, loanRequest);
         

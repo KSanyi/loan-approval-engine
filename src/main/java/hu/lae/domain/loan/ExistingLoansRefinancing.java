@@ -51,14 +51,20 @@ public class ExistingLoansRefinancing {
         return yearlyDebtServiceForExistingLoans;
     }
 
-    public double nonRefinancableLoans() {
+    public List<ExistingLoan> nonRefinancableLoans() {
+        return existingLoansRefinancingMap.keySet().stream()
+            .filter(loan -> !refinance(loan))
+            .collect(Collectors.toList());
+    }
+    
+    public double sumOfNonRefinancableLoans() {
         return existingLoansRefinancingMap.keySet().stream()
             .filter(loan -> !refinance(loan))
             .mapToLong(l -> l.amount)
             .sum();
     }
     
-    public long refinancableLoans() {
+    public long sumOfRefinancableLoans() {
         return existingLoansRefinancingMap.keySet().stream()
             .filter(this::refinance)
             .mapToLong(l -> l.amount)

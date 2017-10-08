@@ -113,9 +113,11 @@ public class DebtServiceChart extends ChartJs {
     
     private static List<BarDataset> createExistingLoanDatasets(List<LocalDate> dates, ExistingLoansRefinancing existingLoansRefinancing, InterestRates interestRates) {
         
+    	List<ExistingLoan> nonRefinancedLoans = existingLoansRefinancing.nonRefinancableLoans();
+    	
         List<BarDataset> datasets = new ArrayList<>();
         int index = 1;
-        for(ExistingLoan existingLoan : existingLoansRefinancing.existingLoansRefinancingMap.keySet()) {
+        for(ExistingLoan existingLoan : nonRefinancedLoans) {
         	double yearlyDebtService = existingLoan.calculateYearlyDebtService(interestRates, Clock.date());
             if(existingLoan.isShortTemLoan()) {
                 List<Double> data = dates.stream().map(d -> MathUtil.round(yearlyDebtService / 4, 1)).collect(Collectors.toList());
@@ -126,7 +128,7 @@ public class DebtServiceChart extends ChartJs {
         }
         
         index = 1;
-        for(ExistingLoan existingLoan : existingLoansRefinancing.existingLoansRefinancingMap.keySet()) {
+        for(ExistingLoan existingLoan : nonRefinancedLoans) {
             if(existingLoan.isLongTemLoan()) {
             	double yearlyDebtService = existingLoan.calculateYearlyDebtService(interestRates, Clock.date());
                 List<Double> data = dates.stream()
