@@ -1,14 +1,9 @@
 package hu.lae.infrastructure.ui.loancalculation.decision;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
@@ -19,23 +14,19 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.HtmlRenderer;
-import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
+import hu.lae.domain.finance.FreeCashFlowCalculator;
 import hu.lae.domain.loan.CovenantCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.Loan;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.riskparameters.RiskParameters;
-import hu.lae.domain.validation.EquityRatioValidator;
-import hu.lae.domain.validation.LiquidityValidator;
-import hu.lae.domain.validation.ValidationResult;
 import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.infrastructure.ui.loancalculation.proposal.ProposalWindow;
 import hu.lae.util.Formatters;
-import hu.lae.util.Pair;
 
 @SuppressWarnings("serial")
 public class DecisionWindow extends Window {
@@ -88,7 +79,7 @@ public class DecisionWindow extends Window {
         dscrField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
         dscrField.setReadOnly(true);
         
-        VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), dscrField, createAllLoansTable());
+        VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), createEquityRatioTable(), dscrField, createAllLoansTable());
         column1.setMargin(false);
         
         VerticalLayout column2 = new VerticalLayout(createWarningsTable(), createCovenantTable());
@@ -107,76 +98,31 @@ public class DecisionWindow extends Window {
     
     private Grid<EbitdaTableRow> createEbitdaTable() {
         
-        List<Integer> years = client.financialHistory.years();
-        
-        Grid<EbitdaTableRow> grid = new Grid<>();
-        grid.addColumn(row -> row.caption).setCaption("");
-        years.stream().forEach(year -> grid.addColumn(row -> row.ebitdas.get(year)).setCaption(year + ""));
-        grid.addColumn(row -> row.lastChange, new NumberRenderer(new DecimalFormat("0.0%"))).setCaption("Last growth");
-        
-        Map<Integer, Long> ebitdas = client.financialHistory.incomeStatementHistory().ebitdas();
-        Map<Integer, Long> sales = client.financialHistory.incomeStatementHistory().sales();
-        
-        List<EbitdaTableRow> items = Arrays.asList(
-                new EbitdaTableRow("EBITDA",ebitdas, client.financialHistory.incomeStatementHistory().ebitdaGrowth()),
-                new EbitdaTableRow("Sales", sales, client.financialHistory.incomeStatementHistory().salesGrowth()));
-        grid.setItems(items);
-        
-        grid.addStyleName(VaadinUtil.GRID_SMALL);
-        grid.setCaption("EBITDA & Sales & Free CF");
-        grid.setHeightMode(HeightMode.ROW);
-        grid.setHeightByRows(2);
-        
-        return grid;
+        return new EbitdaTable(client.financialHistory);
     }
     
-    private Grid<FreeCFTableRow> createFreeCFTable() {
-        Grid<FreeCFTableRow> grid = new Grid<>();
-        grid.addColumn(row -> row.caption).setCaption("");
-        grid.addColumn(row -> row.value).setCaption("Free CF");
-        
-        List<FreeCFTableRow> items = Arrays.asList(
-                new FreeCFTableRow("W Last year", 0),
-                new FreeCFTableRow("W Corrected", 0));
-        grid.setItems(items);
-        
-        grid.addStyleName(VaadinUtil.GRID_SMALL);
-        //grid.setCaption("EBITDA & Sales & Free CF");
-        grid.setHeightMode(HeightMode.ROW);
-        grid.setHeightByRows(2);
-        grid.setWidth("250px");
-        return grid;
+    private FreeCashFlowTable createFreeCFTable() {
+        double lastYearBasedFCF = FreeCashFlowCalculator.lastYear.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
+        double averageBasedFCF = FreeCashFlowCalculator.average.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
+        return new FreeCashFlowTable(lastYearBasedFCF, averageBasedFCF);
     }
     
-    private Grid<CovenantTableRow> createCovenantTable() {
-        Grid<CovenantTableRow> grid = new Grid<>();
-        grid.addColumn(row -> row.caption).setCaption("Covenant");
-        grid.addColumn(row -> row.value).setCaption("Value").setStyleGenerator(item -> "v-align-right");
-        grid.addColumn(row -> row.message).setCaption("Contractual covenant");
+    private EquityRatioTable createEquityRatioTable() {
+        double equityRatioBeforeLoan = client.financialHistory.lastFinancialStatementData().balanceSheet.liabilities.equityRatio();
+        double equityRatioAfterLoan = client.financialHistory.lastFinancialStatementData().balanceSheet.liabilities.equityRatio(loanRequest.sum());
+        return new EquityRatioTable(equityRatioBeforeLoan, equityRatioAfterLoan);
+    }
+    
+    private CovenantTable createCovenantTable() {
         
         CovenantCalculator covenantCalculator = new CovenantCalculator(riskParameters.thresholds.turnoverRequirement);
         double turnoverReqValue = covenantCalculator.calculateRequiredTurnover(existingLoansRefinancing, loanRequest, client.financialStatementData().incomeStatement.sales);
         double debtCapacityUsage = CovenantCalculator.calculateDebtCapacityUsage(loanRequest, maxDebtCapacity, existingLoansRefinancing);
         double localLoansRatio = covenantCalculator.calculateLocalLoansRatio(existingLoansRefinancing, loanRequest);
         double allLocalLoans = covenantCalculator.allLocalLoans(existingLoansRefinancing, loanRequest);
-        
-        boolean furtherIndebtnessOk = debtCapacityUsage <= riskParameters.thresholds.debtCapacity;
-        boolean localLoansRatioOk = localLoansRatio <= riskParameters.thresholds.localLoanRatio;
-        
-        List<CovenantTableRow> items = Arrays.asList(
-                new CovenantTableRow("Turnover requirement", "", "Min HUF " + Formatters.formatAmount(turnoverReqValue) + " mln turnover"),
-                new CovenantTableRow("Further indebtedness", Formatters.formatPercent(debtCapacityUsage), furtherIndebtnessOk ? "-" : "No further indebtedness"),
-                new CovenantTableRow("Account opening clause", Formatters.formatDecimal(localLoansRatio), localLoansRatioOk ? "No restriction" : "Further accounts w bank consent"),
-                new CovenantTableRow("Collateral requirement", "", riskParameters.collateralRequirement.evaluate(client.pd, (long)allLocalLoans, debtCapacityUsage)));
+        String collateralRequirement = riskParameters.collateralRequirement.evaluate(client.pd, (long)allLocalLoans, debtCapacityUsage);
 
-        grid.setItems(items);
-        
-        grid.addStyleName(VaadinUtil.GRID_SMALL);
-        grid.setCaption("Covenants");
-        grid.setHeightMode(HeightMode.ROW);
-        grid.setHeightByRows(items.size());
-        grid.setWidth("600px");
-        return grid;
+        return new CovenantTable(turnoverReqValue, debtCapacityUsage, localLoansRatio, allLocalLoans, collateralRequirement, riskParameters.thresholds);
     }
     
     private Grid<Loan> createAllLoansTable() {
@@ -199,136 +145,9 @@ public class DecisionWindow extends Window {
         return grid;
     }
     
-    private Grid<WariningTableRow> createWarningsTable() {
+    private WarningTable createWarningsTable() {
         
-        List<Integer> years = client.financialHistory.years();
-        
-        Grid<WariningTableRow> grid = new Grid<>();
-        grid.addColumn(row -> row.caption).setCaption("");
-        years.stream().forEach(year -> grid.addColumn(row -> row.values.get(year).v1)
-                .setCaption(year + "")
-                .setStyleGenerator(row -> row.values.get(year).v2.type.name()));
-        
-        //grid.setDescriptionGenerator(g -> g.validationResult.toString());
-        
-        Map<Integer, Pair<String, ValidationResult>> ownEquityValues = client.financialHistory.financialStatements.stream()
-                .collect(Collectors.toMap(f -> f.year, f -> {
-                double ownEquity = f.balanceSheet.liabilities.ownEquity;
-                return new Pair<>(Formatters.formatAmount(ownEquity), ValidationResult.Ok());   
-            }));
-        
-        EquityRatioValidator equityRatioValidator = new EquityRatioValidator(riskParameters.thresholds.equityRatio);
-        
-        Map<Integer, Pair<String, ValidationResult>> equityRatios = client.financialHistory.financialStatements.stream()
-            .collect(Collectors.toMap(f -> f.year, f -> {
-            double equityRatio = f.balanceSheet.liabilities.equityRatio();
-            return new Pair<>(Formatters.formatAmount(equityRatio), equityRatioValidator.validate(f));   
-        }));
-        
-        LiquidityValidator liquidityRatioValidator = new LiquidityValidator(existingLoansRefinancing.nonRefinancableShortTermLoans(), riskParameters.thresholds.liquidityRatio);
-        
-        Map<Integer, Pair<String, ValidationResult>> liquidityRatios1 = client.financialHistory.financialStatements.stream()
-                .collect(Collectors.toMap(f -> f.year, f -> {
-                double liquidityRatio = f.balanceSheet.liquidityRatio1(existingLoansRefinancing.nonRefinancableShortTermLoans() + loanRequest.shortTermLoan);
-                
-                return client.financialHistory.lastFinancialStatementData().year == f.year ? 
-                        new Pair<>(Formatters.formatDecimal(liquidityRatio), liquidityRatioValidator.validateRatio1(f, loanRequest)) : new Pair<>("NA", ValidationResult.Ok());
-            }));
-        
-        Map<Integer, Pair<String, ValidationResult>> liquidityRatios2 = client.financialHistory.financialStatements.stream()
-                .collect(Collectors.toMap(f -> f.year, f -> {
-                double liquidityRatio = f.balanceSheet.liquidityRatio2();
-                return client.financialHistory.lastFinancialStatementData().year == f.year ? 
-                        new Pair<>(Formatters.formatDecimal(liquidityRatio), liquidityRatioValidator.validateRatio2(f)) : new Pair<>("NA", ValidationResult.Ok());
-            }));
-        
-        Map<Integer, Pair<String, ValidationResult>> liquidityRatios3 = client.financialHistory.financialStatements.stream()
-                .collect(Collectors.toMap(f -> f.year, f -> {
-                double liquidityRatio = f.balanceSheet.liquidityRatio3();
-                return client.financialHistory.lastFinancialStatementData().year == f.year ? 
-                        new Pair<>(Formatters.formatDecimal(liquidityRatio), liquidityRatioValidator.validateRatio3(f)) : new Pair<>("NA", ValidationResult.Ok());
-            }));
-        
-        Map<Integer, Pair<String, ValidationResult>> supplierDaysValues = client.financialHistory.financialStatements.stream()
-                .collect(Collectors.toMap(f -> f.year, f -> {
-                return new Pair<>(Formatters.formatDecimal(f.supplierDays()), ValidationResult.Ok());   
-        }));
-        
-        Map<Integer, Pair<String, ValidationResult>> buyersDays = client.financialHistory.financialStatements.stream()
-                .collect(Collectors.toMap(f -> f.year, f -> {
-                return new Pair<>(Formatters.formatDecimal(f.buyersDays()), ValidationResult.Ok());   
-        }));
-        
-        Map<Integer, Pair<String, ValidationResult>> stockDays = client.financialHistory.financialStatements.stream()
-                .collect(Collectors.toMap(f -> f.year, f -> {
-                return new Pair<>(Formatters.formatDecimal(f.stockDays()), ValidationResult.Ok());   
-        }));
-        
-        List<WariningTableRow> items = Arrays.asList(
-                new WariningTableRow("Equity value", ownEquityValues),
-                new WariningTableRow("Equity ratio", equityRatios),
-                new WariningTableRow("Liquidity ratio 1", liquidityRatios1),
-                new WariningTableRow("Liquid. ratio 2 wo credit", liquidityRatios2),
-                new WariningTableRow("Liquid. ratio 3 wo cred&cash", liquidityRatios3),
-                new WariningTableRow("Suppliers day", supplierDaysValues),
-                new WariningTableRow("Buyers days", buyersDays),
-                new WariningTableRow("Stock days", stockDays));
-        grid.setItems(items);
-        
-        grid.addStyleName(VaadinUtil.GRID_SMALL);
-        grid.setCaption("Warnings & KOs");
-        grid.setHeightMode(HeightMode.ROW);
-        grid.setHeightByRows(8);
-        grid.setSelectionMode(SelectionMode.NONE);
-        
-        return grid;
+        return new WarningTable(riskParameters.thresholds, client.financialHistory, loanRequest, existingLoansRefinancing);
     }
     
-    private static class EbitdaTableRow {
-        
-        final String caption;
-        final Map<Integer, Long> ebitdas;
-        final double lastChange;
-
-        public EbitdaTableRow(String caption, Map<Integer, Long> ebitdas, double lastChange) {
-            this.caption = caption;
-            this.ebitdas = ebitdas;
-            this.lastChange = lastChange;
-        }
-    }
-    
-    private static class WariningTableRow {
-        
-        final String caption;
-        final Map<Integer, Pair<String, ValidationResult>> values;
-
-        public WariningTableRow(String caption, Map<Integer, Pair<String, ValidationResult>> values) {
-            this.caption = caption;
-            this.values = values;
-        }
-    }
-    
-    private static class FreeCFTableRow {
-        
-        final String caption;
-        final Integer value;
-
-        public FreeCFTableRow(String caption, Integer value) {
-            this.caption = caption;
-            this.value = value;
-        }
-    }
-    
-    private static class CovenantTableRow {
-        
-        final String caption;
-        final String value;
-        final String message;
-
-        public CovenantTableRow(String caption, String value, String message) {
-            this.caption = caption;
-            this.value = value;
-            this.message = message;
-        }
-    }
 }

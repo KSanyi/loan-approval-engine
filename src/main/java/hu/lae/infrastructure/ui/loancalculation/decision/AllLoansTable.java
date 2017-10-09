@@ -27,6 +27,5 @@ class AllLoansTable extends Grid<Loan> {
         setHeightByRows(loans.size());
         addStyleName(VaadinUtil.GRID_SMALL);
     }
-    
 
 }

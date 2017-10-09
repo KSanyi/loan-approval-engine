@@ -19,7 +19,7 @@ public class EquityRatioValidator {
         double equityRatio = financialStatement.balanceSheet.liabilities.equityRatio();
         
         if(equityRatio < threshold) {
-            return ValidationResult.Ko("Liquidity ratio2 (" + DF.format(equityRatio) + ") is below threshold (" + threshold + ")");
+            return ValidationResult.Ko("Equity ratio (" + DF.format(equityRatio) + ") is below threshold (" + threshold + ")");
         }
         
         return ValidationResult.Ok();
