@@ -3,15 +3,16 @@ package hu.lae.infrastructure.ui.loancalculation.proposal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
 import hu.lae.domain.loan.ExistingLoan;
@@ -25,9 +26,11 @@ import hu.lae.util.Formatters;
 @SuppressWarnings("serial")
 class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing> {
 
-    private final Grid<ExistingLoan> grid;
+    private final Grid<ExistingLoanRow> grid;
     
     private ExistingLoans existingLoans;
+    
+    private final List<ExistingLoanRow> rows;
     
     private final List<RefinanceChangeListener> refinanceChangeListeners = new ArrayList<>();
     
@@ -37,44 +40,55 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
         this.existingLoans = existingLoans;
         this.interestRates = interestRates;
         grid = new Grid<>();
+        rows = existingLoans.existingLoans.stream().map(ExistingLoanRow::new).collect(Collectors.toList());
     }
     
     @Override
     public ExistingLoansRefinancing getValue() {
-        return new ExistingLoansRefinancing(existingLoans.existingLoans.stream()
-                .collect(Collectors.toMap(Function.identity(), grid.getSelectedItems()::contains)));
+        return new ExistingLoansRefinancing(rows.stream()
+                .collect(Collectors.toMap(row -> row.existingLoan, row -> row.refinanced.getValue())));
     }
 
     @Override
     protected Component initContent() {
-        grid.addColumn(l -> l.type.toString()).setCaption("Type");
- 
         
-        grid.addColumn(l -> Formatters.formatAmount(l.amount))
+        grid.addColumn(l -> l.refinanced, new ComponentRenderer())
+            .setCaption("Refinance")
+            .setWidth(100)
+            .setStyleGenerator(item -> "v-align-center");
+        
+        grid.addColumn(l -> l.existingLoan.type.toString()).setCaption("Type");
+        
+        grid.addColumn(l -> Formatters.formatAmount(l.existingLoan.amount))
             .setCaption("Amount")
             .setWidth(90)
             .setStyleGenerator(item -> "v-align-right");
         
-        grid.addColumn(l -> l.isOwn ? VaadinIcons.HOME.getHtml() : "")
+        grid.addColumn(l -> l.existingLoan.isOwn ? VaadinIcons.HOME.getHtml() : "")
             .setCaption("Own")
             .setRenderer(new HtmlRenderer())
             .setWidth(80)
             .setStyleGenerator(item -> "v-align-center");
         
-        grid.addColumn(l -> l.expiry.map(LocalDate::toString).orElse(""))
+        grid.addColumn(l -> l.existingLoan.expiry.map(LocalDate::toString).orElse(""))
             .setCaption("Expiry")
             .setWidth(120);
         
-        grid.addColumn(l -> Formatters.formatAmount(l.calculateYearlyDebtService(interestRates, Clock.date())))
+        grid.addColumn(l -> Formatters.formatAmount(l.existingLoan.calculateYearlyDebtService(interestRates, Clock.date())))
             .setCaption("Debt service")
             .setWidth(120)
             .setStyleGenerator(item -> "v-align-right");
 
-        grid.setWidth("600px");
-        grid.setSelectionMode(SelectionMode.MULTI);
-        grid.addSelectionListener(v -> refinanceChangeListeners.stream().forEach(l -> l.changeHappened()));
+        grid.setWidth("620px");
+        grid.setSelectionMode(SelectionMode.NONE);
         
-        grid.setItems(existingLoans.existingLoans);
+        grid.getColumns().stream().forEach(column -> {
+            column.setResizable(false);
+            column.setSortable(false);
+        });
+        
+        grid.setItems(rows);
+        rows.stream().forEach(row -> row.refinanced.addValueChangeListener(v -> refinanceChangeListeners.stream().forEach(l -> l.changeHappened())));
         
         grid.setHeightByRows(Math.max(1, existingLoans.existingLoans.size()));
         grid.addStyleName(VaadinUtil.GRID_SMALL);
@@ -98,5 +112,17 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
     static interface RefinanceChangeListener {
         void changeHappened();
     }
+    
+}
 
+class ExistingLoanRow {
+    
+    final CheckBox refinanced = new CheckBox();
+    
+    final ExistingLoan existingLoan;
+
+    public ExistingLoanRow(ExistingLoan existingLoan) {
+        this.existingLoan = existingLoan;
+    }
+    
 }
