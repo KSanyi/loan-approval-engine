@@ -26,7 +26,7 @@ public class ExistingLoanField extends CustomField<ExistingLoan> {
     
     private final DateField expiryField = new DateField("Expiry");
     
-    private final CheckBox isLocalCheckBox = new CheckBox("Erste loan");
+    private final CheckBox isOwnCheckBox = new CheckBox("Own loan");
     
     public ExistingLoanField(ExistingLoan existingLoan) {
         
@@ -43,26 +43,26 @@ public class ExistingLoanField extends CustomField<ExistingLoan> {
         loanTypeRadio.setValue(existingLoan.expiry.isPresent() ? LoanType.LongTerm : LoanType.ShortTerm);
         amountField.setAmount(existingLoan.amount);
         expiryField.setValue(existingLoan.expiry.orElse(null));
-        isLocalCheckBox.setValue(existingLoan.isLocal);
+        isOwnCheckBox.setValue(existingLoan.isOwn);
     }
     
     @Override
     public ExistingLoan getValue() {
         if(expiryField.getValue() == null) {
-            return ExistingLoan.newShortTermLoan(amountField.getAmount(), isLocalCheckBox.getValue());
+            return ExistingLoan.newShortTermLoan(amountField.getAmount(), isOwnCheckBox.getValue());
         } else {
-            return ExistingLoan.newLongTermLoan(amountField.getAmount(), expiryField.getValue(), isLocalCheckBox.getValue());
+            return ExistingLoan.newLongTermLoan(amountField.getAmount(), expiryField.getValue(), isOwnCheckBox.getValue());
         }
     }
 
     @Override
     protected Component initContent() {
-        HorizontalLayout horizontalLayout = new HorizontalLayout(loanTypeRadio, amountField, expiryField, isLocalCheckBox);
+        HorizontalLayout horizontalLayout = new HorizontalLayout(loanTypeRadio, amountField, expiryField, isOwnCheckBox);
         horizontalLayout.setComponentAlignment(amountField, Alignment.MIDDLE_CENTER);
         horizontalLayout.setComponentAlignment(expiryField, Alignment.MIDDLE_CENTER);
-        horizontalLayout.setComponentAlignment(isLocalCheckBox, Alignment.MIDDLE_CENTER);
+        horizontalLayout.setComponentAlignment(isOwnCheckBox, Alignment.MIDDLE_CENTER);
         
-        isLocalCheckBox.addStyleName(ValoTheme.CHECKBOX_SMALL);
+        isOwnCheckBox.addStyleName(ValoTheme.CHECKBOX_SMALL);
         
         loanTypeRadio.addStyleName(ValoTheme.CHECKBOX_SMALL);
         

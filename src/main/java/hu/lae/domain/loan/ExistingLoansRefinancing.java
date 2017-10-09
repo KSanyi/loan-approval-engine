@@ -74,7 +74,7 @@ public class ExistingLoansRefinancing {
     public long localNonRefinancableLoans() {
         return existingLoansRefinancingMap.keySet().stream()
             .filter(loan -> !refinance(loan))
-            .filter(loan -> loan.isLocal)
+            .filter(loan -> loan.isOwn)
             .mapToLong(l -> l.amount)
             .sum();
     }

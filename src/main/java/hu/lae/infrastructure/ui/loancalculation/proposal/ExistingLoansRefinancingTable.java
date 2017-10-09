@@ -55,7 +55,7 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
             .setWidth(90)
             .setStyleGenerator(item -> "v-align-right");
         
-        grid.addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "")
+        grid.addColumn(l -> l.isOwn ? VaadinIcons.HOME.getHtml() : "")
             .setCaption("Own")
             .setRenderer(new HtmlRenderer())
             .setWidth(80)

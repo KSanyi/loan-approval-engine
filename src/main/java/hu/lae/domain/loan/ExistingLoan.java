@@ -12,26 +12,26 @@ import hu.lae.util.ExcelFunctions;
 
 public class ExistingLoan {
 
-    public static ExistingLoan newShortTermLoan(long amount, boolean isLocal) {
-        return new ExistingLoan(amount, Optional.empty(), isLocal, LoanType.ShortTerm);
+    public static ExistingLoan newShortTermLoan(long amount, boolean isOwn) {
+        return new ExistingLoan(amount, Optional.empty(), isOwn, LoanType.ShortTerm);
     }
     
-    public static ExistingLoan newLongTermLoan(long amount, LocalDate expiry, boolean isLocal) {
-        return new ExistingLoan(amount, Optional.of(expiry), isLocal, LoanType.LongTerm);
+    public static ExistingLoan newLongTermLoan(long amount, LocalDate expiry, boolean isOwn) {
+        return new ExistingLoan(amount, Optional.of(expiry), isOwn, LoanType.LongTerm);
     }
     
     public final long amount;
     
     public final Optional<LocalDate> expiry;
     
-    public final boolean isLocal;
+    public final boolean isOwn;
     
     public final LoanType type;
 
-    private ExistingLoan(long amount, Optional<LocalDate> expiry, boolean isLocal, LoanType type) {
+    private ExistingLoan(long amount, Optional<LocalDate> expiry, boolean isOwn, LoanType type) {
         this.amount = amount;
         this.expiry = expiry;
-        this.isLocal = isLocal;
+        this.isOwn = isOwn;
         this.type = type;
     }
     
@@ -53,7 +53,7 @@ public class ExistingLoan {
     }
     
     public Loan toLoan(boolean refinanced) {
-        return new Loan(false, amount, type, isLocal, refinanced);
+        return new Loan(false, amount, type, isOwn, refinanced);
     }
     
     @Override

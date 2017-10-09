@@ -14,11 +14,11 @@ import hu.lae.util.Formatters;
 class AllLoansTable extends Grid<Loan> {
 
     AllLoansTable(List<Loan> loans) {
-        addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "").setCaption("Új").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
+        addColumn(l -> l.isOwn ? VaadinIcons.HOME.getHtml() : "").setCaption("Új").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
         addColumn(l -> l.loanType.name()).setCaption("Tipus");
         addColumn(l -> Formatters.formatAmount(l.amount)).setCaption("Összeg").setWidth(90).setStyleGenerator(item -> "v-align-right");
-        addColumn(l -> l.isLocal ? VaadinIcons.HOME.getHtml() : "").setCaption("Erstés").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
-        addColumn(l -> l.isLocal ? VaadinIcons.STAR.getHtml() : "").setCaption("Új").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
+        addColumn(l -> l.isOwn ? VaadinIcons.HOME.getHtml() : "").setCaption("Erstés").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
+        addColumn(l -> l.isOwn ? VaadinIcons.STAR.getHtml() : "").setCaption("Új").setRenderer(new HtmlRenderer()).setWidth(80).setStyleGenerator(item -> "v-align-center");
 
         setSelectionMode(SelectionMode.NONE);
         
