@@ -1,5 +1,7 @@
 package hu.lae.domain.legal;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -14,12 +16,20 @@ public class LegalIssueEvaluation {
     
     public final EvaluationEntry companyGroupEntry;
     
-    public final int materialityThreshold;
+    public final Optional<Integer> materialityThreshold;
     
-    public LegalIssueEvaluation(EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry, int materialityThreshold) {
+    private LegalIssueEvaluation(EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry, Optional<Integer> materialityThreshold) {
         this.companyEntry = companyEntry;
         this.companyGroupEntry = companyGroupEntry;
         this.materialityThreshold = materialityThreshold;
+    }
+    
+    public LegalIssueEvaluation(EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry) {
+        this(companyEntry, companyGroupEntry, Optional.empty());
+    }
+    
+    public LegalIssueEvaluation(EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry, int materialityThreshold) {
+        this(companyEntry, companyGroupEntry, Optional.of(materialityThreshold));
     }
     
     public Level evaluate(LegalIssue issue) {
