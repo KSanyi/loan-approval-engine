@@ -43,7 +43,7 @@ class WarningTable extends Grid<WarningTableRow> {
         Map<Integer, Pair<String, ValidationResult>> equityRatios = financialHistory.financialStatements.stream()
             .collect(Collectors.toMap(f -> f.year, f -> {
             double equityRatio = f.balanceSheet.liabilities.equityRatio();
-            return new Pair<>(Formatters.formatAmount(equityRatio), equityRatioValidator.validate(f));   
+            return new Pair<>(Formatters.formatPercent(equityRatio), equityRatioValidator.validate(f));   
         }));
         
         LiquidityValidator liquidityRatioValidator = new LiquidityValidator(existingLoansRefinancing.nonRefinancableShortTermLoans(), thresholds.liquidityRatio);
