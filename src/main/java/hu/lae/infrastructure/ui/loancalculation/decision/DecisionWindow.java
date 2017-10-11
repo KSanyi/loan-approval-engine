@@ -109,7 +109,8 @@ public class DecisionWindow extends Window {
     
     private EquityRatioTable createEquityRatioTable() {
         double equityRatioBeforeLoan = client.financialHistory.lastFinancialStatementData().balanceSheet.liabilities.equityRatio();
-        double equityRatioAfterLoan = client.financialHistory.lastFinancialStatementData().balanceSheet.liabilities.equityRatio(loanRequest.sum());
+        double loanIncrement = loanRequest.sum() - existingLoansRefinancing.sumOfRefinancableLoans();
+        double equityRatioAfterLoan = client.financialHistory.lastFinancialStatementData().balanceSheet.liabilities.equityRatio(loanIncrement);
         return new EquityRatioTable(equityRatioBeforeLoan, equityRatioAfterLoan);
     }
     
