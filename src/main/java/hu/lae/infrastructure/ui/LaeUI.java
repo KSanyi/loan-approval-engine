@@ -59,6 +59,7 @@ public class LaeUI extends UI {
 	}
 	
 	private void buildUI(UserInfo userInfo) {
+	    this.userInfo = userInfo;
 	    logger.info(userInfo.loginName + " logged in");
 	    
 	    VerticalLayout pageLayout = new VerticalLayout(new Header(userInfo), new Menu(), mainScreenHolder);
