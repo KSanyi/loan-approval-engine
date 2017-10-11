@@ -1,7 +1,6 @@
 package hu.lae.infrastructure.ui.loancalculation.proposal;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -31,6 +30,7 @@ import hu.lae.domain.loan.DSCRCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
+import hu.lae.domain.loan.LoanRequestValidator;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.domain.validation.LiquidityValidator;
 import hu.lae.domain.validation.ValidationResult;
@@ -228,31 +228,9 @@ public class ProposalWindow extends Window {
     
     private List<String> validate(LoanRequest loanRequest) {
         
-        //TODO make it smarter
-        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, loanRequest.longTermLoan, paybackYearsCombo.getValue(), existingLoansRefinancingTable.getValue(), cashflowCalculatorCombo.getValue());
-        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, paybackYearsCombo.getValue(), existingLoansRefinancingTable.getValue(), cashflowCalculatorCombo.getValue());
+        LoanRequestValidator loanRequestValidator =  new LoanRequestValidator(loanCalculator);
         
-        double ownEquityRatioAverage = loanCalculator.industryData.ownEquityRatioAverage(client.industry);
-        double loanIncrement = loanRequest.sum() - existingLoansRefinancingTable.getValue().sumOfRefinancableLoans();
-        int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio(loanIncrement));
-        
-        List<String> errorMessages = new ArrayList<>();
-        
-        if(loanRequest.sum() < existingLoansRefinancingTable.getValue().sumOfRefinancableLoans()) {
-            errorMessages.add("Loan request must be enough to cover the existing refinanceable loans");
-        }
-        
-        if(loanRequest.shortTermLoan > maxShortTermLoan) {
-            errorMessages.add("Short term loan must not exceed " + maxShortTermLoan);
-        }
-        if(loanRequest.longTermLoan > maxLongTermLoan) {
-            errorMessages.add("Long term loan must not exceed " + (long)maxLongTermLoan);
-        }
-        if(maxLoanDuration < paybackYearsCombo.getValue()) {
-        	errorMessages.add("Decrease loan amount or maturity shall be decreased to RP years");
-        }
-        
-        return errorMessages;
+        return loanRequestValidator.validate(cashflowCalculatorCombo.getValue(), client, existingLoansRefinancingTable.getValue(), loanRequest);
     }
     
     @Override
