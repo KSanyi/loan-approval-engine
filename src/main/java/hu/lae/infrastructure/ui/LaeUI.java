@@ -76,7 +76,8 @@ public class LaeUI extends UI {
 	}
 	
 	public static String currentUser() {
-        return current().userInfo.loginName;
+        UserInfo userInfo = current().userInfo;
+        return userInfo != null ? userInfo.name : "NO_USER";
     }
 
     public void showRiskParametersScreen() {
