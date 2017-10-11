@@ -13,6 +13,8 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.infrastructure.ui.LaeUI;
+
 @SuppressWarnings("serial")
 public class AmountField extends TextField {
 
@@ -73,7 +75,7 @@ public class AmountField extends TextField {
     
     private void setAmount(Long amount, boolean userOriginated) {
         if(userOriginated) {
-            logger.debug("USERACTION: " + name + " is set to " + amount);
+            logger.debug("USERACTION {}: {} is set to {}", LaeUI.currentUser(), name, amount);
         }
         this.amount = amount;
         doSetValue(FORMATTER.format(amount));

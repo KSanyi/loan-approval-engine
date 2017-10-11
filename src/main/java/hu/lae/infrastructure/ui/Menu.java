@@ -18,7 +18,7 @@ public class Menu extends MenuBar {
         setSizeFull();
         
         MenuItem openingHoursMenuItem = addItem("Menu", null);
-        openingHoursMenuItem.addItem("Parameters", new LoggerCommand(c -> LaeUI.getCurrent().showRiskParametersScreen()));
+        openingHoursMenuItem.addItem("Parameters", new LoggerCommand(c -> LaeUI.current().showRiskParametersScreen()));
     }
     
     private static class LoggerCommand implements Command {

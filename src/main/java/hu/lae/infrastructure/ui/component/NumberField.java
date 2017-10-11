@@ -10,6 +10,8 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.infrastructure.ui.LaeUI;
+
 @SuppressWarnings("serial")
 public class NumberField extends TextField {
 
@@ -45,7 +47,7 @@ public class NumberField extends TextField {
     
     private void setNumber(Double number, boolean userOriginated) {
         if(userOriginated) {
-            logger.debug("USERACTION: " + name + " is set to " + number);
+            logger.debug("USERACTION {}: {} is set to {}", LaeUI.currentUser(), name, number);
         }
         this.number = number;
         doSetValue(String.valueOf(number));

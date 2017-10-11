@@ -6,6 +6,8 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.lae.infrastructure.ui.LaeUI;
+
 @SuppressWarnings("serial")
 public class ComboBox<T> extends com.vaadin.ui.ComboBox<T> {
 
@@ -19,7 +21,7 @@ public class ComboBox<T> extends com.vaadin.ui.ComboBox<T> {
         super(caption, options);
         addValueChangeListener(e -> {
             if(e.isUserOriginated()) {
-                logger.debug("USERACTION: "+ id + ": '" + e.getValue() + "' selected");
+                logger.debug("USERACTION {}: {} '{}' selected", LaeUI.currentUser(), id, e.getValue());
             }
         });
     }

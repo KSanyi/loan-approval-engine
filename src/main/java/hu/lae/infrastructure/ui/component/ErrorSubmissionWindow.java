@@ -14,6 +14,8 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.infrastructure.ui.LaeUI;
+
 @SuppressWarnings("serial")
 public class ErrorSubmissionWindow extends Window {
 
@@ -49,7 +51,7 @@ public class ErrorSubmissionWindow extends Window {
         if(errorMessage == null || errorMessage.isEmpty()) {
             Notification.show("Please leave some message to help me debugging", Type.WARNING_MESSAGE);
         } else {
-            logger.error("Error was posted: " + textArea.getValue());
+            logger.error("Error was posted by {}: {}", LaeUI.currentUser(), textArea.getValue());
             close();
         }
     }

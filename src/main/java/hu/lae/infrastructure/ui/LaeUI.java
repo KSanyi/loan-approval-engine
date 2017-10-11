@@ -71,9 +71,13 @@ public class LaeUI extends UI {
 		setScreen(createClientScreen());
 	}
 	
-	public static LaeUI getCurrent() {
+	public static LaeUI current() {
 		return (LaeUI)UI.getCurrent();
 	}
+	
+	public static String currentUser() {
+        return current().userInfo.loginName;
+    }
 
     public void showRiskParametersScreen() {
         ParametersWindow.show(applicationService.riskParameterRepository, applicationService.legalParametersRepository, applicationService.industryDataRepository);

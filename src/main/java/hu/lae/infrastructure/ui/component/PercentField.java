@@ -12,6 +12,8 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
+import hu.lae.infrastructure.ui.LaeUI;
+
 @SuppressWarnings("serial")
 public class PercentField extends TextField {
     
@@ -50,7 +52,7 @@ public class PercentField extends TextField {
     
     private void setPercent(Double percent, boolean userOriginated) {
         if(userOriginated) {
-            logger.debug("USERACTION: " + name + " is set to " + percent);
+            logger.debug("USERACTION {}: {} is set to {}", LaeUI.currentUser(), name, percent);
         }
         this.percentValue = percent;
         doSetValue(FORMATTTER.format(percent));
