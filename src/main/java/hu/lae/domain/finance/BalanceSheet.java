@@ -1,6 +1,7 @@
 package hu.lae.domain.finance;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -102,6 +103,16 @@ public class BalanceSheet {
         public double equityRatio(double newLoan) {
             if(total == 0) return 0;  
             return ((double)ownEquity - evaluationReserve) / (total + newLoan);
+        }
+        
+        public Optional<Double> maxNewLoanToEquityRatio(double ratio) {
+            if(ratio == 0) return Optional.of(Double.MAX_VALUE);
+            double newLoan = ((double)ownEquity - evaluationReserve) / ratio - total;
+            if(newLoan >= 0) {
+               return Optional.of(newLoan);
+            } else {
+                return Optional.empty();
+            }
         }
         
         @Override

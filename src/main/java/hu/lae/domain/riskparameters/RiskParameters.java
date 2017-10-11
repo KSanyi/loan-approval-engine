@@ -51,5 +51,9 @@ public class RiskParameters {
 		Optional<Integer> maxLoanDurationCap = thresholds.ownEquityRatioThresholds.maxLoanDuration(ownEquityRatio, industryAverage);
 		return maxLoanDurationCap.map(cap -> Math.min(cap, maxLoanDurationByIndustry)).orElse(maxLoanDurationByIndustry);
 	}
+	
+	public Optional<Double> minOwnEquityRatio(double industryAverage, int loanDuration) {
+	    return thresholds.ownEquityRatioThresholds.minEquityRatio(industryAverage, loanDuration);
+	}
     
 }

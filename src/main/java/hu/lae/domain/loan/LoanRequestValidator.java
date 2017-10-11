@@ -2,6 +2,7 @@ package hu.lae.domain.loan;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
@@ -42,7 +43,14 @@ public class LoanRequestValidator {
             errorMessages.add("Long term loan must not exceed " + MathUtil.round(maxLongTermLoan, 1));
         }
         if (maxLoanDuration < loanRequest.longTermLoanDuration) {
-            errorMessages.add("Decrease loan amount or maturity shall be decreased to RP years");
+            Optional<Double> minEquityRatio = riskParameters.minOwnEquityRatio(ownEquityRatioAverage, loanRequest.longTermLoanDuration);
+            Optional<Double> maxNewLoan = minEquityRatio.flatMap(ratio -> client.financialStatementData().balanceSheet.liabilities.maxNewLoanToEquityRatio(ratio));
+            
+            if(maxNewLoan.isPresent()) {
+                errorMessages.add("Decrease loan amount to " + MathUtil.round(maxNewLoan.get(), 1) + " or maturity to " + maxLoanDuration + " years");
+            } else {
+                errorMessages.add("Decrease maturity to " + maxLoanDuration + " years");
+            }
         }
 
         return errorMessages;
