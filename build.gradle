@@ -22,17 +22,18 @@ dependencies {
     compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.3.8.v20160314'
     compile group: 'org.eclipse.jetty', name: 'jetty-webapp', version: '9.3.8.v20160314'
 	
-	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5' // for toString()
 	
-	compile group: 'org.apache.poi', name: 'poi', version: '3.9'
+	compile group: 'org.apache.poi', name: 'poi', version: '3.9' // for excel functions
 	
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.26'
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.12'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.12'
-	
-	compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.23.2'
-    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-processing', version: '2.23.2'
-	
+
+    // for http comminucation
+    compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
+
+	// for UI
     compile group: 'com.vaadin', name: 'vaadin-server', version: '8.1.1'
     compile group: 'com.vaadin', name: 'vaadin-shared', version: '8.1.1'
     compile group: 'com.vaadin', name: 'vaadin-themes', version: '8.1.1'

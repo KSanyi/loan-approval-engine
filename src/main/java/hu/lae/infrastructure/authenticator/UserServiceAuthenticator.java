@@ -2,17 +2,15 @@ package hu.lae.infrastructure.authenticator;
 
 import java.lang.invoke.MethodHandles;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.body.RequestBodyEntity;
 
 import hu.lae.usermanagement.Authenticator;
 import hu.lae.usermanagement.UserInfo;
@@ -26,35 +24,36 @@ public class UserServiceAuthenticator implements Authenticator {
     
     private final String userServiceUrl;
     
-    public UserServiceAuthenticator(String userServiceUrl) {
-        this.userServiceUrl = userServiceUrl;
+    public UserServiceAuthenticator(String userServiceBaseUrl) {
+        userServiceUrl = userServiceBaseUrl + "/user/" + DOMAIN + "/{userId}/authenticate";
     }
-    
-    @Override
-    public UserInfo authenticateUser(String userId, String password) throws AuthenticationException {
-        
-        Client client = ClientBuilder.newClient();
-        
-        WebTarget webtarget = client.target(userServiceUrl)
-                .path("user/" + DOMAIN + "/" + userId + "/authenticate");
 
-        logger.info("Calling userService: {}", webtarget.getUri());
-        
-        try {
-            JsonObject requestJsonObject = Json.createObjectBuilder()
-                    .add("password", password)
-                    .build();
-            Entity<JsonObject> entity = Entity.entity(requestJsonObject, MediaType.APPLICATION_JSON);
-            JsonObject responseJsonObject = webtarget.request(MediaType.APPLICATION_JSON).post(entity, JsonObject.class);
-            logger.info("Result: {}", responseJsonObject);
-            return new UserInfo(userId, responseJsonObject.getString("name"), UserRole.valueOf(responseJsonObject.getString("role")));
-        } catch(NotAuthorizedException ex) {
-            logger.warn("NotAuthorizedException: " + ex.getMessage());
-            throw new WrongPasswordException();
-        } catch(Exception ex) {
-            logger.error("Error calling kits-user-service: " + ex.getMessage());
-            throw new AuthenticationException(ex.getMessage());
-        }
-    }
+	@Override
+	public UserInfo authenticateUser(String userId, String password) throws AuthenticationException {
+		try {
+			RequestBodyEntity request = Unirest.post(userServiceUrl)
+					.header("Content-Type", "application/json")
+					.routeParam("userId", userId)
+					.body(new JSONObject().put("password", password));
+			
+			logger.info("Calling userService: {}", request.getHttpRequest().getUrl());
+			HttpResponse<JsonNode> response = request.asJson();
+			
+			logger.info("Response status: " + response.getStatusText());
+			
+			if(response.getStatus() == 401) {
+	            throw new WrongPasswordException();
+			}
+			
+			JSONObject responseJsonObject = response.getBody().getObject();
+			
+			return new UserInfo(userId,
+					responseJsonObject.getString("name"),
+					UserRole.valueOf(responseJsonObject.getString("role")));
+		} catch (UnirestException ex) {
+			logger.error("Error calling kits-user-service: " + ex.getMessage());
+			throw new AuthenticationException(ex.getMessage());
+		}
+	}
     
 }
