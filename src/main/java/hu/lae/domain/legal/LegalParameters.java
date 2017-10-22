@@ -25,7 +25,7 @@ public class LegalParameters {
     public LegalEvaluationResult evaluate(LegalData legalData) {
         
         Map<Level, List<LegalIssue>> issuesByLevel = legalData.legalIssues.stream()
-                .collect(Collectors.groupingBy(issue -> legalIssueEvaluationMap.get(issue).evaluate(issue)));
+                .collect(Collectors.groupingBy(issue -> legalIssueEvaluationMap.get(issue.type).evaluate(issue)));
         
         List<LegalIssue> noGoIssues = issuesByLevel.getOrDefault(Level.NOGO, Collections.emptyList());
         if(!noGoIssues.isEmpty()) {

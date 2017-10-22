@@ -51,9 +51,17 @@ public class LegalIssueEvaluation {
         
         public final Level inHistoryLevel;
         
-        public final int limitationYears;
+        public final Optional<Integer> limitationYears;
 
+        public EvaluationEntry(Level inProgressLevel, Level inHistoryLevel) {
+            this(inProgressLevel, inHistoryLevel, Optional.empty());
+        }
+        
         public EvaluationEntry(Level inProgressLevel, Level inHistoryLevel, int limitationYears) {
+            this(inProgressLevel, inHistoryLevel, Optional.of(limitationYears));
+        }
+        
+        public EvaluationEntry(Level inProgressLevel, Level inHistoryLevel, Optional<Integer> limitationYears) {
             this.inProgressLevel = inProgressLevel;
             this.inHistoryLevel = inHistoryLevel;
             this.limitationYears = limitationYears;
@@ -63,7 +71,8 @@ public class LegalIssueEvaluation {
             if(issue.isInProgress()) {
                 return inProgressLevel;
             } else {
-                if(issue.date.get().isAfter(Clock.date().minusYears(limitationYears))) {
+            	int usedLimitationYears = limitationYears.orElse(Integer.MAX_VALUE);
+                if(issue.date.get().isAfter(Clock.date().minusYears(usedLimitationYears))) {
                     return inHistoryLevel;
                 } else {
                     return Level.GO;

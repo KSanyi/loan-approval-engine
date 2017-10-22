@@ -1,5 +1,6 @@
 package hu.lae.infrastructure.ui.parameters.legalparameters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,11 +103,11 @@ class Row {
     
     final LevelButton companyInProgressLevelButton;
     final LevelButton companyInHistoryLevelButton;
-    final ComboBox<Integer> companyLimitationYearsCombo = new ComboBox<>(null, "Company.Limitation.Years", generateComboValues());
+    final ComboBox<Optional<Integer>> companyLimitationYearsCombo = createComboBox("Company.Limitation.Years");
     
     final LevelButton groupInProgressLevelButton;
     final LevelButton groupInHistoryLevelButton;
-    final ComboBox<Integer> groupLimitationYearsCombo = new ComboBox<>(null, "Group.Limitation.Years", generateComboValues());
+    final ComboBox<Optional<Integer>> groupLimitationYearsCombo = createComboBox("Group.Limitation.Years");
     
     final AmountField materialityThresholdField = new AmountField(null, "Materiality.Threashold");
     
@@ -119,14 +120,6 @@ class Row {
         groupInProgressLevelButton = new LevelButton(groupEvaluationEntry.inProgressLevel, "group.inProgress." + issueType);
         groupInHistoryLevelButton = new LevelButton(groupEvaluationEntry.inHistoryLevel, "group.inHistory." + issueType);
         groupLimitationYearsCombo.setValue(groupEvaluationEntry.limitationYears);
-        
-        companyLimitationYearsCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
-        companyLimitationYearsCombo.setWidth("60px");
-        companyLimitationYearsCombo.setEmptySelectionAllowed(false);
-        
-        groupLimitationYearsCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
-        groupLimitationYearsCombo.setWidth("60px");
-        groupLimitationYearsCombo.setEmptySelectionAllowed(false);
         
         materialityThresholdField.setWidth("70px");
         
@@ -152,7 +145,20 @@ class Row {
         
     }
 
-    private static List<Integer> generateComboValues() {
-        return IntStream.range(1, 11).mapToObj(i -> i).collect(Collectors.toList());
+    private static ComboBox<Optional<Integer>> createComboBox(String caption) {
+    	List<Optional<Integer>> values = new ArrayList<>();
+    	IntStream.range(1, 11).forEach(value -> values.add(Optional.of(value)));
+    	values.add(Optional.empty());
+    	
+    	ComboBox<Optional<Integer>> comboBox = new ComboBox<>(null, "Group.Limitation.Years", values);
+    	comboBox.setItemCaptionGenerator(item -> item.isPresent() ? item.get().toString() : "None");
+    	
+    	comboBox.addStyleName(ValoTheme.COMBOBOX_SMALL);
+    	comboBox.setWidth("75px");
+    	comboBox.setEmptySelectionAllowed(false);
+    	comboBox.setDescription("None means no limitation");
+    	comboBox.addStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
+    	
+        return comboBox;
     }
 }

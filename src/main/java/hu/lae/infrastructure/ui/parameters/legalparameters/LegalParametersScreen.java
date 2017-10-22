@@ -41,7 +41,7 @@ public class LegalParametersScreen extends VerticalLayout {
     private void save() {
         legalParametersRepository.updateLegalParameters(legalParametersForm.getValue());
         logger.info("Legal parameters saved");
-        Notification.show("Risk parameters updated");
+        Notification.show("Legal parameters updated");
     }
     
 }
