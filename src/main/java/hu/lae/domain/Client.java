@@ -2,6 +2,7 @@ package hu.lae.domain;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -14,6 +15,10 @@ import hu.lae.domain.finance.IncomeStatementHistory;
 import hu.lae.domain.finance.BalanceSheet.Assets;
 import hu.lae.domain.finance.BalanceSheet.Liabilities;
 import hu.lae.domain.industry.Industry;
+import hu.lae.domain.legal.LegalData;
+import hu.lae.domain.legal.LegalData.LegalIssue;
+import hu.lae.domain.legal.LegalData.Entity;
+import hu.lae.domain.legal.LegalIssueType;
 import hu.lae.domain.loan.ExistingLoan;
 import hu.lae.domain.loan.ExistingLoans;
 import hu.lae.domain.riskparameters.Haircuts;
@@ -30,12 +35,15 @@ public class Client {
     
     public final double pd;
     
-    public Client(String name, Industry industry, FinancialHistory financialHistory, ExistingLoans existingLoans, double pd) {
+    public final LegalData legalData;
+    
+    public Client(String name, Industry industry, FinancialHistory financialHistory, ExistingLoans existingLoans, double pd, LegalData legalData) {
         this.name = name;
         this.industry = industry;
         this.financialHistory = financialHistory;
         this.existingLoans = existingLoans;
         this.pd = pd;
+        this.legalData = legalData;
     }
     
     public double calculateJustifiableShortTermLoan(Haircuts haircuts) {
@@ -62,7 +70,11 @@ public class Client {
                 new ExistingLoans(Arrays.asList(
                         ExistingLoan.newShortTermLoan(100, false),
                         ExistingLoan.newLongTermLoan(150, LocalDate.of(2021, 2, 12), false),
-                        ExistingLoan.newLongTermLoan(200, LocalDate.of(2020, 4, 1), false))), 0.015);
+                        ExistingLoan.newLongTermLoan(200, LocalDate.of(2020, 4, 1), false))),
+                0.015,
+                new LegalData(Arrays.asList(
+                		new LegalIssue(LegalIssueType.BLACK_EMPLOYER, Optional.of(LocalDate.of(2011,1,1)), Entity.COMPANY_GROUP),
+                		new LegalIssue(LegalIssueType.BANKRUPTCY, Optional.empty(), Entity.COMPANY))));
     }
 
     public IncomeStatementHistory incomeStatementHistory() {

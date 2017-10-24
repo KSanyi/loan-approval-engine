@@ -21,6 +21,7 @@ import hu.lae.domain.industry.Industry;
 import hu.lae.infrastructure.ui.client.existingloans.ExistingLoansPanel;
 import hu.lae.infrastructure.ui.client.finstatement.FinancialHistoryWindow;
 import hu.lae.infrastructure.ui.client.finstatement.FinancialStatementForm;
+import hu.lae.infrastructure.ui.client.legaldata.LegalDataPanel;
 import hu.lae.infrastructure.ui.component.PercentField;
 
 @SuppressWarnings("serial")
@@ -36,6 +37,8 @@ public class ClientPanel extends Panel {
     
     private final ExistingLoansPanel existingLoansPanel;
     
+    private final LegalDataPanel legalDataPanel;
+    
     private final FinancialHistoryWindow financialHistoryWindow;
     
     private final PercentField pdField = new PercentField("PD");
@@ -46,6 +49,7 @@ public class ClientPanel extends Panel {
         industryCombo.setValue(client.industry);
         financialStatementForm = new FinancialStatementForm(client.financialStatementData());
         existingLoansPanel = new ExistingLoansPanel(client.existingLoans);
+        legalDataPanel = new LegalDataPanel(client.legalData);
         financialHistoryWindow = new FinancialHistoryWindow(client.financialHistory);
         pdField.setPercent(client.pd);
         
@@ -75,7 +79,8 @@ public class ClientPanel extends Panel {
         row1.setWidth("805px");
         row1.setComponentAlignment(pdField, Alignment.MIDDLE_RIGHT);
         HorizontalLayout row2 = new HorizontalLayout(financialStatementForm, existingLoansPanel);
-        VerticalLayout mainLayout = new VerticalLayout(row1, row2);
+        HorizontalLayout row3 = new HorizontalLayout(legalDataPanel);
+        VerticalLayout mainLayout = new VerticalLayout(row1, row2, row3);
         
         return mainLayout;
     }
@@ -84,7 +89,7 @@ public class ClientPanel extends Panel {
         List<FinancialStatementData> financialStatements = new ArrayList<>(financialHistoryWindow.getFinancialHistory().financialStatements);
         financialStatements.add(financialStatementForm.getValue());
         FinancialHistory financialHistory = new FinancialHistory(financialStatements);
-        return new Client(nameField.getValue(), industryCombo.getValue(), financialHistory, existingLoansPanel.getExistingLoans(), pdField.getPercent());
+        return new Client(nameField.getValue(), industryCombo.getValue(), financialHistory, existingLoansPanel.getExistingLoans(), pdField.getPercent(), legalDataPanel.getLegalData());
     }
     
 }

@@ -17,6 +17,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.industry.IndustryData;
+import hu.lae.domain.legal.LegalParameters;
 import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.infrastructure.server.ApplicationService;
@@ -99,6 +100,7 @@ public class LaeUI extends UI {
         
         calculateButton.addClickListener(click -> {
             RiskParameters riskParameters = applicationService.riskParameterRepository.loadRiskParameters();
+            LegalParameters legalParameters = applicationService.legalParametersRepository.loadLegalParameters();
             IndustryData industryData = applicationService.industryDataRepository.loadIndustryData();
             LocalDate currentDate = Clock.date();
             
@@ -109,7 +111,7 @@ public class LaeUI extends UI {
                 logger.info("Risk Parameters: " + riskParameters);
                 logger.info("Client: " + client);
                 logger.info("Date: " + currentDate);
-                ProposalWindow calculatorWindow = new ProposalWindow(new LoanCalculator(riskParameters, industryData, currentDate), client, currentDate);
+                ProposalWindow calculatorWindow = new ProposalWindow(legalParameters, new LoanCalculator(riskParameters, industryData, currentDate), client, currentDate);
                 UI.getCurrent().addWindow(calculatorWindow);                
             }
         });

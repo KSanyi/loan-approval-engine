@@ -18,6 +18,8 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
+import hu.lae.domain.legal.LegalEvaluationResult;
+import hu.lae.domain.legal.LegalParameters;
 import hu.lae.domain.loan.CovenantCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.Loan;
@@ -32,6 +34,8 @@ import hu.lae.util.Formatters;
 public class DecisionWindow extends Window {
 
     private final RiskParameters riskParameters;
+    
+    private final LegalParameters legalParameters;
     
     private final Client client;
     
@@ -49,8 +53,9 @@ public class DecisionWindow extends Window {
     
     private final Button backButton = new Button("Back", click -> back());
     
-    public DecisionWindow(RiskParameters riskParameters, Client client, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, double dscr, double maxDebtCapacity, double freeCashFlow, ProposalWindow proposalWindow) {
+    public DecisionWindow(RiskParameters riskParameters, LegalParameters legalParameters, Client client, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, double dscr, double maxDebtCapacity, double freeCashFlow, ProposalWindow proposalWindow) {
         this.riskParameters= riskParameters;
+        this.legalParameters = legalParameters;
         this.client = client;
         this.existingLoansRefinancing = existingLoansRefinancing;
         this.maxDebtCapacity = maxDebtCapacity;
@@ -79,6 +84,7 @@ public class DecisionWindow extends Window {
         dscrField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
         dscrField.setReadOnly(true);
         
+        //VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), createEquityRatioTable(), dscrField, createAllLoansTable(), createLegalEvaluationResultPanel());
         VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), createEquityRatioTable(), dscrField, createAllLoansTable());
         column1.setMargin(false);
         
@@ -99,6 +105,12 @@ public class DecisionWindow extends Window {
     private Grid<EbitdaTableRow> createEbitdaTable() {
         
         return new EbitdaTable(client.financialHistory);
+    }
+    
+    private LegalEvaluationResultPanel createLegalEvaluationResultPanel() {
+    	
+    	LegalEvaluationResult legalEvaluationResult = legalParameters.evaluate(client.legalData);
+    	return new LegalEvaluationResultPanel(legalEvaluationResult);
     }
     
     private FreeCashFlowTable createFreeCFTable() {

@@ -18,6 +18,7 @@ import hu.lae.domain.finance.FreeCashFlowCalculator;
 import hu.lae.domain.finance.IncomeStatement;
 import hu.lae.domain.industry.Industry;
 import hu.lae.domain.industry.IndustryData;
+import hu.lae.domain.legal.LegalData;
 import hu.lae.domain.riskparameters.CollateralRequirement;
 import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.domain.riskparameters.InterestRates;
@@ -60,7 +61,7 @@ public class LoanCalculatorTest2 {
                     ExistingLoan.newShortTermLoan(150, false),
                     ExistingLoan.newLongTermLoan(150, LocalDate.of(2021,2,12), false),
                     ExistingLoan.newLongTermLoan(200, LocalDate.of(2020,4,1), false))), 
-            0.015);
+            0.015, LegalData.empty);
 
     private ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(client.existingLoans, false);
     
@@ -109,7 +110,7 @@ public class LoanCalculatorTest2 {
                         ExistingLoan.newShortTermLoan(350, false),
                         ExistingLoan.newLongTermLoan(50, LocalDate.of(2021,2,12), false),
                         ExistingLoan.newLongTermLoan(200, LocalDate.of(2020,4,1), false))), 
-                0.015);
+                0.015, LegalData.empty);
         ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(client.existingLoans, false);
         
         double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, 200, 5, existingLoansRefinancing, FreeCashFlowCalculator.average);

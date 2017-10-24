@@ -2,6 +2,8 @@ package hu.lae.util;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Formatters {
 
@@ -9,6 +11,7 @@ public class Formatters {
     private static final DecimalFormat AMOUNT_FORMAT;
     private final static DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.0%");
     private final static DecimalFormat PERCENT_FORMAT2 = new DecimalFormat("0.00%");
+    private final static DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd");
     
     static {
         DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
@@ -57,6 +60,10 @@ public class Formatters {
         } else {
             return number + " " + unit + "s";
         }
+    }
+    
+    public static String formatDate(LocalDate date) {
+    	return DATE_FORMAT.format(date);
     }
     
 }

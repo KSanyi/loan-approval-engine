@@ -26,6 +26,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
+import hu.lae.domain.legal.LegalParameters;
 import hu.lae.domain.loan.DSCRCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanCalculator;
@@ -71,10 +72,13 @@ public class ProposalWindow extends Window {
     
     private final RiskParameters riskParameters;
     
+    private final LegalParameters legalParameters;
+    
     private final Button submitButton = new Button("Submit for proposal", click -> submit());
     
-    public ProposalWindow(LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
+    public ProposalWindow(LegalParameters legalParameters, LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
         this.loanCalculator = loanCalculator;
+        this.legalParameters = legalParameters;
         this.client = client;
         setModal(true);
         
@@ -216,7 +220,7 @@ public class ProposalWindow extends Window {
             double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
             double dscr = DSCRCalculator.calculateDSCR(riskParameters.interestRates, freeCashFlow, loanRequest, existingLoansRefinancing, Clock.date());
             LoanRequest idealLoanRequest = loanCalculator.calculateIdealLoanRequest(client, freeCashFlowCalculator);
-            UI.getCurrent().addWindow(new DecisionWindow(riskParameters, client, existingLoansRefinancing, loanRequest, dscr, idealLoanRequest.sum(), freeCashFlow, this));
+            UI.getCurrent().addWindow(new DecisionWindow(riskParameters, legalParameters, client, existingLoansRefinancing, loanRequest, dscr, idealLoanRequest.sum(), freeCashFlow, this));
         } else {
             Notification.show("Validation error", String.join("\n", errorMessages), Type.ERROR_MESSAGE);
         }

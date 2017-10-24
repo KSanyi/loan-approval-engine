@@ -1,6 +1,7 @@
 package hu.lae.domain.legal;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,10 +10,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class LegalData {
 
+	public static LegalData empty = new LegalData(Collections.emptyList());
+	
     public final List<LegalIssue> legalIssues;
     
     public LegalData(List<LegalIssue> legalIssues) {
-        this.legalIssues = legalIssues;
+        this.legalIssues = Collections.unmodifiableList(legalIssues);
     }
 
     public static class LegalIssue {
@@ -41,7 +44,14 @@ public class LegalData {
     }
     
     public static enum Entity {
-        COMPANY, COMPANYGROUP;
+        COMPANY("Company"), COMPANY_GROUP("Company Group");
+    	
+    	public final String displayName;
+
+		private Entity(String displayName) {
+			this.displayName = displayName;
+		}
+    	 
     }
     
     @Override
