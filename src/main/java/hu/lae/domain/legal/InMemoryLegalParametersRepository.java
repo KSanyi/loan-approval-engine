@@ -12,24 +12,24 @@ public class InMemoryLegalParametersRepository implements LegalParametersReposit
     
     public InMemoryLegalParametersRepository() {
         Map<LegalIssueType, LegalIssueEvaluation> map = new HashMap<>();
-        map.put(LegalIssueType.BANKRUPTCY, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.LIQUIDATION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.DISSOLVENCY, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.DELETION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.FORCED_DELETION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.EXECUTION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.IDERICT, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.CONFISCATION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.CRIMINAL_CHARGE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.TAX_NUMBER_SUSPENDED, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.TAX_NUMBER_DELETED, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.ASSET_SETTLEMENT_PROCEDURE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.DEBT_SETTLEMENT_PROCEDURE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.TAX_EXECUTION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.BLACK_EMPLOYER, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.ANTICARTEL_PROCEDURE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.CONSUMER_PROTECTION_PROCEDURE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
-        map.put(LegalIssueType.EMPLOYMENT_FINE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 0));
+        map.put(LegalIssueType.BANKRUPTCY, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.LIQUIDATION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.DISSOLVENCY, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.DELETION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.FORCED_DELETION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.EXECUTION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 100));
+        map.put(LegalIssueType.IDERICT, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.CONFISCATION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 100));
+        map.put(LegalIssueType.CRIMINAL_CHARGE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.TAX_NUMBER_SUSPENDED, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.TAX_NUMBER_DELETED, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.ASSET_SETTLEMENT_PROCEDURE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.DEBT_SETTLEMENT_PROCEDURE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.TAX_EXECUTION, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 100));
+        map.put(LegalIssueType.BLACK_EMPLOYER, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.ANTICARTEL_PROCEDURE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)));
+        map.put(LegalIssueType.CONSUMER_PROTECTION_PROCEDURE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 100));
+        map.put(LegalIssueType.EMPLOYMENT_FINE, new LegalIssueEvaluation(new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 100));
         legalParameters = new LegalParameters(2, 1, map);
     }
     

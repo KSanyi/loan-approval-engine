@@ -33,6 +33,11 @@ public class LegalIssueEvaluation {
     }
     
     public Level evaluate(LegalIssue issue) {
+    	
+    	if(materialityThreshold.isPresent() && materialityThreshold.get() >= issue.value.get()) {
+    		return Level.GO;
+    	}
+    	
         if(issue.entity == Entity.COMPANY) {
             return companyEntry.evaluate(issue);
         } else {
@@ -68,6 +73,7 @@ public class LegalIssueEvaluation {
         }
         
         public Level evaluate(LegalIssue issue) {
+        	
             if(issue.isInProgress()) {
                 return inProgressLevel;
             } else {

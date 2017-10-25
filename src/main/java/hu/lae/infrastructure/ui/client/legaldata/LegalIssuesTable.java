@@ -30,6 +30,9 @@ class LegalIssuesTable extends Grid<LegalIssue> {
 		addColumn(l -> l.entity.displayName)
 			.setCaption("Entity").setWidth(150);
 		
+		addColumn(l -> l.value.isPresent() ? Formatters.formatAmount(l.value.get()) : "-")
+			.setCaption("Value").setWidth(80);
+		
 		addColumn(l -> new DeleteButton(this, l), new ComponentRenderer())
 			.setCaption("").setWidth(80);
 		
@@ -45,7 +48,7 @@ class LegalIssuesTable extends Grid<LegalIssue> {
         setHeightByRows(Math.max(1, legalIssues.size()));
         addStyleName(VaadinUtil.GRID_SMALL);
         
-        setWidth("550px");
+        setWidth("650px");
 	}
 	
 	private void removeIssue(LegalIssue issue) {

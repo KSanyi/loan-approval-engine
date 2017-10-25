@@ -25,11 +25,18 @@ public class LegalData {
         public final Optional<LocalDate> date;
         
         public final Entity entity;
+        
+        public final Optional<Integer> value;
 
-        public LegalIssue(LegalIssueType type, Optional<LocalDate> date, Entity entity) {
-            this.type = type;
+        public LegalIssue(LegalIssueType type, Optional<LocalDate> date, Entity entity, Optional<Integer> value) {
+
+        	if(!type.hasMaterialityThreshold && value.isPresent()) throw new IllegalArgumentException("Value no materiality threshold type");
+        	if(type.hasMaterialityThreshold && !value.isPresent()) throw new IllegalArgumentException("No value with materiality threshold type");
+        	
+        	this.type = type;
             this.date = date;
             this.entity = entity;
+            this.value = value;
         }
         
         public boolean isInProgress() {

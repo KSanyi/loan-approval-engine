@@ -18,6 +18,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import hu.lae.domain.legal.LegalData.Entity;
 import hu.lae.domain.legal.LegalData.LegalIssue;
 import hu.lae.domain.legal.LegalIssueType;
+import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.infrastructure.ui.component.ComboBox;
 import hu.lae.infrastructure.ui.component.DateField;
@@ -65,11 +66,19 @@ class LegalIssueForm extends CustomField<LegalIssue> {
 	
 	private final RadioButtonGroup<Entity> entityRadio = new RadioButtonGroup<>("Entity", Arrays.asList(Entity.values()));
 	
+	private final AmountField valueField = new AmountField("Value");
+	
 	@Override
 	public LegalIssue getValue() {
-		return new LegalIssue(typeCombo.getValue(),
+		
+		LegalIssueType type = typeCombo.getValue();
+		
+		Optional<Integer> amount = type.hasMaterialityThreshold ? Optional.of((int)valueField.getAmount()) : Optional.empty();
+		
+		return new LegalIssue(type,
 				inProgressCheck.getValue() ? Optional.empty() : Optional.of(dateField.getValue()),
-				entityRadio.getValue());
+				entityRadio.getValue(),
+				amount);
 	}
 
 	@Override
@@ -79,6 +88,7 @@ class LegalIssueForm extends CustomField<LegalIssue> {
 		typeCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
 		typeCombo.setItemCaptionGenerator(type -> type.displayName);
 		typeCombo.setValue(LegalIssueType.values()[0]);
+		typeCombo.addValueChangeListener(event -> valueField.setVisible(event.getValue().hasMaterialityThreshold));
 		
 		inProgressCheck.addStyleName(ValoTheme.CHECKBOX_SMALL);
 		inProgressCheck.addValueChangeListener(event -> dateField.setEnabled(!event.getValue()));
@@ -90,9 +100,12 @@ class LegalIssueForm extends CustomField<LegalIssue> {
 		entityRadio.setValue(Entity.COMPANY);
 		entityRadio.setItemCaptionGenerator(entity -> entity.displayName);
 		
+		valueField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
+		valueField.setVisible(typeCombo.getValue().hasMaterialityThreshold);
+		
 		HorizontalLayout dateLayput = new HorizontalLayout(inProgressCheck, dateField);
 		dateLayput.setComponentAlignment(inProgressCheck, Alignment.MIDDLE_CENTER);
-		VerticalLayout layout = new VerticalLayout(typeCombo, dateLayput, entityRadio);
+		VerticalLayout layout = new VerticalLayout(typeCombo, dateLayput, entityRadio, valueField);
 		layout.setMargin(false);
 		
 		return layout;

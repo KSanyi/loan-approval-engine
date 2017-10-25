@@ -18,7 +18,7 @@ public enum LegalIssueType {
     TAX_EXECUTION("Adóvégrehajtás", true),
     BLACK_EMPLOYER("Feketén foglaloztatók", false),
     ANTICARTEL_PROCEDURE("GVH versenyhivatali eljárás", false),
-    CONSUMER_PROTECTION_PROCEDURE("Ffogyasztóvédelmi eljárás", true),
+    CONSUMER_PROTECTION_PROCEDURE("Fogyasztóvédelmi eljárás", true),
     EMPLOYMENT_FINE("Munkaügyi elmarasztalás", true);
     
     public final String displayName;

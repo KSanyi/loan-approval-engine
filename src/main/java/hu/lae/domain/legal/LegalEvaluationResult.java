@@ -35,7 +35,7 @@ public class LegalEvaluationResult {
     }
     
     public static LegalEvaluationResult judge(int loanYears, List<LegalIssue> issues) {
-        return new LegalEvaluationResult(Value.GO, loanYears, issues);
+        return new LegalEvaluationResult(Value.JUDGE, loanYears, issues);
     }
     
     @Override

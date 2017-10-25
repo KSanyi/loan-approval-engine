@@ -73,8 +73,8 @@ public class Client {
                         ExistingLoan.newLongTermLoan(200, LocalDate.of(2020, 4, 1), false))),
                 0.015,
                 new LegalData(Arrays.asList(
-                		new LegalIssue(LegalIssueType.BLACK_EMPLOYER, Optional.of(LocalDate.of(2011,1,1)), Entity.COMPANY_GROUP),
-                		new LegalIssue(LegalIssueType.BANKRUPTCY, Optional.empty(), Entity.COMPANY))));
+                		new LegalIssue(LegalIssueType.BLACK_EMPLOYER, Optional.of(LocalDate.of(2011,1,1)), Entity.COMPANY_GROUP, Optional.empty()),
+                		new LegalIssue(LegalIssueType.BANKRUPTCY, Optional.empty(), Entity.COMPANY, Optional.empty()))));
     }
 
     public IncomeStatementHistory incomeStatementHistory() {

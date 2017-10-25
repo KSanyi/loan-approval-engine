@@ -84,8 +84,7 @@ public class DecisionWindow extends Window {
         dscrField.addStyleName(ValoTheme.TEXTFIELD_ALIGN_RIGHT);
         dscrField.setReadOnly(true);
         
-        //VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), createEquityRatioTable(), dscrField, createAllLoansTable(), createLegalEvaluationResultPanel());
-        VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), createEquityRatioTable(), dscrField, createAllLoansTable());
+        VerticalLayout column1 = new VerticalLayout(createEbitdaTable(), createFreeCFTable(), createEquityRatioTable(), dscrField, createAllLoansTable(), createLegalEvaluationResultPanel());
         column1.setMargin(false);
         
         VerticalLayout column2 = new VerticalLayout(createWarningsTable(), createCovenantTable());
