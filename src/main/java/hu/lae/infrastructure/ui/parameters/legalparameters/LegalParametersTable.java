@@ -154,6 +154,7 @@ class Row {
     	comboBox.setItemCaptionGenerator(item -> item.isPresent() ? item.get().toString() : "None");
     	
     	comboBox.addStyleName(ValoTheme.COMBOBOX_SMALL);
+    	comboBox.setPageLength(values.size());
     	comboBox.setWidth("75px");
     	comboBox.setEmptySelectionAllowed(false);
     	comboBox.setDescription("None means no limitation");
