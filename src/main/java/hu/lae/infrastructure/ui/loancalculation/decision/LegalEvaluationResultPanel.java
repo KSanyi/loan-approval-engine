@@ -29,7 +29,7 @@ class LegalEvaluationResultPanel extends Panel {
 		issuesTable.addColumn(l -> l.value.isPresent() ? Formatters.formatAmount(l.value.get()) : "").setCaption("Value");
 		issuesTable.addStyleName(VaadinUtil.GRID_SMALL);
 		issuesTable.setItems(result.issues);
-		issuesTable.setHeightByRows(result.issues.size());
+		issuesTable.setHeightByRows(Math.max(1, result.issues.size()));
 		issuesTable.setWidth("550px");
 		
 		VerticalLayout layout = new VerticalLayout(label, issuesTable);
