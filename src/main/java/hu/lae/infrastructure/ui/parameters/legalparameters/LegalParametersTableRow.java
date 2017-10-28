@@ -37,7 +37,7 @@ class LegalParametersTableRow {
         
         groupInProgressLevelButton = new LevelButton(groupEvaluationEntry.inProgressLevel, Level.allLevels(), "group.inProgress." + issueType);
         groupInHistoryLevelButton = new LevelButton(groupEvaluationEntry.inHistoryLevel, groupEvaluationEntry.inProgressLevel.lessOrEqualSevereLevels(), "group.inHistory." + issueType);
-        groupInProgressLevelButton.addValueChangeListener(event -> inProgressLevelButtonChanged(event.getValue(), companyInHistoryLevelButton));
+        groupInProgressLevelButton.addValueChangeListener(event -> inProgressLevelButtonChanged(event.getValue(), groupInHistoryLevelButton));
         groupLimitationYearsCombo.setValue(groupEvaluationEntry.limitationYears);
         
         materialityThresholdField.setWidth("70px");
