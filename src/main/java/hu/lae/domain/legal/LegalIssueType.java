@@ -1,5 +1,10 @@
 package hu.lae.domain.legal;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public enum LegalIssueType {
 
     BANKRUPTCY("Csődeljárás", false),
@@ -31,7 +36,19 @@ public enum LegalIssueType {
     }
 
     public static enum Level {
-        GO, JUDGE, NOGO
+        GO, JUDGE, NOGO;
+
+		public boolean moreSevereThan(Level referenceLevel) {
+			return this.ordinal() > referenceLevel.ordinal();
+		}
+		
+		public List<Level> lessOrEqualSevereLevels() {
+			return Stream.of(values()).filter(level -> !level.moreSevereThan(this)).collect(Collectors.toList());
+		}
+		
+		public static List<Level> allLevels() {
+			return Arrays.asList(values());
+		}
     }
     
 }

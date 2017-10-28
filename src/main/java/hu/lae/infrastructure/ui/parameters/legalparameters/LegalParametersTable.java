@@ -1,31 +1,24 @@
 package hu.lae.infrastructure.ui.parameters.legalparameters;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import hu.lae.infrastructure.ui.component.AmountField;
-import hu.lae.infrastructure.ui.component.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.legal.LegalIssueEvaluation;
-import hu.lae.domain.legal.LegalIssueEvaluation.EvaluationEntry;
 import hu.lae.domain.legal.LegalIssueType;
 import hu.lae.infrastructure.ui.VaadinUtil;
 
 @SuppressWarnings("serial")
-class LegalParametersTable extends Grid<Row> {
+class LegalParametersTable extends Grid<LegalParametersTableRow> {
 
-    private List<Row> items;
+    private List<LegalParametersTableRow> items;
     
     LegalParametersTable(Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap) {
         
@@ -39,7 +32,7 @@ class LegalParametersTable extends Grid<Row> {
         addColumn(r -> r.materialityThresholdField, new ComponentRenderer()).setCaption("Materiality threshold").setId("m");
         
         items = Stream.of(LegalIssueType.values())
-                .map(issueType -> new Row(issueType, legalIssueEvaluationMap.get(issueType).companyEntry, legalIssueEvaluationMap.get(issueType).companyEntry, legalIssueEvaluationMap.get(issueType).materialityThreshold))
+                .map(issueType -> new LegalParametersTableRow(issueType, legalIssueEvaluationMap.get(issueType).companyEntry, legalIssueEvaluationMap.get(issueType).companyEntry, legalIssueEvaluationMap.get(issueType).materialityThreshold))
                 .collect(Collectors.toList());
         
         setItems(items);
@@ -49,7 +42,7 @@ class LegalParametersTable extends Grid<Row> {
     
     Map<LegalIssueType, LegalIssueEvaluation> getLegalIssueEvaluationMap() {
         Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap = new HashMap<>();
-        for(Row item : items) {
+        for(LegalParametersTableRow item : items) {
             legalIssueEvaluationMap.put(item.issueType, item.getLegalIssueEvaluation());
         }
         
@@ -97,69 +90,3 @@ class LegalParametersTable extends Grid<Row> {
     
 }
 
-class Row {
-    
-    final LegalIssueType issueType;
-    
-    final LevelButton companyInProgressLevelButton;
-    final LevelButton companyInHistoryLevelButton;
-    final ComboBox<Optional<Integer>> companyLimitationYearsCombo = createComboBox("Company.Limitation.Years");
-    
-    final LevelButton groupInProgressLevelButton;
-    final LevelButton groupInHistoryLevelButton;
-    final ComboBox<Optional<Integer>> groupLimitationYearsCombo = createComboBox("Group.Limitation.Years");
-    
-    final AmountField materialityThresholdField = new AmountField(null, "Materiality.Threashold");
-    
-    Row(LegalIssueType issueType, EvaluationEntry companyEvaluationEntry, EvaluationEntry groupEvaluationEntry, Optional<Integer> materialityThreashold) {
-        this.issueType = issueType;
-        companyInProgressLevelButton = new LevelButton(companyEvaluationEntry.inProgressLevel, "company.inProgress." + issueType);
-        companyInHistoryLevelButton = new LevelButton(companyEvaluationEntry.inHistoryLevel, "company.inHistory." + issueType);
-        companyLimitationYearsCombo.setValue(companyEvaluationEntry.limitationYears);
-        
-        groupInProgressLevelButton = new LevelButton(groupEvaluationEntry.inProgressLevel, "group.inProgress." + issueType);
-        groupInHistoryLevelButton = new LevelButton(groupEvaluationEntry.inHistoryLevel, "group.inHistory." + issueType);
-        groupLimitationYearsCombo.setValue(groupEvaluationEntry.limitationYears);
-        
-        materialityThresholdField.setWidth("70px");
-        
-        if(issueType.hasMaterialityThreshold) {
-            materialityThresholdField.setAmount((long)materialityThreashold.get());
-        } else {
-            materialityThresholdField.setVisible(false);
-        }
-        
-    }
-    
-    LegalIssueEvaluation getLegalIssueEvaluation() {
-        if(issueType.hasMaterialityThreshold) {
-            return new LegalIssueEvaluation(
-                    new EvaluationEntry(companyInProgressLevelButton.getValue(), companyInHistoryLevelButton.getValue(), companyLimitationYearsCombo.getValue()),
-                    new EvaluationEntry(groupInProgressLevelButton.getValue(), groupInHistoryLevelButton.getValue(), groupLimitationYearsCombo.getValue()),
-                    (int)materialityThresholdField.getAmount());
-        } else {
-            return new LegalIssueEvaluation(
-                    new EvaluationEntry(companyInProgressLevelButton.getValue(), companyInHistoryLevelButton.getValue(), companyLimitationYearsCombo.getValue()),
-                    new EvaluationEntry(groupInProgressLevelButton.getValue(), groupInHistoryLevelButton.getValue(), groupLimitationYearsCombo.getValue()));
-        }
-        
-    }
-
-    private static ComboBox<Optional<Integer>> createComboBox(String caption) {
-    	List<Optional<Integer>> values = new ArrayList<>();
-    	IntStream.range(1, 11).forEach(value -> values.add(Optional.of(value)));
-    	values.add(Optional.empty());
-    	
-    	ComboBox<Optional<Integer>> comboBox = new ComboBox<>(null, "Group.Limitation.Years", values);
-    	comboBox.setItemCaptionGenerator(item -> item.isPresent() ? item.get().toString() : "None");
-    	
-    	comboBox.addStyleName(ValoTheme.COMBOBOX_SMALL);
-    	comboBox.setPageLength(values.size());
-    	comboBox.setWidth("75px");
-    	comboBox.setEmptySelectionAllowed(false);
-    	comboBox.setDescription("None means no limitation");
-    	comboBox.addStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
-    	
-        return comboBox;
-    }
-}

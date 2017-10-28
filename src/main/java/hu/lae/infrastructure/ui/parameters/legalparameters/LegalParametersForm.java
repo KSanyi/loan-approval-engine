@@ -38,12 +38,14 @@ public class LegalParametersForm extends CustomField<LegalParameters> {
     protected Component initContent() {
         
         maxJudgeEntriesCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
-        maxJudgeEntriesCombo.setWidth("70px");
+        maxJudgeEntriesCombo.setWidth("60px");
         maxJudgeEntriesCombo.setEmptySelectionAllowed(false);
+        maxJudgeEntriesCombo.addStyleName(ValoTheme.COMBOBOX_ALIGN_CENTER);
         
         maxLoanMaturityForJudgeCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
-        maxLoanMaturityForJudgeCombo.setWidth("70px");
+        maxLoanMaturityForJudgeCombo.setWidth("60px");
         maxLoanMaturityForJudgeCombo.setEmptySelectionAllowed(false);
+        maxLoanMaturityForJudgeCombo.addStyleName(ValoTheme.COMBOBOX_ALIGN_CENTER);
         
         VerticalLayout layout = new VerticalLayout(new HorizontalLayout(maxJudgeEntriesCombo, maxLoanMaturityForJudgeCombo), legalParametersTable);
         layout.setMargin(false);

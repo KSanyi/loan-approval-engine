@@ -1,6 +1,9 @@
 package hu.lae.infrastructure.ui.parameters.legalparameters;
 
 import hu.lae.infrastructure.ui.component.Button;
+
+import java.util.List;
+
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.themes.ValoTheme;
@@ -12,23 +15,29 @@ public class LevelButton extends CustomField<Level>{
 
     private Level level = Level.GO;
     
+    private List<Level> availableLevels;
+    
     private final Button button;
     
-    LevelButton(Level level, String id) {
-        this.level = level;
+    LevelButton(Level level, List<Level> availableLevels, String id) {
+
+    	if(!availableLevels.contains(level)) throw new IllegalArgumentException("Available levels " + availableLevels + " do not contain level " + level);
+    	
+        this.availableLevels = availableLevels;
         this.button = new Button("", id);
-        initButton(level);
+        this.level = level;
+        refershButton();
         button.setHeight("25px");
         button.addClickListener(click -> clicked());
     }
     
     private void clicked() {
-        int index = level.ordinal();
-        level = Level.values()[(index+1) % Level.values().length];
-        initButton(level);
+        int index = availableLevels.indexOf(level);
+        Level level = availableLevels.get((index+1) % availableLevels.size());
+        setValue(level);
     }
     
-    private void initButton(Level level) {
+    private void refershButton() {
         button.setCaption(level.name());
         switch(level) {
         case GO: button.setStyleName(ValoTheme.BUTTON_FRIENDLY);
@@ -53,8 +62,13 @@ public class LevelButton extends CustomField<Level>{
     }
 
     @Override
-    protected void doSetValue(Level value) {
-        throw new IllegalStateException();
+    protected void doSetValue(Level level) {
+        this.level = level;
+        refershButton();
     }
+
+	public void setAvailableLevels(List<Level> availableLevels) {
+		this.availableLevels = availableLevels;
+	}
 
 }

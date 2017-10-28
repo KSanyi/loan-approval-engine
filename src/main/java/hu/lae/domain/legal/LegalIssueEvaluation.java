@@ -12,24 +12,27 @@ import hu.lae.util.Clock;
 
 public class LegalIssueEvaluation {
 
+	public final LegalIssueType legalIssueType;
+	
     public final EvaluationEntry companyEntry;
     
     public final EvaluationEntry companyGroupEntry;
     
     public final Optional<Integer> materialityThreshold;
     
-    private LegalIssueEvaluation(EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry, Optional<Integer> materialityThreshold) {
-        this.companyEntry = companyEntry;
+    public LegalIssueEvaluation(LegalIssueType legalIssueType, EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry, Optional<Integer> materialityThreshold) {
+        this.legalIssueType = legalIssueType;
+    	this.companyEntry = companyEntry;
         this.companyGroupEntry = companyGroupEntry;
         this.materialityThreshold = materialityThreshold;
     }
     
-    public LegalIssueEvaluation(EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry) {
-        this(companyEntry, companyGroupEntry, Optional.empty());
+    public LegalIssueEvaluation(LegalIssueType legalIssueType, EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry) {
+        this(legalIssueType, companyEntry, companyGroupEntry, Optional.empty());
     }
     
-    public LegalIssueEvaluation(EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry, int materialityThreshold) {
-        this(companyEntry, companyGroupEntry, Optional.of(materialityThreshold));
+    public LegalIssueEvaluation(LegalIssueType legalIssueType, EvaluationEntry companyEntry, EvaluationEntry companyGroupEntry, int materialityThreshold) {
+        this(legalIssueType, companyEntry, companyGroupEntry, Optional.of(materialityThreshold));
     }
     
     public Level evaluate(LegalIssue issue) {
@@ -70,6 +73,14 @@ public class LegalIssueEvaluation {
             this.inProgressLevel = inProgressLevel;
             this.inHistoryLevel = inHistoryLevel;
             this.limitationYears = limitationYears;
+            
+            validate();
+        }
+        
+        private void validate() {
+        	if(inHistoryLevel.moreSevereThan(inProgressLevel)) {
+        		throw new IllegalArgumentException("Legal issue evaluation parameter error: 'In progress' level is more severe than 'In history' level");
+        	}
         }
         
         public Level evaluate(LegalIssue issue) {
