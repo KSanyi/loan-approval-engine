@@ -42,7 +42,7 @@ public class LevelButton extends CustomField<Level>{
         switch(level) {
         case GO: button.setStyleName(ValoTheme.BUTTON_FRIENDLY);
             break;
-        case JUDGE: button.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        case JUDGE: button.setStyleName("warning");
             break;
         case NOGO: button.setStyleName(ValoTheme.BUTTON_DANGER);
             break;
@@ -57,7 +57,6 @@ public class LevelButton extends CustomField<Level>{
 
     @Override
     protected Component initContent() {
-        button.addStyleName(ValoTheme.BUTTON_SMALL);
         return button;
     }
 

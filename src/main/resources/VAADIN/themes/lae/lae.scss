@@ -52,4 +52,8 @@ $v-font-family: 'Lora', sans-serif, 'Source Sans Pro';
     	background: red;
 	}
 	
+	.v-button-warning {
+		@include valo-button-style($background-color: hsl(60, 99%, 50%));
+	}
+	
 }
