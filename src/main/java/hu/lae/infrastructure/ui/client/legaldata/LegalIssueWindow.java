@@ -22,6 +22,7 @@ import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.infrastructure.ui.component.ComboBox;
 import hu.lae.infrastructure.ui.component.DateField;
+import hu.lae.util.Clock;
 
 @SuppressWarnings("serial")
 class LegalIssueWindow extends Window {
@@ -62,7 +63,7 @@ class LegalIssueForm extends CustomField<LegalIssue> {
 	
 	private final CheckBox inProgressCheck = new CheckBox("In progress", true);
 	
-	private final DateField dateField = new DateField("Date");
+	private final DateField dateField = new DateField("Date closed");
 	
 	private final RadioButtonGroup<Entity> entityRadio = new RadioButtonGroup<>("Entity", Arrays.asList(Entity.values()));
 	
@@ -93,6 +94,7 @@ class LegalIssueForm extends CustomField<LegalIssue> {
 		inProgressCheck.addStyleName(ValoTheme.CHECKBOX_SMALL);
 		inProgressCheck.addValueChangeListener(event -> dateField.setEnabled(!event.getValue()));
 		
+		dateField.setRangeEnd(Clock.date());
 		dateField.setEnabled(false);
 		dateField.addStyleName(ValoTheme.DATEFIELD_SMALL);
 		dateField.setWidth("110px");
