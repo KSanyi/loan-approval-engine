@@ -30,7 +30,8 @@ public class LoanCalculator {
     }
     
     public LoanRequest calculateIdealLoanRequest(Client client, FreeCashFlowCalculator freeCashFlowCalculator) {
-        int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(client.industry);
+    	double ownEquityRatioAverage = industryData.ownEquityRatioAverage(client.industry);
+    	int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio());
         
         ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(client.existingLoans, true);
         
@@ -59,7 +60,8 @@ public class LoanCalculator {
         if(allShortTermLoans >= justifiableShortTermLoan) {
             double amountAboveJustifiableSTLoan = allShortTermLoans - justifiableShortTermLoan;
             // logger.info("Amount above justifiable ST loan: " + amountAboveJustifiableSTLoan);
-            int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(client.industry);
+            double ownEquityRatioAverage = industryData.ownEquityRatioAverage(client.industry);
+        	int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio());
             double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.interestRates.longTermInterestRate.value, maxLoanDuration, amountAboveJustifiableSTLoan);
             // logger.info("CF needed for above: " + cfNeededForStDebtService);
             cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.interestRates.shortTermInterestRate.multiply(justifiableShortTermLoan) - cfNeededForStDebtService);
@@ -94,7 +96,8 @@ public class LoanCalculator {
         double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
         double remaining = Math.max(freeCashFlow / riskParameters.dscrThreshold - (yearlyDebtServiceForExistingShortTermLoans + yearlyDebtServiceForExistingLongTermLoans + yearlyDebtServiceForNewLongTermLoans), 0);
         
-        int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(client.industry);
+        double ownEquityRatioAverage = industryData.ownEquityRatioAverage(client.industry);
+    	int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio());
         
         double maxShortTermLoan;
         if(idealLoanRequest.shortTermLoan > existingLoansRefinancing.nonRefinancableShortTermLoans()) {
@@ -131,7 +134,8 @@ public class LoanCalculator {
         if(allShortTermLoans >= idealShortTermLoan) {
             double amountAboveJustifiableSTLoan = allShortTermLoans - idealShortTermLoan;
             // logger.info("Amount above justifiable ST loan: " + amountAboveJustifiableSTLoan);
-            int maxLoanDuration = riskParameters.maxLoanDurations.maxLoanDuration(client.industry);
+            double ownEquityRatioAverage = industryData.ownEquityRatioAverage(client.industry);
+        	int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio());
             double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.interestRates.longTermInterestRate.value, maxLoanDuration, amountAboveJustifiableSTLoan);
             // logger.info("CF needed for above: " + cfNeededForStDebtService);
             cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.interestRates.shortTermInterestRate.multiply(idealShortTermLoan) - cfNeededForStDebtService);
