@@ -1,5 +1,6 @@
 package hu.lae.infrastructure.ui;
 
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class LaeUI extends UI {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static final Logger logger = LoggerFactory.getLogger(LaeUI.class);
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	private ApplicationService applicationService = ((LaeServlet)VaadinServlet.getCurrent()).applicationService;
 	
@@ -109,6 +110,7 @@ public class LaeUI extends UI {
                 Notification.show("Validation error", "Change the expiry of existing loans", Notification.Type.ERROR_MESSAGE);
             } else {
                 logger.info("Risk Parameters: " + riskParameters);
+                logger.info("Legal Parameters: " + legalParameters);
                 logger.info("Client: " + client);
                 logger.info("Date: " + currentDate);
                 ProposalWindow calculatorWindow = new ProposalWindow(legalParameters, new LoanCalculator(riskParameters, industryData, currentDate), client, currentDate);

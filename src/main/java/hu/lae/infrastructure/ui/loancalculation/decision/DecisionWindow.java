@@ -1,7 +1,11 @@
 package hu.lae.infrastructure.ui.loancalculation.decision;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
@@ -33,6 +37,8 @@ import hu.lae.util.Formatters;
 @SuppressWarnings("serial")
 public class DecisionWindow extends Window {
 
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
     private final RiskParameters riskParameters;
     
     private final LegalParameters legalParameters;
@@ -109,6 +115,7 @@ public class DecisionWindow extends Window {
     private LegalEvaluationResultPanel createLegalEvaluationResultPanel() {
     	
     	LegalEvaluationResult legalEvaluationResult = legalParameters.evaluate(client.legalData);
+    	logger.info("Legal evaluation result: " + legalEvaluationResult);
     	return new LegalEvaluationResultPanel(legalEvaluationResult);
     }
     

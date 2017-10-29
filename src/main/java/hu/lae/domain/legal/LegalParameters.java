@@ -44,4 +44,10 @@ public class LegalParameters {
         return LegalEvaluationResult.go();
     }
     
+    @Override
+    public String toString() {
+    	return "maxJudgeEntries: " + maxJudgeEntries + " maxLoanMaturityForJudge: " + maxLoanMaturityForJudge + "\n" + 
+    			legalIssueEvaluationMap.values().stream().map(l -> l.toString()).collect(Collectors.joining("\n"));	
+    }
+    
 }
