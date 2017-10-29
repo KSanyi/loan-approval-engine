@@ -25,7 +25,7 @@ class LegalIssuesTable extends Grid<LegalIssue> {
         	.setCaption("Type");
 		
 		addColumn(l -> l.date.isPresent() ? Formatters.formatDate(l.date.get()) : "In progress")
-    		.setCaption("Date").setWidth(120);
+    		.setCaption("Date closed").setWidth(120);
 		
 		addColumn(l -> l.entity.displayName)
 			.setCaption("Entity").setWidth(150);

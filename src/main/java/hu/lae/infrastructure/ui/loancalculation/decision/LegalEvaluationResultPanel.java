@@ -24,7 +24,7 @@ class LegalEvaluationResultPanel extends Panel {
 		
 		Grid<LegalIssue> issuesTable = new Grid<>();
 		issuesTable.addColumn(i -> i.type.displayName).setCaption("Issue");
-		issuesTable.addColumn(l -> l.date.isPresent() ? Formatters.formatDate(l.date.get()) : "In progress").setCaption("Date");
+		issuesTable.addColumn(l -> l.date.isPresent() ? Formatters.formatDate(l.date.get()) : "In progress").setCaption("Date closed");
 		issuesTable.addColumn(i -> i.entity.displayName).setCaption("Entity");
 		issuesTable.addColumn(l -> l.value.isPresent() ? Formatters.formatAmount(l.value.get()) : "").setCaption("Value");
 		issuesTable.addStyleName(VaadinUtil.GRID_SMALL);
