@@ -26,10 +26,12 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
+import hu.lae.domain.industry.IndustryData;
 import hu.lae.domain.legal.LegalParameters;
 import hu.lae.domain.loan.DSCRCalculator;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.loan.LoanCalculator;
+import hu.lae.domain.loan.LoanPreCalculator;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.loan.LoanRequestValidator;
 import hu.lae.domain.riskparameters.RiskParameters;
@@ -52,6 +54,7 @@ public class ProposalWindow extends Window {
     private final IdealStructurePanel idealStructurePanel;
     
     private final LoanCalculator loanCalculator;
+    private final IndustryData industryData;
     private final Client client;
     
     private final ComboBox<Integer> paybackYearsCombo;
@@ -76,17 +79,15 @@ public class ProposalWindow extends Window {
     
     private final Button submitButton = new Button("Submit for proposal", click -> submit());
     
-    public ProposalWindow(LegalParameters legalParameters, LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
+    public ProposalWindow(LegalParameters legalParameters, IndustryData industryData, LoanCalculator loanCalculator, Client client, LocalDate currentDate) {
         this.loanCalculator = loanCalculator;
         this.legalParameters = legalParameters;
+        this.industryData = industryData;
         this.client = client;
         setModal(true);
         
-        double ownEquityRatioAverage = loanCalculator.industryData.ownEquityRatioAverage(client.industry);
-        
         riskParameters = loanCalculator.riskParameters;
-        
-        maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio()); 
+        maxLoanDuration = loanCalculator.maxLoanDuration;
 
         paybackYearsCombo = new ComboBox<>("Select l/t number of years", generateComboValues(maxLoanDuration));
         paybackYearsCombo.setValue(maxLoanDuration);
@@ -232,7 +233,8 @@ public class ProposalWindow extends Window {
     
     private List<String> validate(LoanRequest loanRequest) {
         
-        LoanRequestValidator loanRequestValidator =  new LoanRequestValidator(loanCalculator);
+    	LoanPreCalculator loanPreCalculator = new LoanPreCalculator(riskParameters, legalParameters, industryData);
+        LoanRequestValidator loanRequestValidator = new LoanRequestValidator(loanCalculator, loanPreCalculator, industryData);
         
         return loanRequestValidator.validate(cashflowCalculatorCombo.getValue(), client, existingLoansRefinancingTable.getValue(), loanRequest);
     }

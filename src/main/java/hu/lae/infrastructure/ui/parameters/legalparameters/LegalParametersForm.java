@@ -26,12 +26,12 @@ public class LegalParametersForm extends CustomField<LegalParameters> {
         maxJudgeEntriesCombo.setValue(legalParameters.maxJudgeEntries);
         maxLoanMaturityForJudgeCombo.setValue(legalParameters.maxLoanMaturityForJudge);
         
-        legalParametersTable = new LegalParametersTable(legalParameters.legalIssueEvaluationMap);
+        legalParametersTable = new LegalParametersTable(legalParameters.legalIssuEvaluationEntries());
     }
     
     @Override
     public LegalParameters getValue() {
-        return new LegalParameters(maxJudgeEntriesCombo.getValue(), maxLoanMaturityForJudgeCombo.getValue(), legalParametersTable.getLegalIssueEvaluationMap());
+        return new LegalParameters(maxJudgeEntriesCombo.getValue(), maxLoanMaturityForJudgeCombo.getValue(), legalParametersTable.getLegalIssueEvaluationList());
     }
 
     @Override

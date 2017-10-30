@@ -2,6 +2,7 @@ package hu.lae.domain.legal;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -12,12 +13,12 @@ public class LegalEvaluationResult {
 
     public final Value value;
     
-    public final int loanYears;
+    public final Optional<Integer> maxLoanDuration;
     
     public final List<LegalIssue> issues;
     
-    private LegalEvaluationResult(Value value, int loanYears, List<LegalIssue> issues) {
-        this.loanYears = loanYears;
+    private LegalEvaluationResult(Value value, Optional<Integer> maxLoanDuration, List<LegalIssue> issues) {
+        this.maxLoanDuration = maxLoanDuration;
         this.value = value;
         this.issues = issues;
     }
@@ -27,15 +28,15 @@ public class LegalEvaluationResult {
     }
     
     public static LegalEvaluationResult go() {
-        return new LegalEvaluationResult(Value.GO, Integer.MAX_VALUE, Collections.emptyList());
+        return new LegalEvaluationResult(Value.GO, Optional.empty(), Collections.emptyList());
     }
     
     public static LegalEvaluationResult noGo(List<LegalIssue> issues) {
-        return new LegalEvaluationResult(Value.NOGO, 0, issues);
+        return new LegalEvaluationResult(Value.NOGO, Optional.empty(), issues);
     }
     
     public static LegalEvaluationResult judge(int loanYears, List<LegalIssue> issues) {
-        return new LegalEvaluationResult(Value.JUDGE, loanYears, issues);
+        return new LegalEvaluationResult(Value.JUDGE, Optional.of(loanYears), issues);
     }
     
     @Override

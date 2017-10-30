@@ -2,9 +2,6 @@ package hu.lae.domain.legal;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import hu.lae.domain.legal.LegalIssueEvaluation.EvaluationEntry;
 import hu.lae.domain.legal.LegalIssueType.Level;
@@ -15,7 +12,7 @@ public class InMemoryLegalParametersRepository implements LegalParametersReposit
     
     public InMemoryLegalParametersRepository() {
         
-        List<LegalIssueEvaluation> issueEvaluations = Arrays.asList(
+        List<LegalIssueEvaluation> legalIssueEvaluations = Arrays.asList(
     		new LegalIssueEvaluation(LegalIssueType.BANKRUPTCY, new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)),
 	        new LegalIssueEvaluation(LegalIssueType.LIQUIDATION, new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)),
 	        new LegalIssueEvaluation(LegalIssueType.DISSOLVENCY, new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10)),
@@ -35,8 +32,7 @@ public class InMemoryLegalParametersRepository implements LegalParametersReposit
 	        new LegalIssueEvaluation(LegalIssueType.CONSUMER_PROTECTION_PROCEDURE, new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 100),
 	        new LegalIssueEvaluation(LegalIssueType.EMPLOYMENT_FINE, new EvaluationEntry(Level.JUDGE, Level.GO, 10), new EvaluationEntry(Level.JUDGE, Level.GO, 10), 100));
         
-        Map<LegalIssueType, LegalIssueEvaluation> map = issueEvaluations.stream().collect(Collectors.toMap(legalIssueEvaluation -> legalIssueEvaluation.legalIssueType, Function.identity()));
-        legalParameters = new LegalParameters(2, 1, map);
+        legalParameters = new LegalParameters(2, 1, legalIssueEvaluations);
     }
     
     @Override

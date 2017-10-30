@@ -20,6 +20,7 @@ import hu.lae.domain.Client;
 import hu.lae.domain.industry.IndustryData;
 import hu.lae.domain.legal.LegalParameters;
 import hu.lae.domain.loan.LoanCalculator;
+import hu.lae.domain.loan.LoanPreCalculator;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.infrastructure.server.ApplicationService;
 import hu.lae.infrastructure.server.LaeServlet;
@@ -113,7 +114,11 @@ public class LaeUI extends UI {
                 logger.info("Legal Parameters: " + legalParameters);
                 logger.info("Client: " + client);
                 logger.info("Date: " + currentDate);
-                ProposalWindow calculatorWindow = new ProposalWindow(legalParameters, new LoanCalculator(riskParameters, industryData, currentDate), client, currentDate);
+                
+                LoanPreCalculator loanPreCalulator = new LoanPreCalculator(riskParameters, legalParameters, industryData);
+                int maxLoanDuration = loanPreCalulator.calculateMaxLoanDuration(client, 0);
+                LoanCalculator loanCalculator = new LoanCalculator(riskParameters, currentDate, maxLoanDuration);
+                ProposalWindow calculatorWindow = new ProposalWindow(legalParameters, industryData, loanCalculator, client, currentDate);
                 UI.getCurrent().addWindow(calculatorWindow);                
             }
         });

@@ -8,11 +8,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import hu.lae.domain.industry.Industry;
 
-public class MaxLoanDurations {
+public class IndustryMaxLoanDurations {
 
     private final Map<Industry, Integer> maxLoanDurationMap;
     
-    public MaxLoanDurations(Map<Industry, Integer> maxLoanDurationMap) {
+    public IndustryMaxLoanDurations(Map<Industry, Integer> maxLoanDurationMap) {
         this.maxLoanDurationMap = Collections.unmodifiableMap(maxLoanDurationMap);
     }
     

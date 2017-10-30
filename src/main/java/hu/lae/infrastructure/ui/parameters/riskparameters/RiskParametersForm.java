@@ -25,7 +25,7 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
     private final PercentField otherField = new PercentField("Other justifiable ratio");
     private final NumberField dscrThresholdField = new NumberField("DSCR threshold");
     private final PercentField shortTermInterestRateField = new PercentField("Short term interest rate");
-    private final MaxLoanDurationsForm maxLoanDurationsForm;
+    private final IndustryMaxLoanDurationsForm industryMaxLoanDurationsForm;
     private final PercentField longTermInterestRateField = new PercentField("Long term interest rate");
     private final ThresholdsForm thresholdsForm;
     private final CollateralRequirementsForm collateralRequirementsForm;
@@ -33,7 +33,7 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
     public RiskParametersForm(RiskParameters riskParameters) {
         this.riskParameters = riskParameters;
         
-        maxLoanDurationsForm = new MaxLoanDurationsForm(riskParameters.maxLoanDurations);
+        industryMaxLoanDurationsForm = new IndustryMaxLoanDurationsForm(riskParameters.industryMaxLoanDurations);
         thresholdsForm = new ThresholdsForm(riskParameters.thresholds);
         collateralRequirementsForm = new CollateralRequirementsForm(riskParameters.collateralRequirement);
         
@@ -54,7 +54,7 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
                 amortizationRateField.getPercent(), 
                 new Haircuts(arField.getPercent(), stockField.getPercent(), cashField.getPercent(),  otherField.getPercent()),
                 new InterestRates(shortTermInterestRateField.getPercent(), longTermInterestRateField.getPercent()),
-                maxLoanDurationsForm.getValue(),
+                industryMaxLoanDurationsForm.getValue(),
                 dscrThresholdField.getNumber(),
                 thresholdsForm.getValue(),
                 collateralRequirementsForm.getValue());
@@ -74,7 +74,7 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
 		gridLayout.setSpacing(true);
 		gridLayout.setColumns(4);
 		
-		gridLayout.addComponents(panel, maxLoanDurationsForm, thresholdsForm, collateralRequirementsForm);
+		gridLayout.addComponents(panel, industryMaxLoanDurationsForm, thresholdsForm, collateralRequirementsForm);
         
 		return gridLayout;
 	}

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import hu.lae.domain.Client;
 import hu.lae.domain.finance.CashFlow;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
-import hu.lae.domain.industry.IndustryData;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.util.ExcelFunctions;
 
@@ -19,19 +18,17 @@ public class LoanCalculator {
     
     public final RiskParameters riskParameters;
     
-    public final IndustryData industryData;
-    
     private final LocalDate currentDate;
+    
+    public final int maxLoanDuration;
 
-    public LoanCalculator(RiskParameters riskParameters, IndustryData industryData, LocalDate currentDate) {
+    public LoanCalculator(RiskParameters riskParameters, LocalDate currentDate, int maxLoanDuration) {
         this.riskParameters = riskParameters;
         this.currentDate = currentDate;
-        this.industryData = industryData;
+        this.maxLoanDuration = maxLoanDuration;
     }
     
     public LoanRequest calculateIdealLoanRequest(Client client, FreeCashFlowCalculator freeCashFlowCalculator) {
-    	double ownEquityRatioAverage = industryData.ownEquityRatioAverage(client.industry);
-    	int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio());
         
         ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(client.existingLoans, true);
         
@@ -60,8 +57,6 @@ public class LoanCalculator {
         if(allShortTermLoans >= justifiableShortTermLoan) {
             double amountAboveJustifiableSTLoan = allShortTermLoans - justifiableShortTermLoan;
             // logger.info("Amount above justifiable ST loan: " + amountAboveJustifiableSTLoan);
-            double ownEquityRatioAverage = industryData.ownEquityRatioAverage(client.industry);
-        	int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio());
             double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.interestRates.longTermInterestRate.value, maxLoanDuration, amountAboveJustifiableSTLoan);
             // logger.info("CF needed for above: " + cfNeededForStDebtService);
             cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.interestRates.shortTermInterestRate.multiply(justifiableShortTermLoan) - cfNeededForStDebtService);
@@ -95,9 +90,6 @@ public class LoanCalculator {
         
         double freeCashFlow = freeCashFlowCalculator.calculate(client.incomeStatementHistory(), riskParameters.amortizationRate);
         double remaining = Math.max(freeCashFlow / riskParameters.dscrThreshold - (yearlyDebtServiceForExistingShortTermLoans + yearlyDebtServiceForExistingLongTermLoans + yearlyDebtServiceForNewLongTermLoans), 0);
-        
-        double ownEquityRatioAverage = industryData.ownEquityRatioAverage(client.industry);
-    	int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio());
         
         double maxShortTermLoan;
         if(idealLoanRequest.shortTermLoan > existingLoansRefinancing.nonRefinancableShortTermLoans()) {
@@ -134,8 +126,6 @@ public class LoanCalculator {
         if(allShortTermLoans >= idealShortTermLoan) {
             double amountAboveJustifiableSTLoan = allShortTermLoans - idealShortTermLoan;
             // logger.info("Amount above justifiable ST loan: " + amountAboveJustifiableSTLoan);
-            double ownEquityRatioAverage = industryData.ownEquityRatioAverage(client.industry);
-        	int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio());
             double cfNeededForStDebtService = -ExcelFunctions.pmt(riskParameters.interestRates.longTermInterestRate.value, maxLoanDuration, amountAboveJustifiableSTLoan);
             // logger.info("CF needed for above: " + cfNeededForStDebtService);
             cashFlowForNewLongTermLoans = Math.max(0, freeCashFlow / riskParameters.dscrThreshold - riskParameters.interestRates.shortTermInterestRate.multiply(idealShortTermLoan) - cfNeededForStDebtService);

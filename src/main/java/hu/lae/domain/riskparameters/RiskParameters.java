@@ -19,7 +19,7 @@ public class RiskParameters {
     
     public final InterestRates interestRates;
     
-    public final MaxLoanDurations maxLoanDurations;
+    public final IndustryMaxLoanDurations industryMaxLoanDurations;
     
     public final double dscrThreshold;
     
@@ -28,14 +28,14 @@ public class RiskParameters {
     public final CollateralRequirement collateralRequirement;
     
     public RiskParameters(String id, String name, double amortizationRate, Haircuts haircuts, InterestRates interestRates,
-            MaxLoanDurations maxLoanDurations, double dscrThreshold, Thresholds thresholds,
+            IndustryMaxLoanDurations industryMaxLoanDurations, double dscrThreshold, Thresholds thresholds,
             CollateralRequirement collateralRequirement) {
         this.id = id;
         this.name = name;
         this.amortizationRate = amortizationRate;
         this.haircuts = haircuts;
         this.interestRates = interestRates;
-        this.maxLoanDurations = maxLoanDurations;
+        this.industryMaxLoanDurations = industryMaxLoanDurations;
         this.dscrThreshold = dscrThreshold;
         this.thresholds = thresholds;
         this.collateralRequirement = collateralRequirement;
@@ -47,9 +47,9 @@ public class RiskParameters {
     }
 
 	public int maxLoanDuration(Industry industry, double industryAverage, double ownEquityRatio) {
-		int maxLoanDurationByIndustry = maxLoanDurations.maxLoanDuration(industry);
+		int maxLoanDurationForIndustry = industryMaxLoanDurations.maxLoanDuration(industry);
 		Optional<Integer> maxLoanDurationCap = thresholds.ownEquityRatioThresholds.maxLoanDuration(ownEquityRatio, industryAverage);
-		return maxLoanDurationCap.map(cap -> Math.min(cap, maxLoanDurationByIndustry)).orElse(maxLoanDurationByIndustry);
+		return maxLoanDurationCap.map(cap -> Math.min(cap, maxLoanDurationForIndustry)).orElse(maxLoanDurationForIndustry);
 	}
 	
 	public Optional<Double> minOwnEquityRatio(double industryAverage, int loanDuration) {

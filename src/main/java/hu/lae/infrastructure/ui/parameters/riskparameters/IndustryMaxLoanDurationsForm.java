@@ -16,15 +16,15 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.industry.Industry;
-import hu.lae.domain.riskparameters.MaxLoanDurations;
+import hu.lae.domain.riskparameters.IndustryMaxLoanDurations;
 import hu.lae.infrastructure.ui.component.ComboBox;
 
 @SuppressWarnings("serial")
-class MaxLoanDurationsForm extends CustomField<MaxLoanDurations> {
+class IndustryMaxLoanDurationsForm extends CustomField<IndustryMaxLoanDurations> {
 
     private final Map<Industry, ComboBox<Integer>> combos = new LinkedHashMap<>();
     
-    MaxLoanDurationsForm(MaxLoanDurations maxLoanDurations) {
+    IndustryMaxLoanDurationsForm(IndustryMaxLoanDurations maxLoanDurations) {
     
         for(Industry industry : Industry.values()) {
             ComboBox<Integer> combo = new ComboBox<>(industry.displayName, generateComboValues());
@@ -34,13 +34,13 @@ class MaxLoanDurationsForm extends CustomField<MaxLoanDurations> {
     }
     
     @Override
-    public MaxLoanDurations getValue() {
+    public IndustryMaxLoanDurations getValue() {
         Map<Industry, Integer> map = new HashMap<>();
         for(Industry industry : Industry.values()) {
             map.put(industry, combos.get(industry).getValue());
         }
         
-        return new MaxLoanDurations(map);
+        return new IndustryMaxLoanDurations(map);
     }
 
     @Override
@@ -70,7 +70,7 @@ class MaxLoanDurationsForm extends CustomField<MaxLoanDurations> {
     }
 
     @Override
-    protected void doSetValue(MaxLoanDurations value) {
+    protected void doSetValue(IndustryMaxLoanDurations value) {
         throw new IllegalStateException();
     }
     

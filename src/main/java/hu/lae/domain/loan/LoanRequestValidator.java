@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
+import hu.lae.domain.industry.IndustryData;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.util.MathUtil;
 
@@ -13,10 +14,16 @@ public class LoanRequestValidator {
 
     private final LoanCalculator loanCalculator;
     
+    private final LoanPreCalculator loanPreCalculator;
+    
+    private final IndustryData industryData;
+    
     private final RiskParameters riskParameters;
     
-    public LoanRequestValidator(LoanCalculator loanCalculator) {
+    public LoanRequestValidator(LoanCalculator loanCalculator, LoanPreCalculator loanPreCalculator, IndustryData industryData) {
         this.loanCalculator = loanCalculator;
+        this.loanPreCalculator = loanPreCalculator;
+        this.industryData = industryData;
         this.riskParameters = loanCalculator.riskParameters;
     }
 
@@ -27,9 +34,8 @@ public class LoanRequestValidator {
         double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, loanRequest.longTermLoanDuration,
                 existingLoansRefinancing, freeCashFlowCalculator);
 
-        double ownEquityRatioAverage = loanCalculator.industryData.ownEquityRatioAverage(client.industry);
         double loanIncrement = loanRequest.sum() - existingLoansRefinancing.sumOfRefinancableLoans();
-        int maxLoanDuration = riskParameters.maxLoanDuration(client.industry, ownEquityRatioAverage, client.financialStatementData().balanceSheet.liabilities.equityRatio(loanIncrement));
+        int maxLoanDuration = loanPreCalculator.calculateMaxLoanDuration(client, loanIncrement);
 
         List<String> errorMessages = new ArrayList<>();
 
@@ -43,7 +49,8 @@ public class LoanRequestValidator {
             errorMessages.add("Long term loan must not exceed " + MathUtil.round(maxLongTermLoan, 1));
         }
         if (maxLoanDuration < loanRequest.longTermLoanDuration) {
-            Optional<Double> minEquityRatio = riskParameters.minOwnEquityRatio(ownEquityRatioAverage, loanRequest.longTermLoanDuration);
+        	double ownEquityRatioIndustryAverage = industryData.ownEquityRatioAverage(client.industry);
+            Optional<Double> minEquityRatio = riskParameters.minOwnEquityRatio(ownEquityRatioIndustryAverage, loanRequest.longTermLoanDuration);
             Optional<Double> maxNewLoan = minEquityRatio.flatMap(ratio -> client.financialStatementData().balanceSheet.liabilities.maxNewLoanToEquityRatio(ratio));
             
             if(maxNewLoan.isPresent()) {

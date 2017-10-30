@@ -1,10 +1,7 @@
 package hu.lae.infrastructure.ui.parameters.legalparameters;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.components.grid.HeaderCell;
@@ -20,7 +17,7 @@ class LegalParametersTable extends Grid<LegalParametersTableRow> {
 
     private List<LegalParametersTableRow> items;
     
-    LegalParametersTable(Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap) {
+    LegalParametersTable(List<LegalIssueEvaluation> legalIssueEvaluationList) {
         
         addColumn(r -> r.issueType.displayName).setSortable(false).setCaption("").setId("0");
         addColumn(r -> r.companyInProgressLevelButton, new ComponentRenderer()).setCaption("In progress").setId("c1");
@@ -31,8 +28,8 @@ class LegalParametersTable extends Grid<LegalParametersTableRow> {
         addColumn(r -> r.groupLimitationYearsCombo, new ComponentRenderer()).setCaption("Limitation").setId("g3");
         addColumn(r -> r.materialityThresholdField, new ComponentRenderer()).setCaption("Materiality threshold").setId("m");
         
-        items = Stream.of(LegalIssueType.values())
-                .map(issueType -> new LegalParametersTableRow(issueType, legalIssueEvaluationMap.get(issueType).companyEntry, legalIssueEvaluationMap.get(issueType).companyEntry, legalIssueEvaluationMap.get(issueType).materialityThreshold))
+        items = legalIssueEvaluationList.stream()
+                .map(evaluation -> new LegalParametersTableRow(evaluation.legalIssueType, evaluation.companyEntry, evaluation.companyGroupEntry, evaluation.materialityThreshold))
                 .collect(Collectors.toList());
         
         setItems(items);
@@ -40,13 +37,8 @@ class LegalParametersTable extends Grid<LegalParametersTableRow> {
         format();
     }
     
-    Map<LegalIssueType, LegalIssueEvaluation> getLegalIssueEvaluationMap() {
-        Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap = new HashMap<>();
-        for(LegalParametersTableRow item : items) {
-            legalIssueEvaluationMap.put(item.issueType, item.getLegalIssueEvaluation());
-        }
-        
-        return legalIssueEvaluationMap;
+    List<LegalIssueEvaluation> getLegalIssueEvaluationList() {
+        return items.stream().map(LegalParametersTableRow::getLegalIssueEvaluation).collect(Collectors.toList());
     }
     
     private void format() {

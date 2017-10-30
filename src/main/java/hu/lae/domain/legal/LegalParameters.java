@@ -1,8 +1,10 @@
 package hu.lae.domain.legal;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import hu.lae.domain.legal.LegalData.LegalIssue;
@@ -14,12 +16,12 @@ public class LegalParameters {
     
     public final int maxLoanMaturityForJudge;
     
-    public final Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap;
+    private final Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap;
 
-    public LegalParameters(int maxJudgeEntries, int maxLoanMaturityForJudge, Map<LegalIssueType, LegalIssueEvaluation> legalIssueEvaluationMap) {
+    public LegalParameters(int maxJudgeEntries, int maxLoanMaturityForJudge, List<LegalIssueEvaluation> legalIssueEvaluationList) {
         this.maxJudgeEntries = maxJudgeEntries;
         this.maxLoanMaturityForJudge = maxLoanMaturityForJudge;
-        this.legalIssueEvaluationMap = legalIssueEvaluationMap;
+        this.legalIssueEvaluationMap = legalIssueEvaluationList.stream().collect(Collectors.toMap(legalIssueEvaluation -> legalIssueEvaluation.legalIssueType, Function.identity()));
     }
     
     public LegalEvaluationResult evaluate(LegalData legalData) {
@@ -42,6 +44,10 @@ public class LegalParameters {
         }
         
         return LegalEvaluationResult.go();
+    }
+    
+    public List<LegalIssueEvaluation> legalIssuEvaluationEntries() {
+    	return new ArrayList<>(legalIssueEvaluationMap.values());
     }
     
     @Override
