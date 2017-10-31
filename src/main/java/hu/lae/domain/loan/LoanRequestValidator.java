@@ -43,20 +43,21 @@ public class LoanRequestValidator {
             errorMessages.add("Loan request must be enough to cover the existing refinanceable loans");
         }
 
-        if (loanRequest.shortTermLoan > maxShortTermLoan) {
-            errorMessages.add("Short term loan must not exceed " + MathUtil.round(maxShortTermLoan, 1));
-        } else if (loanRequest.longTermLoan > maxLongTermLoan) {
-            errorMessages.add("Long term loan must not exceed " + MathUtil.round(maxLongTermLoan, 1));
-        }
-        if (maxLoanDuration < loanRequest.longTermLoanDuration) {
+        if (loanRequest.shortTermLoan > maxShortTermLoan || loanRequest.longTermLoan > maxLongTermLoan) {
+            if (loanRequest.shortTermLoan > maxShortTermLoan) {
+                errorMessages.add("Short term loan must not exceed " + MathUtil.round(maxShortTermLoan, 1));
+            } else if (loanRequest.longTermLoan > maxLongTermLoan) {
+                errorMessages.add("Long term loan must not exceed " + MathUtil.round(maxLongTermLoan, 1));
+            }
+        } else if (maxLoanDuration < loanRequest.longTermLoanDuration) {
         	double ownEquityRatioIndustryAverage = industryData.ownEquityRatioAverage(client.industry);
             Optional<Double> minEquityRatio = riskParameters.minOwnEquityRatio(ownEquityRatioIndustryAverage, loanRequest.longTermLoanDuration);
             Optional<Double> maxNewLoan = minEquityRatio.flatMap(ratio -> client.financialStatementData().balanceSheet.liabilities.maxNewLoanToEquityRatio(ratio));
             
             if(maxNewLoan.isPresent()) {
-                errorMessages.add("Decrease loan amount to " + MathUtil.round(maxNewLoan.get(), 1) + " or maturity to " + maxLoanDuration + " years");
+                errorMessages.add("Decrease loan amount to " + MathUtil.round(maxNewLoan.get(), 1));
             } else {
-                errorMessages.add("Decrease maturity to " + maxLoanDuration + " years");
+                errorMessages.add("XXXXXXXXXXXXXXXXX");
             }
         }
 

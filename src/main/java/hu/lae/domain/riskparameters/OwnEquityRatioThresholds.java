@@ -33,7 +33,7 @@ public class OwnEquityRatioThresholds {
 	
 	public Optional<Double> minEquityRatio(double industryAverage, int loanDuration) {
 	    
-	    if(loanDuration >= yearForBelowThreshold1) {
+	    if(loanDuration > yearForBelowThreshold1) {
 	        return Optional.of(threshold1 * industryAverage);
 	    } else if(loanDuration > yearForBelowThreshold2) {
 	        return Optional.of(threshold2 * industryAverage);
