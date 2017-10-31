@@ -1,8 +1,12 @@
 package hu.lae.domain.loan;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
@@ -12,6 +16,8 @@ import hu.lae.util.MathUtil;
 
 public class LoanRequestValidator {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private final LoanCalculator loanCalculator;
     
     private final LoanPreCalculator loanPreCalculator;
@@ -29,6 +35,8 @@ public class LoanRequestValidator {
 
     public List<String> validate(FreeCashFlowCalculator freeCashFlowCalculator, Client client, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest) {
 
+        logger.info("Validating loan request");
+        
         double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, 0, loanRequest.longTermLoanDuration,
                 existingLoansRefinancing, freeCashFlowCalculator);
         double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, loanRequest.longTermLoanDuration,
@@ -57,8 +65,12 @@ public class LoanRequestValidator {
             if(maxNewLoan.isPresent()) {
                 errorMessages.add("Decrease loan amount to " + MathUtil.round(maxNewLoan.get(), 1));
             } else {
-                errorMessages.add("XXXXXXXXXXXXXXXXX");
+                logger.error("No max loan value found for {} years", loanRequest.longTermLoanDuration);
             }
+        }
+        
+        if(!errorMessages.isEmpty()) {
+            logger.info("Validation failure: {}", errorMessages);
         }
 
         return errorMessages;
