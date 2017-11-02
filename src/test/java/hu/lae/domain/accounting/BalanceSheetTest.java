@@ -1,5 +1,7 @@
 package hu.lae.domain.accounting;
 
+import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -60,6 +62,21 @@ public class BalanceSheetTest {
         double liquidityRatio = balanceSheet.liquidityRatio3();
         
         Assert.assertEquals(6.85, liquidityRatio, 0.01);
+    }
+    
+    @Test
+    public void maxNewLoanToEquityRatio() {
+        
+    	double equityRatio = balanceSheet.liabilities.equityRatio(100);
+    	Optional<Double> maxNewLoan = balanceSheet.liabilities.maxNewLoanToEquityRatio(equityRatio);
+        Assert.assertEquals(100, maxNewLoan.get(), 0.01);
+    }
+    
+    @Test
+    public void impossibleNewLoanToEquityRatio() {
+        
+    	Optional<Double> maxNewLoan = balanceSheet.liabilities.maxNewLoanToEquityRatio(0.5);
+        Assert.assertFalse(maxNewLoan.isPresent());
     }
     
 }

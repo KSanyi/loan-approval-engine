@@ -8,11 +8,11 @@ import java.util.stream.IntStream;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
-import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.infrastructure.ui.component.ComboBox;
+import hu.lae.infrastructure.ui.component.DateField;
 import hu.lae.util.Clock;
 
 @SuppressWarnings("serial")
@@ -23,7 +23,7 @@ class MaturityField extends CustomField<LocalDate>{
     private final DateField dateField;
     
     MaturityField(int maxLoanDuration) {
-        setCaption("Select maturity date ot years");
+        setCaption("Select maturity date or years");
         yearsCombo = new ComboBox<>(null, generateComboValues(maxLoanDuration));
         yearsCombo.setItemCaptionGenerator(year -> year + " year" + (year > 1 ? "s" : ""));
         yearsCombo.setValue(maxLoanDuration);
@@ -31,7 +31,7 @@ class MaturityField extends CustomField<LocalDate>{
         yearsCombo.setWidth("105px");
         yearsCombo.setEmptySelectionAllowed(false);
         
-        dateField = new DateField();
+        dateField = new DateField(null, "loan.request.maturity.date");
         dateField.setRangeStart(Clock.date().plusYears(1));
         dateField.setRangeEnd(Clock.date().plusYears(maxLoanDuration));
         dateField.setValue(Clock.date().plusYears(maxLoanDuration));
