@@ -18,7 +18,7 @@ public class DSCRCalculatorTest {
 	public void noExistingLoan1() {
 		
 		double freeCashFlow = 300;
-		LoanRequest loanRequest = new LoanRequest(400, 1000, 5);
+		LoanRequest loanRequest = new LoanRequest(400, 1000, date, date.plusYears(5));
 		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(ExistingLoans.createEmpty(), false);
 		
 		double dscr = DSCRCalculator.calculateDSCR(interestRates, freeCashFlow, loanRequest, existingLoansRefinancing, date);
@@ -30,7 +30,7 @@ public class DSCRCalculatorTest {
 	public void noExistingLoan2() {
 		
 		double freeCashFlow = 100;
-		LoanRequest loanRequest = new LoanRequest(200, 100, 3);
+		LoanRequest loanRequest = new LoanRequest(200, 100, date, date.plusYears(3));
 		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(ExistingLoans.createEmpty(), false);
 		
 		double dscr = DSCRCalculator.calculateDSCR(interestRates, freeCashFlow, loanRequest, existingLoansRefinancing, date);
@@ -42,7 +42,7 @@ public class DSCRCalculatorTest {
 	public void existingRefinanciableLoans() {
 		
 		double freeCashFlow = 300;
-		LoanRequest loanRequest = new LoanRequest(400, 1000, 5);
+		LoanRequest loanRequest = new LoanRequest(400, 1000, date, date.plusYears(5));
 		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(MapFactory.of(
 				ExistingLoan.newShortTermLoan(400, false), true,
 				ExistingLoan.newLongTermLoan(1000, LocalDate.of(2022, 4, 1), false), true));
@@ -56,7 +56,7 @@ public class DSCRCalculatorTest {
 	public void existingNonRefinanciableLoans() {
 		
 		double freeCashFlow = 300;
-		LoanRequest loanRequest = new LoanRequest(400, 1000, 5);
+		LoanRequest loanRequest = new LoanRequest(400, 1000, date, date.plusYears(5));
 		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(MapFactory.of(
 				ExistingLoan.newShortTermLoan(400, false), false,
 				ExistingLoan.newLongTermLoan(1000, LocalDate.of(2022, 4, 1), false), false));
@@ -70,7 +70,7 @@ public class DSCRCalculatorTest {
 	public void tamasExample() {
 		
 		double freeCashFlow = 240;
-		LoanRequest loanRequest = new LoanRequest(200, 100, 5);
+		LoanRequest loanRequest = new LoanRequest(200, 100, date, date.plusYears(5));
 		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(MapFactory.of(
 				ExistingLoan.newShortTermLoan(100, false), true,
 				ExistingLoan.newLongTermLoan(150, LocalDate.of(2021,2,12), false), false,

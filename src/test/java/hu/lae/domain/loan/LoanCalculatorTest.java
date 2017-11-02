@@ -30,6 +30,8 @@ import hu.lae.util.Pair;
 
 public class LoanCalculatorTest {
 
+    private final LocalDate date = LocalDate.of(2017,4,1);
+    
     private LoanCalculator loanCalculator;
     
     FinancialStatementData financialStatementData2016 = new FinancialStatementData(
@@ -186,7 +188,7 @@ public class LoanCalculatorTest {
     
     @Test
     public void minPaybackYearsWithJustifiableShortTermloan() {
-        LoanRequest loanRequest = new LoanRequest(200, 400, 5);
+        LoanRequest loanRequest = new LoanRequest(200, 400, date, date.plusYears(5));
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, existingLoansRefinancing);
         
@@ -195,7 +197,7 @@ public class LoanCalculatorTest {
     
     @Test
     public void minPaybackYearsWithLowerThanJustifiableShortTermloan() {
-        LoanRequest loanRequest = new LoanRequest(111, 400, 5);
+        LoanRequest loanRequest = new LoanRequest(111, 400, date, date.plusYears(5));
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, existingLoansRefinancing);
         
@@ -204,7 +206,7 @@ public class LoanCalculatorTest {
     
     @Test
     public void minPaybackYearsWithHigherThanJustifiableShortTermloan() {
-        LoanRequest loanRequest = new LoanRequest(400, 400, 5);
+        LoanRequest loanRequest = new LoanRequest(400, 400, date, date.plusYears(5));
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, existingLoansRefinancing);
         
@@ -213,7 +215,7 @@ public class LoanCalculatorTest {
     
     @Test
     public void minPaybackYearsWithExtraHighLongTermloan() {
-        LoanRequest loanRequest = new LoanRequest(400, 1000, 5);
+        LoanRequest loanRequest = new LoanRequest(400, 1000, date, date.plusYears(5));
         
         double minPaybackYears = loanCalculator.calculateMinPaybackYears(client, loanRequest, FreeCashFlowCalculator.lastYear, existingLoansRefinancing);
         

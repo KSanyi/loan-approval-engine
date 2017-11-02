@@ -21,11 +21,11 @@ public class LoanHelperWindow extends Window {
 
     private final LoanSelector loanSelector;
     
-    public LoanHelperWindow(LoanCalculator loanCalculator, Client client, int paybackYears, FreeCashFlowCalculator freeCashFlowCalculator, LoanRequest loanRequest, ExistingLoansRefinancing existingLoanRefinancing, Consumer<LoanRequest> action) {
+    public LoanHelperWindow(LoanCalculator loanCalculator, Client client, FreeCashFlowCalculator freeCashFlowCalculator, LoanRequest loanRequest, ExistingLoansRefinancing existingLoanRefinancing, Consumer<LoanRequest> action) {
         setCaption("Loan selection helper");
         setModal(true);
         
-        loanSelector = new LoanSelector(loanCalculator, client, paybackYears, freeCashFlowCalculator, loanRequest, existingLoanRefinancing);
+        loanSelector = new LoanSelector(loanCalculator, client, freeCashFlowCalculator, loanRequest, existingLoanRefinancing);
         
         Button button = new Button("Use the selected values");
         button.addStyleName(ValoTheme.BUTTON_SMALL);

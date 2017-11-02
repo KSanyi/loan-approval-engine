@@ -1,5 +1,7 @@
 package hu.lae.domain.loan;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,12 +14,18 @@ public class LoanRequest {
     
     public final double longTermLoan;
     
+    public final LocalDate requestDate;
+    
+    public final LocalDate longTermLoanMaturityDate;
+    
     public final int longTermLoanDuration;
 
-    public LoanRequest(double shortTermLoan, double longTermLoan, int longTermLoanDuration) {
+    public LoanRequest(double shortTermLoan, double longTermLoan, LocalDate requestDate, LocalDate longTermLoanMaturityDate) {
         this.shortTermLoan = shortTermLoan;
         this.longTermLoan = longTermLoan;
-        this.longTermLoanDuration = longTermLoanDuration;
+        this.requestDate = requestDate;
+        this.longTermLoanMaturityDate = longTermLoanMaturityDate;
+        longTermLoanDuration = (int)ChronoUnit.YEARS.between(requestDate, longTermLoanMaturityDate);
     }
     
     public double sum() {

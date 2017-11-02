@@ -2,8 +2,6 @@ package hu.lae.infrastructure.ui.loancalculation.proposal;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +55,11 @@ public class ProposalWindow extends Window {
     private final IndustryData industryData;
     private final Client client;
     
-    private final ComboBox<Integer> paybackYearsCombo;
-    
     private final ComboBox<FreeCashFlowCalculator> cashflowCalculatorCombo = new ComboBox<>("EBITDA calculation", FreeCashFlowCalculator.calculators());
     
     private final ExistingLoansRefinancingTable existingLoansRefinancingTable;
+    
+    private final MaturityField maturityField;
     
     private final AmountField shortTermLoanField = new AmountField("Short term loan");
     
@@ -89,10 +87,9 @@ public class ProposalWindow extends Window {
         riskParameters = loanCalculator.riskParameters;
         maxLoanDuration = loanCalculator.maxLoanDuration;
 
-        paybackYearsCombo = new ComboBox<>("Select l/t number of years", generateComboValues(maxLoanDuration));
-        paybackYearsCombo.setValue(maxLoanDuration);
-        
         existingLoansRefinancingTable = new ExistingLoansRefinancingTable(client.existingLoans, riskParameters.interestRates);
+
+        maturityField = new MaturityField(maxLoanDuration);
         
         cashflowCalculatorCombo.setValue(FreeCashFlowCalculator.average);
         
@@ -124,10 +121,9 @@ public class ProposalWindow extends Window {
     private void openLoanHelperWindow() {
         
         LoanRequest loanRequest = createLoanRequest();
-        int paybackYears = paybackYearsCombo.getValue();
         FreeCashFlowCalculator cashFlowCalculator = cashflowCalculatorCombo.getValue();
         
-        LoanHelperWindow loanHelperWindow = new LoanHelperWindow(loanCalculator, client, paybackYears, cashFlowCalculator, loanRequest, existingLoansRefinancingTable.getValue(), 
+        LoanHelperWindow loanHelperWindow = new LoanHelperWindow(loanCalculator, client, cashFlowCalculator, loanRequest, existingLoansRefinancingTable.getValue(), 
             selectedLoanRequest -> {
                 shortTermLoanField.setAmount((long)selectedLoanRequest.shortTermLoan);
                 longTermLoanField.setAmount((long)selectedLoanRequest.longTermLoan);
@@ -179,9 +175,6 @@ public class ProposalWindow extends Window {
     }
     
     private Component createMiddlePanel() {
-        paybackYearsCombo.addStyleName(ValoTheme.COMBOBOX_ALIGN_CENTER);
-        paybackYearsCombo.setWidth("85px");
-        paybackYearsCombo.setEmptySelectionAllowed(false);
         
         cashflowCalculatorCombo.setEmptySelectionAllowed(false);
         cashflowCalculatorCombo.setWidth("120px");
@@ -191,7 +184,7 @@ public class ProposalWindow extends Window {
         longTermLoanField.setIcon(VaadinIcons.MONEY);
         longTermLoanField.removeStyleName(ValoTheme.TEXTFIELD_SMALL);
         
-        FormLayout layout = new FormLayout(paybackYearsCombo, cashflowCalculatorCombo, shortTermLoanField, longTermLoanField);
+        FormLayout layout = new FormLayout(maturityField, cashflowCalculatorCombo, shortTermLoanField, longTermLoanField);
         layout.setSizeUndefined();
         layout.setMargin(new MarginInfo(false, false, true, false));
         
@@ -204,10 +197,6 @@ public class ProposalWindow extends Window {
         panelLayout.setSizeFull();
         
         return new Panel(panelLayout);
-    }
-    
-    private static List<Integer> generateComboValues(int maxValue) {
-        return IntStream.range(1, maxValue + 1).mapToObj(i -> i).collect(Collectors.toList());
     }
     
     private void submit() {
@@ -228,7 +217,7 @@ public class ProposalWindow extends Window {
     }
     
     private LoanRequest createLoanRequest() {
-        return new LoanRequest(shortTermLoanField.getAmount(), longTermLoanField.getAmount(), paybackYearsCombo.getValue());
+        return new LoanRequest(shortTermLoanField.getAmount(), longTermLoanField.getAmount(), Clock.date(), maturityField.getValue());
     }
     
     private List<String> validate(LoanRequest loanRequest) {

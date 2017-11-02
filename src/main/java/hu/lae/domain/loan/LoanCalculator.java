@@ -36,7 +36,8 @@ public class LoanCalculator {
         
         double idealLongTermLoan = calculateMaxLongTermLoan(client,  idealShortTermLoan, maxLoanDuration, existingLoansRefinancing, freeCashFlowCalculator);
         
-        LoanRequest idealLoanRequest = new LoanRequest(idealShortTermLoan, idealLongTermLoan, maxLoanDuration);
+        LocalDate longTermLoanDuration = currentDate.plusYears(maxLoanDuration);
+        LoanRequest idealLoanRequest = new LoanRequest(idealShortTermLoan, idealLongTermLoan, currentDate, longTermLoanDuration);
         
         return idealLoanRequest;
     }
