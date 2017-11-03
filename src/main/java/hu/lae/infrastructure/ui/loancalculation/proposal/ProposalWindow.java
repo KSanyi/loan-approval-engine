@@ -3,9 +3,6 @@ package hu.lae.infrastructure.ui.loancalculation.proposal;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.MarginInfo;
@@ -19,7 +16,6 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
@@ -35,19 +31,17 @@ import hu.lae.domain.loan.LoanRequestValidator;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.domain.validation.LiquidityValidator;
 import hu.lae.domain.validation.ValidationResult;
-import hu.lae.infrastructure.ui.LaeUI;
 import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.AmountField;
 import hu.lae.infrastructure.ui.component.Button;
 import hu.lae.infrastructure.ui.component.ComboBox;
+import hu.lae.infrastructure.ui.component.Window;
 import hu.lae.infrastructure.ui.loancalculation.decision.DecisionWindow;
 import hu.lae.util.Clock;
 import hu.lae.util.Formatters;
 
 @SuppressWarnings("serial")
 public class ProposalWindow extends Window {
-    
-    private static final Logger logger = LoggerFactory.getLogger(LaeUI.class);
     
     private final IdealStructurePanel idealStructurePanel;
     
@@ -226,12 +220,6 @@ public class ProposalWindow extends Window {
         LoanRequestValidator loanRequestValidator = new LoanRequestValidator(loanCalculator, loanPreCalculator, industryData);
         
         return loanRequestValidator.validate(cashflowCalculatorCombo.getValue(), client, existingLoansRefinancingTable.getValue(), loanRequest);
-    }
-    
-    @Override
-    public void close() {
-        logger.debug("Proposal window is closed");
-        super.close();
     }
     
 }

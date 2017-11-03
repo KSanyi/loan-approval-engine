@@ -5,16 +5,16 @@ import java.util.stream.Collectors;
 
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
-import hu.lae.infrastructure.ui.component.Button;
-import hu.lae.infrastructure.ui.component.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.finance.FinancialHistory;
+import hu.lae.infrastructure.ui.component.Button;
+import hu.lae.infrastructure.ui.component.ComboBox;
+import hu.lae.infrastructure.ui.component.Window;
 
 @SuppressWarnings("serial")
 public class FinancialHistoryWindow extends Window {

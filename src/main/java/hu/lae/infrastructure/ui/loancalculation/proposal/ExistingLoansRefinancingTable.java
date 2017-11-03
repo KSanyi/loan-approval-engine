@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.Grid;
@@ -20,6 +19,7 @@ import hu.lae.domain.loan.ExistingLoans;
 import hu.lae.domain.loan.ExistingLoansRefinancing;
 import hu.lae.domain.riskparameters.InterestRates;
 import hu.lae.infrastructure.ui.VaadinUtil;
+import hu.lae.infrastructure.ui.component.CheckBox;
 import hu.lae.util.Clock;
 import hu.lae.util.Formatters;
 
@@ -117,7 +117,7 @@ class ExistingLoansRefinancingTable extends CustomField<ExistingLoansRefinancing
 
 class ExistingLoanRow {
     
-    final CheckBox refinanced = new CheckBox();
+    final CheckBox refinanced = new CheckBox(null, "existing.loan.refinance");
     
     final ExistingLoan existingLoan;
 

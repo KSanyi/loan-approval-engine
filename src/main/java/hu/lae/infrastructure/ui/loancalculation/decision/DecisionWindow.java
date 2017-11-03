@@ -16,7 +16,6 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -31,6 +30,7 @@ import hu.lae.domain.loan.LoanRequest;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.Button;
+import hu.lae.infrastructure.ui.component.Window;
 import hu.lae.infrastructure.ui.loancalculation.proposal.ProposalWindow;
 import hu.lae.util.Formatters;
 

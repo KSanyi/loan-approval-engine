@@ -4,12 +4,12 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.industry.IndustryDataRepository;
 import hu.lae.domain.legal.LegalParametersRepository;
 import hu.lae.domain.riskparameters.RiskParametersRepository;
+import hu.lae.infrastructure.ui.component.Window;
 import hu.lae.infrastructure.ui.parameters.industrydata.IndustryDataScreen;
 import hu.lae.infrastructure.ui.parameters.legalparameters.LegalParametersScreen;
 import hu.lae.infrastructure.ui.parameters.riskparameters.RiskParametersScreen;

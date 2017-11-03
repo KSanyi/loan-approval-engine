@@ -17,7 +17,7 @@ public class Button extends com.vaadin.ui.Button {
     public Button(String caption, String id) {
         super(caption);
         setId(id);
-        addClickListener(click -> logger.debug("USERACTION {}: button '{}' clicked", LaeUI.currentUser(), id));
+        addClickListener(click -> logger.debug("USERACTION {}: '{}' clicked", LaeUI.currentUser(), id));
     }
     
     public Button(String caption) {
@@ -32,7 +32,7 @@ public class Button extends com.vaadin.ui.Button {
     public Button(Resource resource, String id) {
         super(resource);
         setId(id);
-        addClickListener(click -> logger.debug("USERACTION {}: button '{}' clicked", LaeUI.currentUser(), id));
+        addClickListener(click -> logger.debug("USERACTION {}: '{}' clicked", LaeUI.currentUser(), id));
     }
     
 }

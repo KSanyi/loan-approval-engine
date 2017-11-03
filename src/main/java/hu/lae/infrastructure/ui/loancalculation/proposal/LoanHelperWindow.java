@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
@@ -15,6 +14,7 @@ import hu.lae.domain.loan.LoanCalculator;
 import hu.lae.domain.loan.LoanRequest;
 import hu.lae.infrastructure.ui.VaadinUtil;
 import hu.lae.infrastructure.ui.component.Button;
+import hu.lae.infrastructure.ui.component.Window;
 
 @SuppressWarnings("serial")
 public class LoanHelperWindow extends Window {
