@@ -18,14 +18,16 @@ public class LoanRequest {
     
     public final LocalDate longTermLoanMaturityDate;
     
-    public final int longTermLoanDuration;
-
     public LoanRequest(double shortTermLoan, double longTermLoan, LocalDate requestDate, LocalDate longTermLoanMaturityDate) {
         this.shortTermLoan = shortTermLoan;
         this.longTermLoan = longTermLoan;
         this.requestDate = requestDate;
         this.longTermLoanMaturityDate = longTermLoanMaturityDate;
-        longTermLoanDuration = (int)ChronoUnit.YEARS.between(requestDate, longTermLoanMaturityDate);
+    }
+    
+    public double maturityYears() {
+        long days = ChronoUnit.DAYS.between(requestDate, longTermLoanMaturityDate);
+        return days / 365.0;
     }
     
     public double sum() {

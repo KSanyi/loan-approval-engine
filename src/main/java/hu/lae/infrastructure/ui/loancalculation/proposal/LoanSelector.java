@@ -50,8 +50,8 @@ public class LoanSelector extends CustomField<LoanRequest> {
         stLoanSlider.setValue(loanRequest.shortTermLoan);
         ltLoanSlider.setValue(loanRequest.longTermLoan);
         
-        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, loanRequest.longTermLoan, loanRequest.longTermLoanDuration, existingLoansRefinancing, freeCashFlowCalculator);
-        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, loanRequest.longTermLoanDuration, existingLoansRefinancing, freeCashFlowCalculator);
+        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, loanRequest.longTermLoan, loanRequest.maturityYears(), existingLoansRefinancing, freeCashFlowCalculator);
+        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, loanRequest.maturityYears(), existingLoansRefinancing, freeCashFlowCalculator);
         stLoanSlider.setMaxLoanValue(maxShortTermLoan);
         ltLoanSlider.setMaxLoanValue(maxLongTermLoan);
         
@@ -60,7 +60,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
     }
     
     private void shortTermLoanChanged(double shortTermLoan) {
-        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, shortTermLoan, loanRequest.longTermLoanDuration, existingLoansRefinancing, freeCashFlowCalculator);
+        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, shortTermLoan, loanRequest.maturityYears(), existingLoansRefinancing, freeCashFlowCalculator);
         ltLoanSlider.setMaxLoanValue(maxLongTermLoan);
         updateDebtCapacityUsageLabel();
         checkLiquidityRatio();
@@ -77,7 +77,7 @@ public class LoanSelector extends CustomField<LoanRequest> {
    }
     
     private void longTermLoanChanged(double longTermLoan) {
-        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, longTermLoan, loanRequest.longTermLoanDuration, existingLoansRefinancing, freeCashFlowCalculator);
+        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, longTermLoan, loanRequest.maturityYears(), existingLoansRefinancing, freeCashFlowCalculator);
         stLoanSlider.setMaxLoanValue(maxShortTermLoan);
         updateDebtCapacityUsageLabel();
     }

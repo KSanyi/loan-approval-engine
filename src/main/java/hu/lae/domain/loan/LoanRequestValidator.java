@@ -37,10 +37,8 @@ public class LoanRequestValidator {
 
         logger.info("Validating loan request");
         
-        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, 0, loanRequest.longTermLoanDuration,
-                existingLoansRefinancing, freeCashFlowCalculator);
-        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, loanRequest.longTermLoanDuration,
-                existingLoansRefinancing, freeCashFlowCalculator);
+        double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, 0, loanRequest.maturityYears(), existingLoansRefinancing, freeCashFlowCalculator);
+        double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, loanRequest.maturityYears(), existingLoansRefinancing, freeCashFlowCalculator);
 
         double loanIncrement = loanRequest.sum() - existingLoansRefinancing.sumOfRefinancableLoans();
         int maxLoanDuration = loanPreCalculator.calculateMaxLoanDuration(client, loanIncrement);
@@ -57,15 +55,15 @@ public class LoanRequestValidator {
             } else if (loanRequest.longTermLoan > maxLongTermLoan) {
                 errorMessages.add("Long term loan must not exceed " + MathUtil.round(maxLongTermLoan, 1));
             }
-        } else if (maxLoanDuration < loanRequest.longTermLoanDuration) {
+        } else if (maxLoanDuration < loanRequest.maturityYears()) {
         	double ownEquityRatioIndustryAverage = industryData.ownEquityRatioAverage(client.industry);
-            Optional<Double> minEquityRatio = riskParameters.minOwnEquityRatio(ownEquityRatioIndustryAverage, loanRequest.longTermLoanDuration);
+            Optional<Double> minEquityRatio = riskParameters.minOwnEquityRatio(ownEquityRatioIndustryAverage, loanRequest.maturityYears());
             Optional<Double> maxNewLoan = minEquityRatio.flatMap(ratio -> client.financialStatementData().balanceSheet.liabilities.maxNewLoanToEquityRatio(ratio));
             
             if(maxNewLoan.isPresent()) {
                 errorMessages.add("Decrease loan amount to " + MathUtil.round(maxNewLoan.get(), 1));
             } else {
-                logger.error("No max loan value found for {} years", loanRequest.longTermLoanDuration);
+                logger.error("No max loan value found for {} years", loanRequest.maturityYears());
             }
         }
         

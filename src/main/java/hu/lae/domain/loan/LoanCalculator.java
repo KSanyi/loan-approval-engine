@@ -42,7 +42,7 @@ public class LoanCalculator {
         return idealLoanRequest;
     }
     
-    public double calculateMaxLongTermLoan(Client client, double shortTermLoanAmount, int paybackYears, ExistingLoansRefinancing existingLoansRefinancing, FreeCashFlowCalculator freeCashFlowCalculator) {
+    public double calculateMaxLongTermLoan(Client client, double shortTermLoanAmount, double paybackYears, ExistingLoansRefinancing existingLoansRefinancing, FreeCashFlowCalculator freeCashFlowCalculator) {
         
         logger.debug("------------------------- Max long term loan calculation -------------------------");
         logger.debug("Short term loan: " + shortTermLoanAmount + " paybackYears: " + paybackYears + " FreeCashFlowCalculator: " + freeCashFlowCalculator);
@@ -70,14 +70,14 @@ public class LoanCalculator {
         double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.interestRates, currentDate);
         cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yearlyDebtServiceForExistingLongTermLoans);
         
-        double maxLongTermLoan = new CashFlow(paybackYears, cashFlowForNewLongTermLoans).presentValue(riskParameters.interestRates.longTermInterestRate);
+        double maxLongTermLoan = new CashFlow((int)Math.round(paybackYears), cashFlowForNewLongTermLoans).presentValue(riskParameters.interestRates.longTermInterestRate);
         
         logger.debug("Calculated max long term loan: " + maxLongTermLoan);
         
         return maxLongTermLoan;
     }
     
-    public double calculateMaxShortTermLoan(Client client, double longTermLoan, int paybackYears, ExistingLoansRefinancing existingLoansRefinancing, FreeCashFlowCalculator freeCashFlowCalculator) {
+    public double calculateMaxShortTermLoan(Client client, double longTermLoan, double paybackYears, ExistingLoansRefinancing existingLoansRefinancing, FreeCashFlowCalculator freeCashFlowCalculator) {
         
         logger.debug("------------------------- Max short term loan calculation -------------------------");
         logger.debug("Long term loan: " + longTermLoan + " paybackYears: " + paybackYears + " FreeCashFlowCalculator: " + freeCashFlowCalculator);

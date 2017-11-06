@@ -32,7 +32,7 @@ public class ExistingLoansRefinancing {
         double nonRefinancableShortTermLoans = nonRefinancableShortTermLoans();
         
         if(nonRefinancableShortTermLoans > idealLoanRequest.shortTermLoan) {
-            double debtService = -ExcelFunctions.pmt(interestRates.longTermInterestRate.value, idealLoanRequest.longTermLoanDuration, nonRefinancableShortTermLoans - idealLoanRequest.shortTermLoan);
+            double debtService = -ExcelFunctions.pmt(interestRates.longTermInterestRate.value, idealLoanRequest.maturityYears(), nonRefinancableShortTermLoans - idealLoanRequest.shortTermLoan);
             return interestRates.shortTermInterestRate.multiply(idealLoanRequest.shortTermLoan) + debtService;
         } else {
             return interestRates.shortTermInterestRate.multiply(nonRefinancableShortTermLoans);

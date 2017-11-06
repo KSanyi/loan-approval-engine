@@ -23,7 +23,7 @@ public class DSCRCalculator {
         
         double debtServiceForExistingLongTermLoan = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(interestRates, date);
         
-        double debtServiceForRequestedLongTermLoan = -ExcelFunctions.pmt(interestRates.longTermInterestRate.value, loanRequest.longTermLoanDuration, loanRequest.longTermLoan);
+        double debtServiceForRequestedLongTermLoan = -ExcelFunctions.pmt(interestRates.longTermInterestRate.value, loanRequest.maturityYears(), loanRequest.longTermLoan);
         
         double fullDebtService = interestForShortTermLoan + debtServiceForExistingLongTermLoan + debtServiceForRequestedLongTermLoan;
         

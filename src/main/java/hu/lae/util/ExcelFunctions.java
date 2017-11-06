@@ -15,7 +15,7 @@ public final class ExcelFunctions {
 	 *
 	 * @see #pmt(double, int, double, double, int)
 	 */
-	public static double pmt(double r, int nper, double pv, double fv) {
+	public static double pmt(double r, double nper, double pv, double fv) {
 
 		return pmt(r, nper, pv, fv, 0);
 	}
@@ -25,7 +25,7 @@ public final class ExcelFunctions {
 	 *
 	 * @see #pmt(double, int, double, double, int)
 	 */
-	public static double pmt(double r, int nper, double pv) {
+	public static double pmt(double r, double nper, double pv) {
 
 		return pmt(r, nper, pv, 0);
 	}

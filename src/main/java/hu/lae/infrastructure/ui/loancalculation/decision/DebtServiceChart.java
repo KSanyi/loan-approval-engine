@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.byteowls.vaadin.chartjs.ChartJs;
 import com.byteowls.vaadin.chartjs.config.BarChartConfig;
@@ -36,7 +35,7 @@ public class DebtServiceChart extends ChartJs {
     private static BarChartConfig createConfig(double freeCashFlow, ExistingLoansRefinancing existingLoansRefinancing, LoanRequest loanRequest, InterestRates interestRates) {
         BarChartConfig config = new BarChartConfig();
         
-        List<LocalDate> dates = dates(loanRequest.longTermLoanDuration);
+        List<LocalDate> dates = dates(loanRequest.longTermLoanMaturityDate);
         
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy MMMM");
         List<String> labels = dates.stream().map(date -> date.format(dtf)).collect(Collectors.toList());
@@ -48,7 +47,7 @@ public class DebtServiceChart extends ChartJs {
         createExistingLoanDatasets(dates, existingLoansRefinancing, interestRates).stream().forEach(config.data()::addDataset);
         config.data()
             .addDataset(createNewSTLoanDataset(dates, loanRequest.shortTermLoan, interestRates.shortTermInterestRate))
-            .addDataset(createNewLTLoanDataset(dates, loanRequest.longTermLoan, loanRequest.longTermLoanDuration, interestRates.longTermInterestRate));
+            .addDataset(createNewLTLoanDataset(dates, loanRequest, interestRates.longTermInterestRate));
         
         config.options()
             .responsive(true)
@@ -69,11 +68,14 @@ public class DebtServiceChart extends ChartJs {
         return config;
     }
     
-    private static List<LocalDate> dates(int longTermloanDuration) {
+    private static List<LocalDate> dates(LocalDate longTermLoanMaturityDate) {
         
-        return IntStream.range(1, longTermloanDuration * 4)
-            .mapToObj(quarter -> Clock.date().plusMonths(quarter * 3))
-            .collect(Collectors.toList());
+        List<LocalDate> dates = new ArrayList<>();
+        for(LocalDate date = Clock.date();!date.isAfter(longTermLoanMaturityDate);date = date.plusMonths(3)) {
+            dates.add(date);
+        }
+        
+        return dates;
     }
     
     private static BarDataset createFreeCFDataset(List<LocalDate> dates, double freeCashFlow) {
@@ -99,9 +101,9 @@ public class DebtServiceChart extends ChartJs {
             .dataAsList(data);
     }
     
-    private static BarDataset createNewLTLoanDataset(List<LocalDate> dates, double longTermLoan, int paybackYears, InterestRate longTermInterestRate) {
+    private static BarDataset createNewLTLoanDataset(List<LocalDate> dates, LoanRequest loanRequest, InterestRate longTermInterestRate) {
         
-    	double yearlyDebtService = -ExcelFunctions.pmt(longTermInterestRate.value, paybackYears, longTermLoan);
+    	double yearlyDebtService = -ExcelFunctions.pmt(longTermInterestRate.value, loanRequest.maturityYears(), loanRequest.longTermLoan);
         double roundedValue = MathUtil.round(yearlyDebtService / 4, 1);
         
         List<Double> data = dates.stream().map(d -> roundedValue).collect(Collectors.toList());
