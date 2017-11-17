@@ -2,6 +2,7 @@ package hu.lae.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 public class MathUtil {
 
@@ -21,6 +22,18 @@ public class MathUtil {
         
         double x = Math.pow(10, digits);
         return Math.round(value * x) / x;
+    }
+    
+    public static double min(double ... values) {
+        
+        return DoubleStream.of(values).min().orElse(0);
+        
+    }
+    
+    public static double min(List<Double> values) {
+        
+        return values.stream().mapToDouble(d -> d).min().orElse(0);
+        
     }
     
 }

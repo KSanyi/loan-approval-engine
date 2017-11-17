@@ -16,7 +16,7 @@ import hu.lae.infrastructure.ui.component.DateField;
 import hu.lae.util.Clock;
 
 @SuppressWarnings("serial")
-class MaturityField extends CustomField<LocalDate>{
+class MaturityField extends CustomField<LocalDate> {
 
     private final ComboBox<Integer> yearsCombo;
     
