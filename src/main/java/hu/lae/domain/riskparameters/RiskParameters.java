@@ -27,9 +27,11 @@ public class RiskParameters {
     
     public final CollateralRequirement collateralRequirement;
     
+    public final EbitdaCorrectionParameters ebitdaCorrectionParameters;
+    
     public RiskParameters(String id, String name, double amortizationRate, Haircuts haircuts, InterestRates interestRates,
             IndustryMaxLoanDurations industryMaxLoanDurations, double dscrThreshold, Thresholds thresholds,
-            CollateralRequirement collateralRequirement) {
+            CollateralRequirement collateralRequirement, EbitdaCorrectionParameters ebitdaCorrectionParameters) {
         this.id = id;
         this.name = name;
         this.amortizationRate = amortizationRate;
@@ -39,6 +41,7 @@ public class RiskParameters {
         this.dscrThreshold = dscrThreshold;
         this.thresholds = thresholds;
         this.collateralRequirement = collateralRequirement;
+        this.ebitdaCorrectionParameters = ebitdaCorrectionParameters;
     }
 
     @Override

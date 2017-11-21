@@ -29,6 +29,7 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
     private final PercentField longTermInterestRateField = new PercentField("Long term interest rate");
     private final ThresholdsForm thresholdsForm;
     private final CollateralRequirementsForm collateralRequirementsForm;
+    private final EbitdaCorrectionParametersPanel ebitdaCorrectionParametersForm;
 
     public RiskParametersForm(RiskParameters riskParameters) {
         this.riskParameters = riskParameters;
@@ -36,6 +37,7 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
         industryMaxLoanDurationsForm = new IndustryMaxLoanDurationsForm(riskParameters.industryMaxLoanDurations);
         thresholdsForm = new ThresholdsForm(riskParameters.thresholds);
         collateralRequirementsForm = new CollateralRequirementsForm(riskParameters.collateralRequirement);
+        ebitdaCorrectionParametersForm = new EbitdaCorrectionParametersPanel(riskParameters.ebitdaCorrectionParameters);
         
         amortizationRateField.setPercent(riskParameters.amortizationRate);
         dscrThresholdField.setNumber(riskParameters.dscrThreshold);
@@ -57,7 +59,8 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
                 industryMaxLoanDurationsForm.getValue(),
                 dscrThresholdField.getNumber(),
                 thresholdsForm.getValue(),
-                collateralRequirementsForm.getValue());
+                collateralRequirementsForm.getValue(),
+                ebitdaCorrectionParametersForm.getEbitdaCorrectionParameters());
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
 		gridLayout.setSpacing(true);
 		gridLayout.setColumns(4);
 		
-		gridLayout.addComponents(panel, industryMaxLoanDurationsForm, thresholdsForm, collateralRequirementsForm);
+		gridLayout.addComponents(panel, industryMaxLoanDurationsForm, thresholdsForm, collateralRequirementsForm, ebitdaCorrectionParametersForm);
         
 		return gridLayout;
 	}

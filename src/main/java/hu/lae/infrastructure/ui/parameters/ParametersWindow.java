@@ -40,7 +40,7 @@ public class ParametersWindow extends Window {
         
         setContent(tabsheet);
         setModal(true);
-        setWidth("1300px");
+        setWidth("1350px");
         setHeight("900px");
     }
     

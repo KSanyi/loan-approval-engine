@@ -19,6 +19,7 @@ import hu.lae.domain.finance.IncomeStatement;
 import hu.lae.domain.industry.Industry;
 import hu.lae.domain.legal.LegalData;
 import hu.lae.domain.riskparameters.CollateralRequirement;
+import hu.lae.domain.riskparameters.EbitdaCorrectionParameters;
 import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.domain.riskparameters.IndustryMaxLoanDurations;
 import hu.lae.domain.riskparameters.InterestRates;
@@ -70,7 +71,8 @@ public class LoanCalculatorTest {
                 new CollateralRequirement(MapFactory.of(
                         0.0, new Pair<>(50L, 0.7), 
                         0.02, new Pair<>(30L, 0.4), 
-                        0.04, new Pair<>(0L, 0.0))));
+                        0.04, new Pair<>(0L, 0.0))),
+                new EbitdaCorrectionParameters(0.3, 0.1, -0.1, -0.05));
         
         loanCalculator = new LoanCalculator(riskParameters, LocalDate.of(2017,4,1), 5);
     }
