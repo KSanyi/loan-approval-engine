@@ -1,65 +1,82 @@
 package hu.lae.domain.finance.ebitdacorrection;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import hu.lae.domain.finance.YearlyData;
 import hu.lae.util.MathUtil;
 
 public class EbitdaCorrector {
 
     private final double reasonableEbitdaMarginGrowth;
     
-    public EbitdaCorrector(double reasonableEbitdaMarginGrowth) {
+    private final double maxDelta;
+    
+    private final double minXXX;
+    
+    public EbitdaCorrector(double reasonableEbitdaMarginGrowth, double maxDelta, double minXXX) {
         this.reasonableEbitdaMarginGrowth = reasonableEbitdaMarginGrowth;
+        this.maxDelta = maxDelta;
+        this.minXXX = minXXX;
     }
 
-    public List<Long> calculateCorrectedEbitdas(List<EbitdaCorretionInput> input) {
-        
-        List<Long> calculateCorrectedSales = calculateCorrectedSales(input);
-        List<Double> calculateCorrectedEbitdaMargins = calculateCorrectedEbitdaMargins(input);
-        
-        List<Long> correctedEbitdaList = new ArrayList<>();
-        for(int i=0;i<input.size();i++) {
-            Long correctedEbitda = Math.round(calculateCorrectedSales.get(i) * calculateCorrectedEbitdaMargins.get(i));
-            correctedEbitdaList.add(correctedEbitda);
-        }
-        
-        return correctedEbitdaList;
+    public YearlyData<Double> xxx(YearlyData<EbitdaCorrectionInput> input) {
+    	
+    	YearlyData<Double> correctedEbitdas = calculateCorrectedEbitdas(input);
+    	
+    	Double tValue = correctedEbitdas.tMinus1Value * Math.min(correctedEbitdas.tValue / correctedEbitdas.tMinus1Value, 1 + maxDelta);
+    	Double tMinus1Value = correctedEbitdas.tMinus2Value * Math.min(correctedEbitdas.tMinus1Value / correctedEbitdas.tMinus2Value, 1 + maxDelta);
+    	
+    	double twoYearsEbitdaGrowth = correctedEbitdas.tValue / correctedEbitdas.tMinus2Value - 1;
+    	double secondYearEbitdaGrowth = correctedEbitdas.tMinus1Value / correctedEbitdas.tMinus2Value - 1;
+    	boolean shouldUseTValue = correctedEbitdas.tValue > correctedEbitdas.tMinus1Value && minXXX < twoYearsEbitdaGrowth && minXXX < secondYearEbitdaGrowth;
+    	
+    	Double tMinus2Value = shouldUseTValue ? correctedEbitdas.tValue : correctedEbitdas.tMinus2Value;
+    	
+    	YearlyData<Double> correctedEbitdas2 = new YearlyData<>(tValue, tMinus1Value, tMinus2Value);
+    	
+    	return correctedEbitdas2;
     }
     
-    private List<Long> calculateCorrectedSales(List<EbitdaCorretionInput> input) {
+    public YearlyData<Double> calculateCorrectedEbitdas(YearlyData<EbitdaCorrectionInput> input) {
         
-        List<Long> correctedSalesList = new ArrayList<>();
-        for(int i=0;i<input.size()-1;i++) {
-            double salesDecrease = input.get(i).sales * (input.get(i).buyersDays - input.get(i+1).buyersDays) / 365;
-            double effectiveSalesDecrease = Double.max(salesDecrease, 0);
-            long correctedSales = Math.round(input.get(i).sales - effectiveSalesDecrease);
-            correctedSalesList.add(correctedSales);       
-        }
-        correctedSalesList.add(input.get(input.size()-1).sales);
+    	YearlyData<Long> calculateCorrectedSales = calculateCorrectedSales(input);
+    	YearlyData<Double> calculateCorrectedEbitdaMargins = calculateCorrectedEbitdaMargins(input);
         
-        return correctedSalesList;
-        
+    	return new YearlyData<>(
+    			calculateCorrectedSales.tValue * calculateCorrectedEbitdaMargins.tValue,
+    			calculateCorrectedSales.tMinus1Value * calculateCorrectedEbitdaMargins.tMinus1Value,
+    			calculateCorrectedSales.tMinus2Value * calculateCorrectedEbitdaMargins.tMinus2Value);
     }
     
-    private List<Double> calculateCorrectedEbitdaMargins(List<EbitdaCorretionInput> input) {
+    private YearlyData<Long> calculateCorrectedSales(YearlyData<EbitdaCorrectionInput> input) {
         
-        List<Double> correctedEbitdaMarginList = new ArrayList<>();
-        for(int i=0;i<input.size()-1;i++) {
-            List<Double> reasonableEbitdaMargins = new ArrayList<>();
-            for(int j=i+1;j<input.size();j++) {
-                double reasonableEbitdaMargin = input.get(j).ebitdaMargin() * Math.pow(1 + reasonableEbitdaMarginGrowth, j);
-                reasonableEbitdaMargins.add(reasonableEbitdaMargin);
-            }
-            
-            double effectiveEbitdaMargin = MathUtil.min(input.get(i).ebitdaMargin(), MathUtil.min(reasonableEbitdaMargins));
-            correctedEbitdaMarginList.add(effectiveEbitdaMargin);       
-        }
-        correctedEbitdaMarginList.add(input.get(input.size()-1).ebitdaMargin());
-        
-        return correctedEbitdaMarginList;
+        return new YearlyData<>(
+        		calculateCorrectedSales(input.tValue, input.tMinus1Value),
+        		calculateCorrectedSales(input.tMinus1Value, input.tMinus2Value),
+        		input.tMinus2Value.sales);
     }
     
+    private Long calculateCorrectedSales(EbitdaCorrectionInput entry, EbitdaCorrectionInput prevEntry) {
+    	 double salesDecrease = entry.sales * (entry.buyersDays - prevEntry.buyersDays) / 365;
+         double effectiveSalesDecrease = Double.max(salesDecrease, 0);
+         return Math.round(entry.sales - effectiveSalesDecrease);
+    }
     
+    private YearlyData<Double> calculateCorrectedEbitdaMargins(YearlyData<EbitdaCorrectionInput> input) {
+        
+    	return new YearlyData<>(
+    			calculateCorrectedEbitdaMarginForActualYear(input),
+    			calculateCorrectedEbitdaMarginForTMinus1Year(input.tMinus1Value, input.tMinus2Value),
+        		input.tMinus2Value.ebitdaMargin());
+    }
+    
+    private Double calculateCorrectedEbitdaMarginForActualYear(YearlyData<EbitdaCorrectionInput> input) {
+    	double reasonableEbitdaMargin1 = input.tMinus1Value.ebitdaMargin() * (1 + reasonableEbitdaMarginGrowth);
+    	double reasonableEbitdaMargin2 = input.tMinus2Value.ebitdaMargin() * (1 + reasonableEbitdaMarginGrowth) * (1 + reasonableEbitdaMarginGrowth);
+    	return MathUtil.min(input.tValue.ebitdaMargin(), reasonableEbitdaMargin1, reasonableEbitdaMargin2);
+    }
+    
+    private Double calculateCorrectedEbitdaMarginForTMinus1Year(EbitdaCorrectionInput entry, EbitdaCorrectionInput prevEntry) {
+    	double reasonableEbitdaMargin = prevEntry.ebitdaMargin() * (1 + reasonableEbitdaMarginGrowth);
+    	return Math.min(entry.ebitdaMargin(), reasonableEbitdaMargin);
+    }
     
 }
