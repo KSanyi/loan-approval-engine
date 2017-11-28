@@ -48,7 +48,7 @@ public class ExistingLoan {
             return interestRates.shortTermInterestRate.multiply(amount);
         } else {
             double quartersUntilMaturity = ChronoUnit.DAYS.between(currentDate, expiry.get()) / 90.0;
-            return -ExcelFunctions.pmt(interestRates.longTermInterestRate.value, quartersUntilMaturity, amount, 0, 0) * 4;
+            return -ExcelFunctions.pmt(interestRates.longTermInterestRate.value, quartersUntilMaturity, amount) * 4;
         }
     }
     

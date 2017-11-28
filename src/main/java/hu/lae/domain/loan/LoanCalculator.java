@@ -137,7 +137,7 @@ public class LoanCalculator {
         double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.interestRates, currentDate);
         cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yearlyDebtServiceForExistingLongTermLoans);
         
-        double years = ExcelFunctions.nper(riskParameters.interestRates.longTermInterestRate.value, cashFlowForNewLongTermLoans, -loanRequest.longTermLoan, 0, false);
+        double years = ExcelFunctions.nper(riskParameters.interestRates.longTermInterestRate.value, cashFlowForNewLongTermLoans, -loanRequest.longTermLoan);
         
         logger.debug("Calculated min payback years: " + years);
         
