@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.lae.domain.Client;
-import hu.lae.domain.finance.CashFlow;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.util.ExcelFunctions;
@@ -70,7 +69,7 @@ public class LoanCalculator {
         double yearlyDebtServiceForExistingLongTermLoans = existingLoansRefinancing.calculateYearlyDebtServiceForLongTermLoans(riskParameters.interestRates, currentDate);
         cashFlowForNewLongTermLoans = Math.max(0, cashFlowForNewLongTermLoans - yearlyDebtServiceForExistingLongTermLoans);
         
-        double maxLongTermLoan = new CashFlow((int)Math.round(paybackYears), cashFlowForNewLongTermLoans).presentValue(riskParameters.interestRates.longTermInterestRate);
+        double maxLongTermLoan = -ExcelFunctions.pv(riskParameters.interestRates.longTermInterestRate.value, paybackYears, cashFlowForNewLongTermLoans);
         
         logger.debug("Calculated max long term loan: " + maxLongTermLoan);
         
@@ -97,11 +96,11 @@ public class LoanCalculator {
             double diff = idealLoanRequest.shortTermLoan - existingLoansRefinancing.nonRefinancableShortTermLoans();
             double interest = riskParameters.interestRates.shortTermInterestRate.multiply(diff);
             double xxx1 = (remaining - interest);
-            double xxx2 = new CashFlow(maxLoanDuration, xxx1).presentValue(riskParameters.interestRates.longTermInterestRate);
+            double xxx2 = -ExcelFunctions.pv(riskParameters.interestRates.longTermInterestRate.value, maxLoanDuration, xxx1);
             double xxx3 = remaining / riskParameters.interestRates.shortTermInterestRate.value;
             maxShortTermLoan = Math.min(diff, xxx3) + Math.max(0, xxx2);
         } else {
-            maxShortTermLoan = new CashFlow(maxLoanDuration, remaining).presentValue(riskParameters.interestRates.longTermInterestRate);
+            maxShortTermLoan = -ExcelFunctions.pv(riskParameters.interestRates.longTermInterestRate.value, maxLoanDuration, remaining);
         }
         
         logger.debug("Calculated max short term loan: " + maxShortTermLoan);

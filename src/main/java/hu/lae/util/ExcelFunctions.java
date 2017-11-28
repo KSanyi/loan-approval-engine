@@ -1,7 +1,5 @@
 package hu.lae.util;
 
-import java.util.List;
-
 import org.apache.poi.ss.formula.functions.FinanceLib;
 
 public final class ExcelFunctions {
@@ -16,11 +14,9 @@ public final class ExcelFunctions {
         return FinanceLib.nper(rate, payment, pv, 0, false);
     }
     
-    public static double npv(double rate, List<Double> payments) {
+    public static double pv(double rate, double nper, double payment) {
         
-        double[] paymentsArray = payments.stream().mapToDouble(p -> p).toArray();
-        
-        return FinanceLib.npv(rate, paymentsArray);
+        return FinanceLib.pv(rate, nper, payment, 0, false);
     }
 	
 }
