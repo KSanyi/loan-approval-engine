@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 apply plugin: 'application'
 apply plugin: "jacoco"
 
-sourceCompatibility = 1.8
+sourceCompatibility = 9
 version = '1.0'
 jar {
     manifest {

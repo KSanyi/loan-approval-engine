@@ -1,12 +1,12 @@
 package hu.lae.domain.loan;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import hu.lae.domain.riskparameters.InterestRates;
-import hu.lae.util.MapFactory;
 
 public class DSCRCalculatorTest {
 
@@ -43,7 +43,7 @@ public class DSCRCalculatorTest {
 		
 		double freeCashFlow = 300;
 		LoanRequest loanRequest = new LoanRequest(400, 1000, date, date.plusYears(5));
-		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(MapFactory.of(
+		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(Map.of(
 				ExistingLoan.newShortTermLoan(400, false), true,
 				ExistingLoan.newLongTermLoan(1000, LocalDate.of(2022, 4, 1), false), true));
 		  
@@ -57,7 +57,7 @@ public class DSCRCalculatorTest {
 		
 		double freeCashFlow = 300;
 		LoanRequest loanRequest = new LoanRequest(400, 1000, date, date.plusYears(5));
-		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(MapFactory.of(
+		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(Map.of(
 				ExistingLoan.newShortTermLoan(400, false), false,
 				ExistingLoan.newLongTermLoan(1000, LocalDate.of(2022, 4, 1), false), false));
 		
@@ -71,7 +71,7 @@ public class DSCRCalculatorTest {
 		
 		double freeCashFlow = 240;
 		LoanRequest loanRequest = new LoanRequest(200, 100, date, date.plusYears(5));
-		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(MapFactory.of(
+		ExistingLoansRefinancing existingLoansRefinancing = new ExistingLoansRefinancing(Map.of(
 				ExistingLoan.newShortTermLoan(100, false), true,
 				ExistingLoan.newLongTermLoan(150, LocalDate.of(2021,2,12), false), false,
 				ExistingLoan.newLongTermLoan(200, LocalDate.of(2020,4, 1), false), false));

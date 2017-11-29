@@ -2,14 +2,12 @@ package hu.lae.domain.industry;
 
 import java.util.Map;
 
-import hu.lae.util.MapFactory;
-
 public class InMemoryIndustryDataRepository implements IndustryDataRepository {
 
 	IndustryData industryData;
 	
 	public InMemoryIndustryDataRepository() {
-		Map<Industry, Double> ownEquityRatioAverageMap = MapFactory.of(
+		Map<Industry, Double> ownEquityRatioAverageMap = Map.of(
         		Industry.AUTOMOTIVE, 0.4,
         		Industry.CONSTRUCTION, 0.5);
 		industryData = new IndustryData(ownEquityRatioAverageMap);

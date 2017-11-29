@@ -1,16 +1,17 @@
 package hu.lae.domain.accounting;
 
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import hu.lae.domain.finance.FreeCashFlowCalculator;
 import hu.lae.domain.finance.IncomeStatement;
 import hu.lae.domain.finance.IncomeStatementHistory;
-import hu.lae.util.MapFactory;
 
 public class FreeCashFlowCalculatorTest {
 
-    IncomeStatementHistory incomeStatementData = new IncomeStatementHistory(MapFactory.of(
+    IncomeStatementHistory incomeStatementData = new IncomeStatementHistory(Map.of(
             2014, new IncomeStatement(1600, 800, 80, 200, 300),
             2015, new IncomeStatement(1800, 900, 110, 180, 300),
             2016, new IncomeStatement(2000, 1000, 100, 200, 300)));

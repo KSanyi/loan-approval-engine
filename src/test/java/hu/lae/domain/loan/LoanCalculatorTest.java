@@ -3,6 +3,7 @@ package hu.lae.domain.loan;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,7 +27,6 @@ import hu.lae.domain.riskparameters.InterestRates;
 import hu.lae.domain.riskparameters.OwnEquityRatioThresholds;
 import hu.lae.domain.riskparameters.RiskParameters;
 import hu.lae.domain.riskparameters.Thresholds;
-import hu.lae.util.MapFactory;
 import hu.lae.util.Pair;
 
 public class LoanCalculatorTest {
@@ -66,9 +66,9 @@ public class LoanCalculatorTest {
     public void init() {
         Haircuts haircuts = new Haircuts(0.8, 0.5, 0.8, 0.4);
         RiskParameters riskParameters = new RiskParameters("id1", "default", 0.4, haircuts, new InterestRates(0.03, 0.05), 
-                new IndustryMaxLoanDurations(MapFactory.of(Industry.CONSTRUCTION, 2, Industry.AUTOMOTIVE, 5)),
+                new IndustryMaxLoanDurations(Map.of(Industry.CONSTRUCTION, 2, Industry.AUTOMOTIVE, 5)),
                 1.2, new Thresholds(0.2, 1.2, 0.15, 0.75, 0.8, new OwnEquityRatioThresholds(0.7, 3, 0.5, 1)),
-                new CollateralRequirement(MapFactory.of(
+                new CollateralRequirement(Map.of(
                         0.0, new Pair<>(50L, 0.7), 
                         0.02, new Pair<>(30L, 0.4), 
                         0.04, new Pair<>(0L, 0.0))),

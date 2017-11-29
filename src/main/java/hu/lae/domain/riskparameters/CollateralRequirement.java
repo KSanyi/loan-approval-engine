@@ -10,7 +10,6 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import hu.lae.util.MapFactory;
 import hu.lae.util.Pair;
 
 public class CollateralRequirement {
@@ -26,7 +25,7 @@ public class CollateralRequirement {
         List<Double> limits = new ArrayList<>(map.keySet());
         Collections.sort(limits);
         
-        this.map = new TreeMap<>(MapFactory.of(
+        this.map = new TreeMap<>(Map.of(
                 limits.get(0), new Entry("Low PD", map.get(limits.get(0)).v1, map.get(limits.get(0)).v2, "no collateral", "0 coll. value POR or private surety or institutional guarantee"),
                 limits.get(1), new Entry("Medium PD", map.get(limits.get(1)).v1, map.get(limits.get(1)).v2, "0 coll. value POR or private surety or portfolio guarantee", "50% RE OR institutional guarantee"),
                 limits.get(2), new Entry("High PD", map.get(limits.get(2)).v1, map.get(limits.get(2)).v2, "", "80% RE or min 80% institutional guarantee")));
