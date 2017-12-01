@@ -20,9 +20,10 @@ public class EbitdaCorrectorTest {
         
         CorrectedEbitdas correctedEbitdas = ebitdaCorrector.xxx(input);
         
-        System.out.println(correctedEbitdas);
-        
-        Assert.assertEquals(new CorrectedEbitdas(269.71, 357.67), correctedEbitdas);
+        Assert.assertEquals(269.71, correctedEbitdas.correctedEbitdaAverage, 0.1);
+        Assert.assertEquals(357.61, correctedEbitdas.correctedLastEbitda, 0.1);
+        Assert.assertEquals(259.68, correctedEbitdas.correctedEbitdaAverageWithoutTMinus1, 0.1);
+        Assert.assertEquals(301.29, correctedEbitdas.correctedEbitdaAverageWithoutTMinus2, 0.1);
     }
     
 }

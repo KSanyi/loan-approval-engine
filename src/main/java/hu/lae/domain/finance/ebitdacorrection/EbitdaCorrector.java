@@ -27,18 +27,23 @@ public class EbitdaCorrector {
     	
     	YearlyData<Double> correctedEbitdas = calculateCorrectedEbitdas(input);
     	
-    	Double tValue = correctedEbitdas.tMinus1Value * Math.min(correctedEbitdas.tValue / correctedEbitdas.tMinus1Value, 1 + maxDelta);
-    	Double tMinus1Value = correctedEbitdas.tMinus2Value * Math.min(correctedEbitdas.tMinus1Value / correctedEbitdas.tMinus2Value, 1 + maxDelta);
-    	
-    	double twoYearsEbitdaGrowth = correctedEbitdas.tValue / correctedEbitdas.tMinus2Value - 1;
+    	double lastEbitdaGrowth = correctedEbitdas.tValue / correctedEbitdas.tMinus1Value - 1;
     	double secondYearEbitdaGrowth = correctedEbitdas.tMinus1Value / correctedEbitdas.tMinus2Value - 1;
-    	boolean shouldUseTValue = correctedEbitdas.tValue > correctedEbitdas.tMinus1Value && twoYearsEbitdaGrowth < minXXX && secondYearEbitdaGrowth < minXXX;
+    	double twoYearsEbitdaGrowth = correctedEbitdas.tValue / correctedEbitdas.tMinus2Value - 1;
     	
-    	Double tMinus2Value = shouldUseTValue ? tValue : correctedEbitdas.tMinus2Value;
+    	double tValue = lastEbitdaGrowth <= maxDelta ? correctedEbitdas.tValue : correctedEbitdas.tMinus1Value * (1 + maxDelta);
+    	double tMinus1Value = secondYearEbitdaGrowth <= maxDelta ? correctedEbitdas.tMinus1Value : correctedEbitdas.tMinus2Value * (1 + maxDelta);
+    	
+    	/*
+    	 *  Ha a T-2es év kiugróan magas (jelentősan nagyobb mint T és mint T-1 ás T nagyobb mint T) de az utolsó évben emelkedett
+    	 *  (azaz nem tartósan csökkenő tendenciáról van szó) akkor a T-2es érték helyett az átlagban a T értékkel számol							
+    	 */
+    	boolean shouldUseTValue = correctedEbitdas.tValue > correctedEbitdas.tMinus1Value && twoYearsEbitdaGrowth < minXXX && secondYearEbitdaGrowth < minXXX;
+    	double tMinus2Value = shouldUseTValue ? tValue : correctedEbitdas.tMinus2Value;
     	
     	double average = DoubleStream.of(tValue, tMinus1Value, tMinus2Value).average().getAsDouble();
-    	double averageWithoutTMinus1 = DoubleStream.of(tValue, tMinus2Value).average().getAsDouble();
-    	double averageWithoutTMinus2 = DoubleStream.of(tValue, tMinus1Value).average().getAsDouble();
+    	double averageWithoutTMinus1 = calculateAverageWithoutTMinus1(correctedEbitdas, tMinus2Value);
+    	double averageWithoutTMinus2 = DoubleStream.of(tValue, correctedEbitdas.tMinus1Value).average().getAsDouble();
     	
     	boolean decreasingTendency = correctedEbitdas.tValue < correctedEbitdas.tMinus1Value && correctedEbitdas.tValue < correctedEbitdas.tMinus2Value;
     	double decreasingTPlus1 = tValue * (1 + Math.max(correctedEbitdas.tValue / correctedEbitdas.tMinus1Value, maxEbitdaDecrease));
@@ -48,7 +53,17 @@ public class EbitdaCorrector {
     	
     	return new CorrectedEbitdas(
     	        MathUtil.round(estimatedTPlus1, 2),
-    	        MathUtil.round(correctedEbitdas.tValue, 2));
+    	        MathUtil.round(correctedEbitdas.tValue, 2),
+    	        MathUtil.round(estimatedTPlus1WihtoutTMinus1, 2),
+    	        MathUtil.round(estimatedTPlus1WihtoutTMinus2, 2));
+    }
+    
+    private double calculateAverageWithoutTMinus1(YearlyData<Double> correctedEbitdas, double tMinus2Value) {
+    	
+    	double twoYearsEbitdaGrowth = correctedEbitdas.tValue / correctedEbitdas.tMinus2Value - 1;
+    	double tValue = twoYearsEbitdaGrowth <= maxDelta ? correctedEbitdas.tValue : correctedEbitdas.tMinus2Value * Math.pow(1 + maxDelta, 2);
+    	
+    	return DoubleStream.of(tValue, tMinus2Value).average().getAsDouble();
     }
     
     public YearlyData<Double> calculateCorrectedEbitdas(YearlyData<EbitdaCorrectionInput> input) {
