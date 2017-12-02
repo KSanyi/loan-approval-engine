@@ -4,6 +4,7 @@ import java.util.stream.DoubleStream;
 
 import hu.lae.domain.finance.YearlyData;
 import hu.lae.domain.riskparameters.EbitdaCorrectionParameters;
+import hu.lae.util.CalculationLog;
 import hu.lae.util.MathUtil;
 
 public class EbitdaCorrector {
@@ -16,6 +17,8 @@ public class EbitdaCorrector {
     
     private final double maxEbitdaDecrease;
     
+    private final CalculationLog calculationLog = new CalculationLog();
+    
     public EbitdaCorrector(EbitdaCorrectionParameters parameters) {
         this.reasonableEbitdaMarginGrowth = parameters.reasonableEbitdaMarginGrowth;
         this.maxDelta = parameters.maxDelta;
@@ -26,6 +29,8 @@ public class EbitdaCorrector {
     public CorrectedEbitdas xxx(YearlyData<EbitdaCorrectionInput> input) {
     	
     	YearlyData<Double> correctedEbitdas = calculateCorrectedEbitdas(input);
+    	
+    	calculationLog.put("Corrected EBITDA", correctedEbitdas.tValue, correctedEbitdas.tMinus1Value, correctedEbitdas.tMinus2Value);
     	
     	double lastEbitdaGrowth = correctedEbitdas.tValue / correctedEbitdas.tMinus1Value - 1;
     	double secondYearEbitdaGrowth = correctedEbitdas.tMinus1Value / correctedEbitdas.tMinus2Value - 1;
@@ -41,6 +46,8 @@ public class EbitdaCorrector {
     	boolean shouldUseTValue = correctedEbitdas.tValue > correctedEbitdas.tMinus1Value && twoYearsEbitdaGrowth < minXXX && secondYearEbitdaGrowth < minXXX;
     	double tMinus2Value = shouldUseTValue ? tValue : correctedEbitdas.tMinus2Value;
     	
+    	calculationLog.put("Corrected EBITDA'", tValue, tMinus1Value, tMinus2Value);
+    	
     	double average = DoubleStream.of(tValue, tMinus1Value, tMinus2Value).average().getAsDouble();
     	double averageWithoutTMinus1 = calculateAverageWithoutTMinus1(correctedEbitdas, tMinus2Value);
     	double averageWithoutTMinus2 = DoubleStream.of(tValue, correctedEbitdas.tMinus1Value).average().getAsDouble();
@@ -51,11 +58,21 @@ public class EbitdaCorrector {
     	double estimatedTPlus1WihtoutTMinus1 = correctedEbitdas.tValue < correctedEbitdas.tMinus2Value ? decreasingTPlus1 : averageWithoutTMinus1;
     	double estimatedTPlus1WihtoutTMinus2 = correctedEbitdas.tValue < correctedEbitdas.tMinus1Value ? decreasingTPlus1 : averageWithoutTMinus2;
     	
+    	calculationLog.put("Average", average);
+    	calculationLog.put("Average without T-1", averageWithoutTMinus1);
+    	calculationLog.put("Average without T-2", averageWithoutTMinus2);
+    	
+    	calculationLog.put("Estimated T+1 (corrected avg)", MathUtil.round(estimatedTPlus1, 2));
+    	calculationLog.put("Estimated T+1 (corrected last)", MathUtil.round(correctedEbitdas.tValue, 2));
+    	calculationLog.put("Estimated T+1 without T-1", MathUtil.round(estimatedTPlus1WihtoutTMinus1, 2));
+    	calculationLog.put("Estimated T+1 without T-2", MathUtil.round(estimatedTPlus1WihtoutTMinus2, 2));
+    	
     	return new CorrectedEbitdas(
     	        MathUtil.round(estimatedTPlus1, 2),
     	        MathUtil.round(correctedEbitdas.tValue, 2),
     	        MathUtil.round(estimatedTPlus1WihtoutTMinus1, 2),
-    	        MathUtil.round(estimatedTPlus1WihtoutTMinus2, 2));
+    	        MathUtil.round(estimatedTPlus1WihtoutTMinus2, 2),
+    	        calculationLog);
     }
     
     private double calculateAverageWithoutTMinus1(YearlyData<Double> correctedEbitdas, double tMinus2Value) {
@@ -71,6 +88,10 @@ public class EbitdaCorrector {
     	YearlyData<Long> calculateCorrectedSales = calculateCorrectedSales(input);
     	YearlyData<Double> calculateCorrectedEbitdaMargins = calculateCorrectedEbitdaMargins(input);
         
+    	calculationLog.put("Corrected sales", calculateCorrectedSales.tValue, calculateCorrectedSales.tMinus1Value, calculateCorrectedSales.tMinus2Value);
+    	
+    	calculationLog.put("Corrected EBITDA margin T", calculateCorrectedEbitdaMargins.tValue, calculateCorrectedEbitdaMargins.tMinus1Value, calculateCorrectedEbitdaMargins.tMinus2Value);
+    	
     	return new YearlyData<>(
     			calculateCorrectedSales.tValue * calculateCorrectedEbitdaMargins.tValue,
     			calculateCorrectedSales.tMinus1Value * calculateCorrectedEbitdaMargins.tMinus1Value,

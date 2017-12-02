@@ -20,6 +20,10 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import hu.lae.domain.Client;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
+import hu.lae.domain.finance.YearlyData;
+import hu.lae.domain.finance.ebitdacorrection.CorrectedEbitdas;
+import hu.lae.domain.finance.ebitdacorrection.EbitdaCorrectionInput;
+import hu.lae.domain.finance.ebitdacorrection.EbitdaCorrector;
 import hu.lae.domain.industry.IndustryData;
 import hu.lae.domain.legal.LegalParameters;
 import hu.lae.domain.loan.DSCRCalculator;
@@ -62,6 +66,8 @@ public class ProposalWindow extends Window {
     private final Label minPaybackYearsLabel = new Label();
     
     private final Button helpButton = new Button("Help", click -> openLoanHelperWindow());
+    
+    private final Button ebitdaCheckButton = new Button("EBITDA check", click -> openEbidaCorrectionWindow());
     
     private final int maxLoanDuration;
     
@@ -185,8 +191,12 @@ public class ProposalWindow extends Window {
         helpButton.setIcon(VaadinIcons.SLIDER);
         helpButton.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         
-        VerticalLayout panelLayout = new VerticalLayout(helpButton, layout, minPaybackYearsLabel);
+        ebitdaCheckButton.setIcon(VaadinIcons.CALC_BOOK);
+        ebitdaCheckButton.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+        
+        VerticalLayout panelLayout = new VerticalLayout(helpButton, layout, minPaybackYearsLabel, ebitdaCheckButton);
         panelLayout.setComponentAlignment(helpButton, Alignment.TOP_RIGHT);
+        panelLayout.setComponentAlignment(ebitdaCheckButton, Alignment.BOTTOM_RIGHT);
         panelLayout.setSpacing(false);
         panelLayout.setSizeFull();
         
@@ -220,6 +230,18 @@ public class ProposalWindow extends Window {
         LoanRequestValidator loanRequestValidator = new LoanRequestValidator(loanCalculator, loanPreCalculator, industryData);
         
         return loanRequestValidator.validate(cashflowCalculatorCombo.getValue(), client, existingLoansRefinancingTable.getValue(), loanRequest);
+    }
+    
+    private void openEbidaCorrectionWindow() {
+    	
+    	YearlyData<EbitdaCorrectionInput> input = new YearlyData<>(
+    			EbitdaCorrectionInput.fromFinancialStatementData(client.financialHistory.financialStatements.get(2)),
+    			EbitdaCorrectionInput.fromFinancialStatementData(client.financialHistory.financialStatements.get(1)),
+    			EbitdaCorrectionInput.fromFinancialStatementData(client.financialHistory.financialStatements.get(0)));
+    	
+    	CorrectedEbitdas correctedEbitdas = new EbitdaCorrector(riskParameters.ebitdaCorrectionParameters).xxx(input);
+    	
+    	EbitdaCheckWindow.show(correctedEbitdas);
     }
     
 }

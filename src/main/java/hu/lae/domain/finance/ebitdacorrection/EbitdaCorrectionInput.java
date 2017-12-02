@@ -3,8 +3,17 @@ package hu.lae.domain.finance.ebitdacorrection;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import hu.lae.domain.finance.FinancialStatementData;
+
 public class EbitdaCorrectionInput {
 
+	public static EbitdaCorrectionInput fromFinancialStatementData(FinancialStatementData financialStatementData) {
+		
+		return new EbitdaCorrectionInput(financialStatementData.incomeStatement.sales,
+				financialStatementData.incomeStatement.ebitda(),
+				financialStatementData.buyersDays());
+	}
+	
 	public final long sales;
     
     public final long ebitda;
