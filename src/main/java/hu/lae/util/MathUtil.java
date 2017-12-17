@@ -27,13 +27,16 @@ public class MathUtil {
     public static double min(double ... values) {
         
         return DoubleStream.of(values).min().orElse(0);
-        
     }
     
     public static double min(List<Double> values) {
         
         return values.stream().mapToDouble(d -> d).min().orElse(0);
+    }
+    
+    public static double max(double ... values) {
         
+        return DoubleStream.of(values).max().orElse(0);
     }
     
 }
