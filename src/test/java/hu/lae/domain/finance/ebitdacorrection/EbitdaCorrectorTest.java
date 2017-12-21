@@ -10,7 +10,7 @@ public class EbitdaCorrectorTest {
 
     @Test
     public void test() {
-        EbitdaCorrectionParameters parameters = new EbitdaCorrectionParameters(0.3, 0.3, -0.1, -0.05, new YearlyData<>(0.4, 0.35, 0.25));
+        EbitdaCorrectionParameters parameters = new EbitdaCorrectionParameters(0.3, 0.3, -0.1, -0.05, new YearlyData<>(0.334, 0.333, 0.333));
         EbitdaCorrector ebitdaCorrector = new EbitdaCorrector(parameters);
         
         YearlyData<EbitdaCorrectionInput> input = new YearlyData<>(

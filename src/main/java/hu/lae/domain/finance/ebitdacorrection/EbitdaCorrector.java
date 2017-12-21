@@ -150,7 +150,9 @@ public class EbitdaCorrector {
     
     private double calculateAverage(double tValue, double tMinus1Value, double tMinus2Value) {
         
-        return yearlyWeights.tValue * tValue + yearlyWeights.tMinus1Value * tMinus1Value + yearlyWeights.tMinus2Value * tMinus2Value; 
+        double divisor = (tValue == 0 ? 0 : yearlyWeights.tValue) + (tMinus1Value == 0 ? 0 : yearlyWeights.tMinus1Value) + (tMinus2Value == 0 ? 0 : yearlyWeights.tMinus2Value);
+        
+        return (yearlyWeights.tValue * tValue + yearlyWeights.tMinus1Value * tMinus1Value + yearlyWeights.tMinus2Value * tMinus2Value) / divisor; 
     }
     
 }
