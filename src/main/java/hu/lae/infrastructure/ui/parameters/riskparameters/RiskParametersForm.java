@@ -4,8 +4,9 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.VerticalLayout;
 
 import hu.lae.domain.riskparameters.Haircuts;
 import hu.lae.domain.riskparameters.InterestRates;
@@ -66,20 +67,18 @@ public class RiskParametersForm extends CustomField<RiskParameters> {
 	@Override
 	protected Component initContent() {
 		
-		FormLayout layout = new FormLayout(amortizationRateField, arField, stockField, cashField, otherField, dscrThresholdField, shortTermInterestRateField, longTermInterestRateField);
-        layout.setSpacing(false);
-        layout.setMargin(new MarginInfo(false, true));
+		FormLayout formLayout = new FormLayout(amortizationRateField, arField, stockField, cashField, otherField, dscrThresholdField, shortTermInterestRateField, longTermInterestRateField);
+		formLayout.setSpacing(false);
+		formLayout.setMargin(new MarginInfo(false, true));
         
-        Panel panel = new Panel("Basic", layout);
+        Panel panel = new Panel("Basic", formLayout);
         panel.addStyleName("colored");
 		
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.setSpacing(true);
-		gridLayout.setColumns(4);
+		VerticalLayout layout = new VerticalLayout();
 		
-		gridLayout.addComponents(panel, industryMaxLoanDurationsForm, thresholdsForm, collateralRequirementsForm, ebitdaCorrectionParametersForm);
+		layout.addComponents(new HorizontalLayout(panel, industryMaxLoanDurationsForm, thresholdsForm, collateralRequirementsForm), ebitdaCorrectionParametersForm);
         
-		return gridLayout;
+		return layout;
 	}
 
 	@Override

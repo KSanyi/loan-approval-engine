@@ -39,6 +39,7 @@ public class RiskParametersScreen extends VerticalLayout {
 	}
 
 	private void save() {
+	    
         riskParameterRepository.updateRiskParameters(riskParametersForm.getValue());
         logger.info("Legal parameters saved");
         Notification.show("Risk parameters updated");

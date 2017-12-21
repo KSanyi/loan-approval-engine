@@ -1,7 +1,5 @@
 package hu.lae.domain.finance.ebitdacorrection;
 
-import java.util.stream.DoubleStream;
-
 import hu.lae.domain.finance.YearlyData;
 import hu.lae.domain.riskparameters.EbitdaCorrectionParameters;
 import hu.lae.util.CalculationLog;
@@ -17,6 +15,8 @@ public class EbitdaCorrector {
     
     private final double maxEbitdaDecrease;
     
+    private final YearlyData<Double> yearlyWeights;
+    
     private final CalculationLog calculationLog = new CalculationLog();
     
     public EbitdaCorrector(EbitdaCorrectionParameters parameters) {
@@ -24,6 +24,7 @@ public class EbitdaCorrector {
         this.maxDelta = parameters.maxDelta;
         this.minXXX = parameters.minXXX;
         this.maxEbitdaDecrease = parameters.maxEbitdaDecrease;
+        this.yearlyWeights = parameters.yearlyWeights;
     }
 
     public CorrectedEbitdas xxx(YearlyData<EbitdaCorrectionInput> input) {
@@ -48,8 +49,8 @@ public class EbitdaCorrector {
     	
     	calculationLog.put("Corrected EBITDA'", tValue, tMinus1Value, tMinus2Value);
     	
-    	double average = DoubleStream.of(tValue, tMinus1Value, tMinus2Value).average().getAsDouble();
-    	double averageWithoutTMinus2 = DoubleStream.of(tValue, correctedEbitdas.tMinus1Value).average().getAsDouble();
+    	double average = calculateAverage(tValue, tMinus1Value, tMinus2Value);
+    	double averageWithoutTMinus2 = calculateAverage(tValue, correctedEbitdas.tMinus1Value, 0);
     	
     	boolean decreasingTendency = correctedEbitdas.tValue < correctedEbitdas.tMinus1Value && correctedEbitdas.tValue < correctedEbitdas.tMinus2Value;
     	double decreasingTPlus1 = tValue * (1 + Math.max(correctedEbitdas.tValue / correctedEbitdas.tMinus1Value, maxEbitdaDecrease));
@@ -94,7 +95,7 @@ public class EbitdaCorrector {
     	
     	double tValue = growth <= maxDelta ? xxx : correctedEbitdas.tMinus2Value * (1 + maxDelta);
     	
-    	double average = DoubleStream.of(tValue, correctedEbitdas.tMinus2Value).average().getAsDouble();
+    	double average = calculateAverage(tValue, 0, correctedEbitdas.tMinus2Value);
     	
     	return tValue < correctedEbitdas.tMinus2Value ? tValue * (1 + Math.max(growth, minXXX)) : average;
     }
@@ -145,6 +146,11 @@ public class EbitdaCorrector {
     private Double calculateCorrectedEbitdaMarginForTMinus1Year(EbitdaCorrectionInput entry, EbitdaCorrectionInput prevEntry) {
     	double reasonableEbitdaMargin = prevEntry.ebitdaMargin() * (1 + reasonableEbitdaMarginGrowth);
     	return Math.min(entry.ebitdaMargin(), reasonableEbitdaMargin);
+    }
+    
+    private double calculateAverage(double tValue, double tMinus1Value, double tMinus2Value) {
+        
+        return yearlyWeights.tValue * tValue + yearlyWeights.tMinus1Value * tMinus1Value + yearlyWeights.tMinus2Value * tMinus2Value; 
     }
     
 }

@@ -16,6 +16,7 @@ import hu.lae.domain.finance.FinancialHistory;
 import hu.lae.domain.finance.FinancialStatementData;
 import hu.lae.domain.finance.FreeCashFlowCalculator;
 import hu.lae.domain.finance.IncomeStatement;
+import hu.lae.domain.finance.YearlyData;
 import hu.lae.domain.industry.Industry;
 import hu.lae.domain.legal.LegalData;
 import hu.lae.domain.riskparameters.CollateralRequirement;
@@ -74,7 +75,7 @@ public class LoanCalculatorTest2 {
                         0.0, new Pair<>(50L, 0.7), 
                         0.02, new Pair<>(30L, 0.4), 
                         0.04, new Pair<>(0L, 0.0))),
-                new EbitdaCorrectionParameters(0.3, 0.1, -0.1, -0.05));
+                new EbitdaCorrectionParameters(0.3, 0.1, -0.1, -0.05, new YearlyData<>(0.4, 0.35, 0.25)));
         
         loanCalculator = new LoanCalculator(riskParameters, LocalDate.of(2017,4,1), 5);
     }

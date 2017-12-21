@@ -14,15 +14,20 @@ public class EbitdaCorrectionParametersPanel extends Panel {
     private final PercentField maxDeltaField = new PercentField("Max delta");
     private final PercentField minXXXField = new PercentField("Min xxx");
     private final PercentField maxEbitdaDecreaseField = new PercentField("Max EBITDA decrease");
+    private final YearlyWeightsField yearlyWeightsField;
 
     public EbitdaCorrectionParametersPanel(EbitdaCorrectionParameters ebitdaCorrectionParameters) {
         
         setCaption("EBITDA Correction Parameters");
         
-        FormLayout layout = new FormLayout(reasonableEbitdaMarginGrowthField, maxDeltaField, minXXXField, maxEbitdaDecreaseField);
+        yearlyWeightsField = new YearlyWeightsField(ebitdaCorrectionParameters.yearlyWeights);
+        
+        FormLayout layout = new FormLayout(reasonableEbitdaMarginGrowthField, maxDeltaField, minXXXField, maxEbitdaDecreaseField, yearlyWeightsField);
         layout.setSpacing(false);
         layout.setMargin(new MarginInfo(false, true));
         setContent(layout);
+        
+        setSizeUndefined();
         
         addStyleName("colored");
         
@@ -36,7 +41,8 @@ public class EbitdaCorrectionParametersPanel extends Panel {
         return new EbitdaCorrectionParameters(reasonableEbitdaMarginGrowthField.getPercent(),
                 maxDeltaField.getPercent(),
                 minXXXField.getPercent(),
-                maxEbitdaDecreaseField.getPercent());
+                maxEbitdaDecreaseField.getPercent(),
+                yearlyWeightsField.getValue());
     }
     
 }

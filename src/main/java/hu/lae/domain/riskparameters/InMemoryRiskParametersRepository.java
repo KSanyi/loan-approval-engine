@@ -2,6 +2,7 @@ package hu.lae.domain.riskparameters;
 
 import java.util.Map;
 
+import hu.lae.domain.finance.YearlyData;
 import hu.lae.domain.industry.Industry;
 import hu.lae.util.Pair;
 
@@ -20,7 +21,7 @@ public class InMemoryRiskParametersRepository implements RiskParametersRepositor
                         0.0, new Pair<>(50L, 0.7), 
                         0.02, new Pair<>(30L, 0.4), 
                         0.04, new Pair<>(0L, 0.0))),
-                new EbitdaCorrectionParameters(0.3, 0.1, -0.1, -0.05)
+                new EbitdaCorrectionParameters(0.3, 0.1, -0.1, -0.05, new YearlyData<>(0.4, 0.35, 0.25))
                 );
     }
     
