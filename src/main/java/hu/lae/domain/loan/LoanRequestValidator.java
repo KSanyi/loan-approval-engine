@@ -37,13 +37,17 @@ public class LoanRequestValidator {
 
         logger.info("Validating loan request");
         
+        List<String> errorMessages = new ArrayList<>();
+        
+        if(loanRequest.sum() == 0) {
+        	errorMessages.add("0 loan requested");
+        }
+        
         double maxShortTermLoan = loanCalculator.calculateMaxShortTermLoan(client, 0, loanRequest.maturityYears(), existingLoansRefinancing, freeCashFlowCalculator);
         double maxLongTermLoan = loanCalculator.calculateMaxLongTermLoan(client, loanRequest.shortTermLoan, loanRequest.maturityYears(), existingLoansRefinancing, freeCashFlowCalculator);
 
         double loanIncrement = loanRequest.sum() - existingLoansRefinancing.sumOfRefinancableLoans();
         int maxLoanDuration = loanPreCalculator.calculateMaxLoanDuration(client, loanIncrement);
-
-        List<String> errorMessages = new ArrayList<>();
 
         if (loanRequest.sum() < existingLoansRefinancing.sumOfRefinancableLoans()) {
             errorMessages.add("Loan request must be enough to cover the existing refinanceable loans");

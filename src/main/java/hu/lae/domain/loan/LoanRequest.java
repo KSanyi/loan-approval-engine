@@ -27,7 +27,7 @@ public class LoanRequest {
     
     public double maturityYears() {
         long days = ChronoUnit.DAYS.between(requestDate, longTermLoanMaturityDate);
-        return days / 365.0;
+        return days / 365.25;
     }
     
     public double sum() {
