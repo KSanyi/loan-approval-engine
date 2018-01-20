@@ -57,10 +57,10 @@ public class Client {
     public static Client createDefault() {
         
         FinancialStatementData financialStatementData2016 = new FinancialStatementData(2016, 
-                new BalanceSheet(new Assets(400, 50, 20, 30), new Liabilities(1000, 100, 70, 0, 2000)), new IncomeStatement(2000, 300, 70, 30, 300));
+                new BalanceSheet(new Assets(400, 50, 20, 30), new Liabilities(1000, 100, 70, 0, 2000)), new IncomeStatement(2000, 200, 70, 30, 300));
         
         FinancialStatementData financialStatementData2015 = new FinancialStatementData(2015, 
-                new BalanceSheet(new Assets(300, 45, 15, 25), new Liabilities(900, 90, 65, 0, 1800)), new IncomeStatement(1800, 250, 40, 30, 275));
+                new BalanceSheet(new Assets(300, 45, 15, 25), new Liabilities(900, 90, 65, 0, 1800)), new IncomeStatement(1800, 200, 40, 30, 275));
         
         FinancialStatementData financialStatementData2014 = new FinancialStatementData(2014, 
                 new BalanceSheet(new Assets(250, 40, 10, 20), new Liabilities(800, 80, 60, 0, 1600)), new IncomeStatement(1600, 200, 35, 30, 250));
